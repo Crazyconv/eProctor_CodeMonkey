@@ -1,4 +1,4 @@
-package ex_models;
+package models;
 
 import play.db.ebean.Model;
 import javax.persistence.*;
@@ -15,7 +15,7 @@ public class Student extends Model {
     @Transient  //meaning that it won't be bound to database
     private File photo;
     private String photoPath;
-    @ManyToMany(cascade = CascadeType.REMOVE)
+    @ManyToMany
     private List<Course> courseList = new ArrayList<Course>();
 
     public static Finder<Integer, Student> find = new Finder<Integer, Student>(

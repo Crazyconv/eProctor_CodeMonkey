@@ -37,7 +37,7 @@ create table time_slot (
   course_course_id          integer not null,
   start_time                datetime,
   end_time                  datetime,
-  limit                     integer,
+  capability                integer,
   constraint pk_time_slot primary key (time_slot_id))
 ;
 
@@ -68,13 +68,13 @@ SET FOREIGN_KEY_CHECKS=0;
 
 drop table course;
 
+drop table student_course;
+
 drop table question;
 
 drop table solution;
 
 drop table student;
-
-drop table student_course;
 
 drop table time_slot;
 

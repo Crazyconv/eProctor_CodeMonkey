@@ -14,6 +14,7 @@ public class Report extends Model{
     @Lob
     private String remark;
     private boolean examStatus = false;
+    @OneToMany(cascade=CascadeType.ALL)
     private List<Chat> chatList = new ArrayList<Chat>();
 
     public static Finder<Integer, Report> find = new Finder<Integer, Report>(

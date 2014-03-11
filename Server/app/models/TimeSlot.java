@@ -1,4 +1,4 @@
-package ex_models;
+package models;
 
 import play.db.ebean.Model;
 
@@ -11,7 +11,7 @@ public class TimeSlot extends Model{
     private Integer timeSlotId;
     private Date startTime;
     private Date endTime;
-    private Integer limit;
+    private Integer capability;
 
     public static Finder<Integer, TimeSlot> find = new Finder<Integer, TimeSlot>(
             Integer.class, TimeSlot.class
@@ -28,8 +28,8 @@ public class TimeSlot extends Model{
     public Date getEndTime(){
         return endTime;
     }
-    public Integer getLimit(){
-        return limit;
+    public Integer getCapability(){
+        return capability;
     }
 
 }

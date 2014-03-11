@@ -1,4 +1,4 @@
-package ex_models;
+package models;
 
 import play.db.ebean.Model;
 
@@ -16,6 +16,8 @@ public class Course extends Model{
     private List<Question> questionSet = new ArrayList<Question>();
     @OneToMany(cascade=CascadeType.ALL)
     private List<TimeSlot> availableSlots = new ArrayList<TimeSlot>();
+    @ManyToMany(mappedBy="courseList")
+    private List<Student> students = new ArrayList<Student>();
 
     public static Finder<Integer, Course> find = new Finder<Integer, Course>(
             Integer.class,Course.class
