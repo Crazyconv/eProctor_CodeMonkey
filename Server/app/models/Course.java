@@ -10,14 +10,17 @@ import java.util.List;
 @Entity
 public class Course extends Model{
     @Id
+    @Column(name = "course_id")
     private Integer courseId;
     private String courseCode;
-    @OneToMany(cascade=CascadeType.ALL)
+    @OneToMany(mappedBy="course")
     private List<Question> questionSet = new ArrayList<Question>();
-    @OneToMany(cascade=CascadeType.ALL)
+    @OneToMany(mappedBy="course")
     private List<TimeSlot> availableSlots = new ArrayList<TimeSlot>();
-    @ManyToMany(mappedBy="courseList")
-    private List<Student> students = new ArrayList<Student>();
+    @OneToMany(mappedBy="course")
+    private List<Registration> registrationList = new ArrayList<Registration>();
+    @OneToMany(mappedBy="course")
+    private List<Exam> examList = new ArrayList<Exam>();
 
     public static Finder<Integer, Course> find = new Finder<Integer, Course>(
             Integer.class,Course.class
@@ -36,5 +39,11 @@ public class Course extends Model{
     }
     public List<TimeSlot> getAvailableSlots(){
         return availableSlots;
+    }
+    public List<Registration> getRegistrationList(){
+        return registrationList;
+    }
+    public List<Exam> getExamList(){
+        return examList;
     }
 }

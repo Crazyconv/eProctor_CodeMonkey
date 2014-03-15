@@ -7,3 +7,8 @@ GET     /                           controllers.Application.index()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+# Sample Data
+GET    /adddata1                    controllers.data.DataController.addData1()
+POST   /addstudent                  controllers.data.DataController.addStudent()
+GET    /getphoto/:studentid         controllers.data.DataController.getPhoto(studentid: Integer)

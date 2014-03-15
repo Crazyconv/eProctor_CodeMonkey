@@ -8,12 +8,13 @@ import java.util.List;
 @Entity
 public class Invigilator extends Model{
     @Id
+    @Column(name = "invi_id")
     private Integer invigilatorId;
     private String account;
     private String password;
     private String name;
-    @ManyToMany(mappedBy = "invigilators")
-    private List<Exam> exams = new ArrayList<Exam>();
+    @OneToMany(mappedBy = "invigilator")
+    private List<Exam> examList = new ArrayList<Exam>();
 
     public static Finder<Integer, Invigilator> find = new Finder<Integer, Invigilator>(
             Integer.class, Invigilator.class
@@ -33,8 +34,8 @@ public class Invigilator extends Model{
     public String getName(){
         return name;
     }
-    public List<Exam> getExams(){
-        return exams;
+    public List<Exam> getExamList(){
+        return examList;
     }
 
 }

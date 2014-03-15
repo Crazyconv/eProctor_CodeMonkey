@@ -8,10 +8,14 @@ import java.util.Date;
 @Entity
 public class TimeSlot extends Model{
     @Id
+    @Column(name = "time_id")
     private Integer timeSlotId;
     private Date startTime;
     private Date endTime;
-    private Integer capability;
+    @ManyToOne
+    @JoinColumn(name="course_id")
+    private Course course;
+    private Integer capacity;
 
     public static Finder<Integer, TimeSlot> find = new Finder<Integer, TimeSlot>(
             Integer.class, TimeSlot.class
@@ -28,8 +32,11 @@ public class TimeSlot extends Model{
     public Date getEndTime(){
         return endTime;
     }
-    public Integer getCapability(){
-        return capability;
+    public Course getCourse(){
+        return course;
+    }
+    public Integer getCapacity(){
+        return capacity;
     }
 
 }
