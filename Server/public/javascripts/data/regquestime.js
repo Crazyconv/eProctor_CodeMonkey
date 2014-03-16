@@ -1,0 +1,87 @@
+$(document).ready(function(){
+    $("#regForm").submit(function(){
+        var options = {
+            url:"/addregistration",
+            type:"POST",
+            dataType:"json",
+            success: function(json){
+                if(json.error!=0){
+                    $("#registrationerror").text(json.error).slideDown();
+                }else{
+                    $('<li/>').text(json.courseCode).appendTo("#student" + json.studentId);
+                    $("#registrationerror").hide();
+                }
+            },
+            error: function(xhr,status){
+                $("#registrationerror").text("Sorry... the form submission failed.").slideDown();
+            }
+        };
+        $(this).ajaxSubmit(options);
+        return false;
+    });
+
+    $("#questionForm").submit(function(){
+        var options = {
+            url:"/addquestion",
+            type:"POST",
+            dataType:"json",
+            beforeSubmit: function(formData, jqForm, option){
+                var form = jqForm[0];
+                if(form.content.value==""){
+                    $("#questionerror").text("Please enter the question.").slideDown();
+                    return false;
+                }
+                if(form.content.value.length > 5000){
+                    $("#questionerror").text("The question exceeds 5000 characters.").slideDown();
+                    return false;
+                }
+                return true;
+            },
+            success: function(json){
+                if(json.error!=0){
+                    $("#questionerror").text(json.error).slideDown();
+                }else{
+                    $("#questionerror").hide();
+                    $("#questionForm textarea").clearFields();
+                    $('<li/>').text(json.content).appendTo("#course" + json.courseId);
+                }
+            },
+            error: function(xhr,status){
+                $("#questionerror").text("Sorry... the form submission failed.").slideDown();
+            }
+        };
+        $(this).ajaxSubmit(options);
+        return false;
+    });
+
+    $("#slotForm").submit(function(){
+        var options = {
+            url:"/addslot",
+            type:"POST",
+            dataType:"json",
+            beforeSubmit: function(formData, jqForm, option){
+                var form = jqForm[0];
+                if(form.capacity.value==""){
+                    $("#sloterror").text("Please enter the capacity.").slideDown();
+                    form.capacity.focus();
+                    return false;
+                }
+                return true;
+            },
+            success: function(json){
+                if(json.error!=0){
+                    $("#sloterror").text(json.error).slideDown();
+                }else{
+                    $("#sloterror").hide()
+                    $('<li>' + json.date + ' ' + json.start + '-' + json.end + ' capacity:' + json.capacity +'</li>').appendTo("#slot" + json.courseId);
+                    $("#slotForm input[type='text']").clearFields();
+                }
+            },
+            error: function(xhr,status){
+                $("#sloterror").text("Sorry... the form submission failed.").slideDown();
+            }
+        };
+        $(this).ajaxSubmit(options);
+        return false;
+    });
+});

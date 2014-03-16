@@ -1,6 +1,7 @@
 package models;
 
 import play.db.ebean.Model;
+import utils.CMException;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -37,6 +38,21 @@ public class TimeSlot extends Model{
     }
     public Integer getCapacity(){
         return capacity;
+    }
+
+    public void setCapacity(Integer capacity){
+        this.capacity = capacity;
+    }
+    public void setSlot(Course course, Date startTime, Date endTime) throws CMException{
+        if(endTime.before(startTime)){
+            throw new CMException("Time setting error.");
+        }
+        if(TimeSlot.find.where().eq("startTime", startTime).eq("course",course).findRowCount()!=0){
+            throw new CMException("This timeslot has been added to course " + course.getCourseCode() + " or has overlapping.");
+        }
+        this.course = course;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
 }

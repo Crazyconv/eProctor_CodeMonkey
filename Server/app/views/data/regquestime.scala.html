@@ -1,0 +1,107 @@
+@(studentList: List[Student], courseList: List[Course])
+
+@main("Add registration, question and timeslot data"){
+        <style>
+            .record{
+                display: inline-block;
+                width: 150px;
+                margin: 5px 10px;
+                vertical-align: top;
+            }
+        </style>
+        <div id="registration">
+            <h2>Register courses for students</h2>
+            <form id="regForm">
+                Student: <select name="studentId">
+                    @studentList.map{student =>
+                        <option value="@student.getStudentId">@student.getMatricNo</option>
+                    }
+                </select>
+                Course: <select name="courseId">
+                    @courseList.map{course =>
+                        <option value="@course.getCourseId">@course.getCourseCode</option>
+                }
+                </select>
+                <input type="submit" value="register"/>
+            </form>
+            <span id="registrationerror" style="display:none;color:red;"></span><br/>
+            @studentList.map{student =>
+                <div class="record">
+                    <h3>@student.getMatricNo</h3>
+                    <ul id="student@student.getStudentId">
+                        @student.getRegistrationList.map{registration =>
+                            <li>@registration.getCourse.getCourseCode</li>
+                        }
+                    </ul>
+
+                </div>
+            }
+        </div>
+        <hr/>
+        <div id="question">
+            <h2>Add questions for courses</h2>
+            <form id="questionForm">
+                Course: <select name="courseId">
+                    @courseList.map{ course =>
+                        <option value="@course.getCourseId">@course.getCourseCode : @course.getTitle</option>
+                    }
+                </select><br/>
+                <textarea name="content" style="width:600px;height:100px;"></textarea><br/>
+                <input type="submit" value="Add"/>
+            </form>
+            <span id="questionerror" style="display:none;color:red;"></span><br/>
+            @courseList.map{course =>
+            <div>
+                <h3>@course.getCourseCode : @course.getTitle</h3>
+                <ul id="course@course.getCourseId">
+                    @course.getQuestionSet.map{question =>
+                    <li>@question.getContent</li>
+                    }
+                </ul>
+            </div>
+            }
+        </div>
+        <hr/>
+        <div id="time">
+            <h2>Add timeslots for courses</h2>
+            <form id="slotForm">
+                Course: <select name="courseId">
+                @courseList.map{ course =>
+                <option value="@course.getCourseId">@course.getCourseCode : @course.getTitle</option>
+                }
+            </select><br/>
+                Date: <select name="date">
+                    @for(i <- 1 to 31){
+                        <option value="@i/05/2014">@i/05/2014</option>
+                    }
+                </select>
+                Start: <select name="start">
+                    @for(i <- 8 to 20){
+                        <option value="@i:00:00">@i:00</option>
+                        <option value="@i:30:00">@i:30</option>
+                    }
+                </select>
+                Period: <select name="period">
+                    <option value="2">2 hour</option>
+                    <option value="2.5">2.5 hours</option>
+                    <option value="3">3 hours</option>
+                </select>
+                Capacity: <input type="text" name="capacity"/>
+                <input type="submit" value="Add"/>
+            </form>
+            <span id="sloterror" style="display:none;color:red;"></span><br/>
+            @courseList.map{course =>
+                <div>
+                    <h3>@course.getCourseCode : @course.getTitle</h3>
+                    <ul id="slot@course.getCourseId">
+                        @course.getAvailableSlots.map{ slot =>
+                            <li>@slot.getStartTime.format("dd/MM/yyyy") @slot.getStartTime.format("hh:mm")-@slot.getEndTime.format("hh:mm") capacity:@slot.getCapacity</li>
+                        }
+                    </ul>
+                </div>
+            }
+
+        </div>
+
+        <script src="@routes.Assets.at("javascripts/data/regquestime.js")" type="text/javascript"></script>
+}

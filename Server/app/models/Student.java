@@ -77,4 +77,8 @@ public class Student extends Model {
     public void setPhoto(File photo){
         this.photo = photo;
     }
+
+    public static Student byId(Integer studentId){
+        return Student.find.byId(studentId);
+    }
 }

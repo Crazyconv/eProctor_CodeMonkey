@@ -3,7 +3,7 @@
 @main("Add student and course data") {
         <div id="student">
             <h1>Existing students</h1>
-            <ul id="existingstudent">
+            <ul id="existingstudents">
                 @studentList.map{ student =>
                     <li>@student.getMatricNo()</li>
                 }
@@ -14,21 +14,23 @@
                 photo: <input type="file" name="photo"/> <br/>
                 <input type="submit" value="add"/> <br/>
             </form>
-            <span id="error" style="color:red;display:none;"></span>
+            <span id="studenterror" style="color:red;display:none;"></span>
         </div>
         <hr/>
         <div id="course">
             <h1>Existing courses</h1>
-            <ul id="existingcourse">
+            <ul id="existingcourses">
                 @courseList.map{ course=>
-                    <li>@course.getCourseCode()</li>
+                    <li>@course.getCourseCode() : @course.getTitle()</li>
                 }
             </ul>
             <h2>Add course data</h2>
             <form id="courseForm">
                 course code: <input type="text" name="courseCode"/>
+                title: <input type="text" name="title"/>
                 <input type="submit" value="add"/>
             </form>
+            <span id="courseerror" style="color:red;display:none;"></span>
         </div>
         <script src="@routes.Assets.at("javascripts/data/stucourse.js")" type="text/javascript"></script>
 }

@@ -1,6 +1,7 @@
 package models;
 
 import play.db.ebean.Model;
+import utils.CMException;
 
 import javax.persistence.*;
 
@@ -30,5 +31,13 @@ public class Registration extends Model{
     }
     public Course getCourse(){
         return course;
+    }
+
+    public void register(Student student, Course course) throws CMException{
+        if(Registration.find.where().eq("student",student).eq("course",course).findRowCount()!=0){
+            throw new CMException(course.getCourseCode() + " has been registered to " + student.getMatricNo());
+        }
+        this.student = student;
+        this.course = course;
     }
 }

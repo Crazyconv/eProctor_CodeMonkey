@@ -10,5 +10,10 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 # Sample Data
 GET    /adddata1                    controllers.data.DataController.addData1()
+GET    /adddata2                    controllers.data.DataController.addData2()
 POST   /addstudent                  controllers.data.DataController.addStudent()
+POST   /addcourse                   controllers.data.DataController.addCourse()
+POST   /addregistration             controllers.data.DataController.addRegistration()
+POST   /addquestion                 controllers.data.DataController.addQuestion()
+POST   /addslot                     controllers.data.DataController.addSlot()
 GET    /getphoto/:studentid         controllers.data.DataController.getPhoto(studentid: Integer)

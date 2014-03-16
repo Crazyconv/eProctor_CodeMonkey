@@ -17,6 +17,7 @@ create table chat (
 create table course (
   course_id                 integer auto_increment not null,
   course_code               varchar(255),
+  title                     varchar(255),
   constraint pk_course primary key (course_id))
 ;
 

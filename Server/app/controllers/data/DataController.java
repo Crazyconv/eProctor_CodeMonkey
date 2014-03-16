@@ -26,6 +26,12 @@ public class DataController extends Controller {
         return ok(stucourse.render(studentList,courseList));
     }
 
+    public static Result addData2(){
+        List<Student> studentList = Student.find.fetch("registrationList").fetch("registrationList.course").findList();
+        List<Course> courseList = Course.find.fetch("questionSet").fetch("availableSlots").findList();
+        return ok(regquestime.render(studentList,courseList));
+    }
+
     public static Result addStudent(){
         //return an Json Object to the client containing error message or data to display
         ObjectNode result = Json.newObject();
@@ -69,6 +75,7 @@ public class DataController extends Controller {
             student.setPhotoPath(photo.getPath());
             student.save();
 
+            //matricNo and studentId are sent to client to display
             result.put("error",0);
             result.put("matricNo",matricNo);
             result.put("studentId",student.getStudentId());
@@ -89,18 +96,131 @@ public class DataController extends Controller {
         }
     }
 
-//    public static Result addCourse(){
-//        ObjectNode result = Json.newObject();
-//        DynamicForm courseForm = Form.form().bindFromRequest();
-//        try{
-//            if(courseForm.hasErrors()){
-//                throw new CMException("Form submit error.");
-//            }
-//            String courseCode = courseForm.get("courseCode");
-//
-//
-//        }catch (CMException e){
-//            result.put("error", e.getMessage());
-//        }
-//    }
+    public static Result addCourse(){
+        ObjectNode result = Json.newObject();
+        DynamicForm courseForm = Form.form().bindFromRequest();
+        try{
+            if(courseForm.hasErrors()){
+                throw new CMException("Form submit error.");
+            }
+            String courseCode = courseForm.get("courseCode");
+            String title = courseForm.get("title");
+            Course course = new Course();
+            course.setCourseCode(courseCode);
+            course.setTitle(title);
+            course.save();
+
+            result.put("error",0);
+            result.put("courseCode",courseCode);
+            result.put("title",title);
+        }catch (CMException e){
+            result.put("error", e.getMessage());
+        }
+        return ok(result);
+    }
+
+    public static Result addRegistration(){
+        ObjectNode result = Json.newObject();
+        DynamicForm registrationForm = Form.form().bindFromRequest();
+        try{
+            if(registrationForm.hasErrors()){
+                throw new CMException("Form submit error.");
+            }
+
+            Integer studentId = Integer.parseInt(registrationForm.get("studentId"));
+            Integer courseId = Integer.parseInt(registrationForm.get("courseId"));
+            Student student = Student.byId(studentId);
+            if(student==null){
+                throw new CMException("Student does not exist!");
+            }
+            Course course = Course.byId(courseId);
+            if(course==null){
+                throw new CMException("Course does not exist!");
+            }
+
+            Registration registration = new Registration();
+            registration.register(student, course);
+            registration.save();
+
+            result.put("error",0);
+            result.put("studentId",studentId);
+            result.put("courseCode",course.getCourseCode());
+        }catch (CMException e){
+            result.put("error", e.getMessage());
+        }
+        return ok(result);
+    }
+
+    public static Result addQuestion(){
+        ObjectNode result = Json.newObject();
+        DynamicForm questionForm = Form.form().bindFromRequest();
+        try{
+            if(questionForm.hasErrors()){
+                throw new CMException("Form submit error.");
+            }
+
+            Integer courseId = Integer.parseInt(questionForm.get("courseId"));
+            Course course = Course.byId(courseId);
+            if(course==null){
+                throw new CMException("Course does not exist.");
+            }
+
+            String content = questionForm.get("content");
+            Question question = new Question();
+            question.setContent(content);
+            question.setCourse(course);
+            question.save();
+            result.put("courseId", courseId);
+            result.put("content",content);
+            result.put("error",0);
+        }catch (CMException e){
+            result.put("error", e.getMessage());
+        }
+        return ok(result);
+    }
+
+    public static Result addSlot(){
+        ObjectNode result = Json.newObject();
+        DynamicForm slotForm = Form.form().bindFromRequest();
+        try{
+            if(slotForm.hasErrors()){
+                throw new CMException("Form submit error.");
+            }
+
+            Integer courseId = Integer.parseInt(slotForm.get("courseId"));
+            Course course = Course.byId(courseId);
+            if(course==null){
+                throw new CMException("Course does not exist.");
+            }
+            Integer capacity = Integer.parseInt(slotForm.get("capacity"));
+            if(capacity==0){
+                throw new CMException("Please enter n valid capacity");
+            }
+
+            String date = slotForm.get("date");
+            String start = slotForm.get("start");
+            double period = Double.valueOf(slotForm.get("period"));
+            SimpleDateFormat format = new SimpleDateFormat("d/MM/yyyy k:mm:ss");
+            String dateString = date + " " + start;
+            Date startTime = format.parse(dateString);
+            long addition = (long) period*60*60*1000;
+            Date endTime = new Date(startTime.getTime() + addition);
+
+            TimeSlot slot = new TimeSlot();
+            slot.setSlot(course,startTime,endTime);
+            slot.setCapacity(capacity);
+            slot.save();
+            result.put("error",0);
+            result.put("courseId",courseId);
+            result.put("date",new SimpleDateFormat("dd/MM/yyyy").format(startTime));
+            result.put("start",new SimpleDateFormat("hh:mm").format(startTime));
+            result.put("end",new SimpleDateFormat("hh:mm").format(endTime));
+            result.put("capacity",capacity);
+        }catch (CMException e){
+            result.put("error", e.getMessage());
+        }catch (Exception e){
+            result.put("error", e.getMessage());
+        }
+        return ok(result);
+    }
 }
