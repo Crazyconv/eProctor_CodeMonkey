@@ -213,8 +213,8 @@ public class DataController extends Controller {
             result.put("error",0);
             result.put("courseId",courseId);
             result.put("date",new SimpleDateFormat("dd/MM/yyyy").format(startTime));
-            result.put("start",new SimpleDateFormat("hh:mm").format(startTime));
-            result.put("end",new SimpleDateFormat("hh:mm").format(endTime));
+            result.put("start",new SimpleDateFormat("kk:mm").format(startTime));
+            result.put("end",new SimpleDateFormat("kk:mm").format(endTime));
             result.put("capacity",capacity);
         }catch (CMException e){
             result.put("error", e.getMessage());

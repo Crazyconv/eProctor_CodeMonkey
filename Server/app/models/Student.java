@@ -81,4 +81,10 @@ public class Student extends Model {
     public static Student byId(Integer studentId){
         return Student.find.byId(studentId);
     }
+    public static boolean login(String matricNo, String password){
+        if(Student.find.where().eq("matricNo",matricNo.toUpperCase()).eq("password",password).findRowCount()==0){
+            return false;
+        }
+        return true;
+    }
 }

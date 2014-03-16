@@ -1,6 +1,8 @@
 package models;
 
 import play.db.ebean.Model;
+import utils.CMException;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,13 @@ public class Invigilator extends Model{
     }
     public List<Exam> getExamList(){
         return examList;
+    }
+
+    public static boolean login(String account, String password){
+        if(Invigilator.find.where().eq("account",account).eq("password",password).findRowCount()==0){
+            return false;
+        }
+        return true;
     }
 
 }

@@ -95,7 +95,7 @@
                     <h3>@course.getCourseCode : @course.getTitle</h3>
                     <ul id="slot@course.getCourseId">
                         @course.getAvailableSlots.map{ slot =>
-                            <li>@slot.getStartTime.format("dd/MM/yyyy") @slot.getStartTime.format("hh:mm")-@slot.getEndTime.format("hh:mm") capacity:@slot.getCapacity</li>
+                            <li>@slot.getStartTime.format("dd/MM/yyyy") @slot.getStartTime.format("kk:mm")-@slot.getEndTime.format("kk:mm") capacity:@slot.getCapacity</li>
                         }
                     </ul>
                 </div>
