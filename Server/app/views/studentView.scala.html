@@ -21,6 +21,7 @@
                 </ul>
             }
         </div>
+        <span id="selecterror" style="display:none;color:red;"></span><br/>
         <table>
             <tr><th>Course</th><th style="min-width:300px;">Time</th><th>Action</th><th>Status</th></tr>
             @student.getRegistrationList.map{ registration =>
@@ -28,13 +29,17 @@
                     @defining(registration.getCourse){ course =>
                         <tr>
                             <td>@course.getCourseCode: @course.getTitle</td>
-                            <td id="slot@course.getCourseId">@if(exam != null){@exam.getStartTime.format("dd/MM/yyyy") @exam.getStartTime.format("kk:mm")-@exam.getEndTime.format("kk:mm")}</td>
+                            <td>
+                                <span id="slot@course.getCourseId">@if(exam != null){@exam.getStartTime.format("dd/MM/yyyy") @exam.getStartTime.format("kk:mm")-@exam.getEndTime.format("kk:mm")}</span>
+                                <span id="select@course.getCourseId" style="display:none;"></span>
+                            </td>
                             <td><form>
                                 <input type="hidden" name="courseId" value="@course.getCourseId"/>
+                                <input type="hidden" name="studentId" value="@student.getStudentId"/>
                                 <input type="button" name="edit" value="Edit"/>
-                                <input type="button" name="remove" value="Remove"/>
+                                <input type="button" name="remove" value="Remove" id="remove@course.getCourseId" @if(exam == null){disabled="disabled"} />
                             </form></td>
-                            <td>@if(exam != null){@if(exam.getStartTime.after(new Date())) {finish} else{<input type="button" value="Start"/>}}</td>
+                            <td>@if(exam != null){@if(exam.getStartTime.before(new Date())) {finish} else{<input type="button" value="Start"/>}}</td>
                         </tr>
                     }
                 }
