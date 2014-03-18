@@ -13,19 +13,26 @@ import views.html.*;
 public class Application extends Controller {
 
     public static Result index() {
-        String CMUser = session().get("cmuser");
-        if(CMUser==null){
+        String CMUserString = session().get("cmuser");
+        String domainString = session().get("domain");
+        if(CMUserString==null || domainString==null){
             return unauthorized(login.render());
         }
-        return ok(index.render("Welcome to Code Monkey e-proctor!"));
-    }
 
-    public static Result login(){
-        String CMUser = session().get("cmuser");
-        if(CMUser!=null){
-            return ok(index.render("Welcome to Code Monkey e-proctor!"));
+        Integer CMUser = Integer.parseInt(CMUserString);
+        Integer domain = Integer.parseInt(domainString);
+        if(domain==0){
+            Student student = Student.byId(CMUser);
+            return ok(studentView.render(student));
         }
-        return ok(login.render());
+        if(domain==1){
+            Invigilator invigilator = Invigilator.byId(CMUser);
+            return ok(invigilatorView.render(invigilator));
+        }
+        if(domain==2){
+            return ok(adminView.render());
+        }
+        return unauthorized(login.render());
     }
 
     public static Result enter(){
@@ -43,18 +50,24 @@ public class Application extends Controller {
             }
 
             Integer domain = Integer.parseInt(loginForm.get("domain"));
+            Integer CMUser = null;
             boolean verify = false;
             if(domain == Global.STUDENT){
                 if(Student.login(username, password)){
+                    Student student = Student.byMatricNo(username);
+                    CMUser = student.getStudentId();
                     verify = true;
                 }
             }else if(domain == Global.INVIGILATOR){
                 if(Invigilator.login(username, password)){
+                    Invigilator invigilator = Invigilator.byAccount(username);
+                    CMUser = invigilator.getInvigilatorId();
                     verify = true;
                 }
             }else if(domain == Global.ADMIN){
                 if(username.equals(Global.ADMIN_ACCOUNT) && password.equals(Global.ADMIN_PASSWORD)){
                     verify = true;
+                    CMUser = 0;
                 }
             }else{
                 throw new CMException("Domain error");
@@ -64,7 +77,7 @@ public class Application extends Controller {
                 throw new CMException("Username does not exist or password is not correct.");
             }
             session("domain", domain.toString());
-            session("cmuser",username);
+            session("cmuser",CMUser.toString());
             result.put("error",0);
         }catch(CMException e){
             result.put("error",e.getMessage());

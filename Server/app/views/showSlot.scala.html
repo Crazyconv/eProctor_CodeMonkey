@@ -1,0 +1,11 @@
+@(course: Course)
+<form id="slotForm@course.getCourseId">
+    <input type="hidden" name="courseId" value="@course.getCourseId"/>
+    <select name="slotId">
+        @course.getAvailableSlots.map{ slot=>
+            <option value="@slot.getTimeSlotId">@slot.getStartTime.format("dd/MM/yyyy") @slot.getStartTime.format("kk:mm")-@slot.getEndTime.format("kk:mm")</option>
+        }
+    </select>
+    <input type="submit" value="Save"/>
+    <input type="button" value="Cancel"/>
+</form>

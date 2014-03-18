@@ -47,4 +47,12 @@ public class Invigilator extends Model{
         return true;
     }
 
+    public static Invigilator byId(Integer invigilatorId){
+        return Invigilator.find.byId(invigilatorId);
+    }
+
+    public static Invigilator byAccount(String account){
+        return Invigilator.find.where().eq("account",account).findUnique();
+    }
+
 }

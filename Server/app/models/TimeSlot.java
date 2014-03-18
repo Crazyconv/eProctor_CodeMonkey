@@ -55,4 +55,8 @@ public class TimeSlot extends Model{
         this.endTime = endTime;
     }
 
+    public static TimeSlot byId(Integer timeSlotId){
+        return TimeSlot.find.byId(timeSlotId);
+    }
+
 }

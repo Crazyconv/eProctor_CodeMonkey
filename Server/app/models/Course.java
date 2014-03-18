@@ -73,6 +73,6 @@ public class Course extends Model{
     }
 
     public static Course byId(Integer courseId){
-        return Course.find.byId(courseId);
+        return Course.find.where().eq("courseId",courseId).join("examList").findUnique();
     }
 }

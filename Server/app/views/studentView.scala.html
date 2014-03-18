@@ -1,0 +1,44 @@
+@(student: Student)
+@main("student"){
+        <style>
+            table th,td{
+                padding:0 20px;
+            }
+        </style>
+        <h1>Welcome! @student.getMatricNo</h1>
+        <div>
+            @student.getRegistrationList.map{ registration =>
+                <h2>@registration.getCourse.getCourseCode: @registration.getCourse.getTitle</h2>
+                <ul>
+                    @registration.getCourse.getAvailableSlots.map{ slot =>
+                        <li>@slot.getStartTime.format("dd/MM/yyyy") @slot.getStartTime.format("kk:mm")-@slot.getEndTime.format("kk:mm")</li>
+                    }
+                </ul>
+                <ul>
+                    @registration.getCourse.getQuestionSet.map{ question =>
+                        <li>@question.getContent</li>
+                    }
+                </ul>
+            }
+        </div>
+        <table>
+            <tr><th>Course</th><th style="min-width:300px;">Time</th><th>Action</th><th>Status</th></tr>
+            @student.getRegistrationList.map{ registration =>
+                @defining(Exam.byStudentCourse(student,registration.getCourse)){ exam=>
+                    @defining(registration.getCourse){ course =>
+                        <tr>
+                            <td>@course.getCourseCode: @course.getTitle</td>
+                            <td id="slot@course.getCourseId">@if(exam != null){@exam.getStartTime.format("dd/MM/yyyy") @exam.getStartTime.format("kk:mm")-@exam.getEndTime.format("kk:mm")}</td>
+                            <td><form>
+                                <input type="hidden" name="courseId" value="@course.getCourseId"/>
+                                <input type="button" name="edit" value="Edit"/>
+                                <input type="button" name="remove" value="Remove"/>
+                            </form></td>
+                            <td>@if(exam != null){@if(exam.getStartTime.after(new Date())) {finish} else{<input type="button" value="Start"/>}}</td>
+                        </tr>
+                    }
+                }
+            }
+        </table>
+        <script src="@routes.Assets.at("javascripts/student.js")" type="text/javascript"></script>
+}

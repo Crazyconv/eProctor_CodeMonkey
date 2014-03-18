@@ -79,8 +79,17 @@ public class Student extends Model {
     }
 
     public static Student byId(Integer studentId){
-        return Student.find.byId(studentId);
+        return Student.find.where().eq("studentId",studentId)
+                .join("registrationList").fetch("registrationList.course")
+                .fetch("registrationList.course.availableSlots").fetch("registrationList.course.questionSet")
+                .fetch("examList").fetch("examList.course").fetch("examList.invigilator")
+                .findUnique();
     }
+
+    public static Student byMatricNo(String matricNo){
+        return Student.find.where().eq("matricNo",matricNo).findUnique();
+    }
+
     public static boolean login(String matricNo, String password){
         if(Student.find.where().eq("matricNo",matricNo.toUpperCase()).eq("password",password).findRowCount()==0){
             return false;

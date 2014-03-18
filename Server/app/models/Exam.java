@@ -21,7 +21,7 @@ public class Exam extends Model {
     private Student student;
     @ManyToOne
     @JoinColumn(name="invi_id")
-    private Invigilator invigilator = new Invigilator();
+    private Invigilator invigilator;
     @OneToOne
     @JoinColumn(name="report_id")
     private Report report;
@@ -52,5 +52,20 @@ public class Exam extends Model {
     }
     public Report getReport(){
         return report;
+    }
+
+    public void setStudent(Student student){
+        this.student = student;
+    }
+    public void setCourse(Course course){
+        this.course = course;
+    }
+    public void setSlot(TimeSlot slot){
+        this.startTime  = slot.getStartTime();
+        this.endTime = slot.getEndTime();
+    }
+
+    public static Exam byStudentCourse(Student student, Course course){
+        return Exam.find.where().eq("student",student).eq("course",course).findUnique();
     }
 }
