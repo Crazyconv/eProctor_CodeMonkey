@@ -28,7 +28,7 @@ $(document).ready(function(){
             "M+": this.getMonth() + 1,
             "d+": this.getDate(),
             "h+": this.getHours(),
-            "m+": this.getMinutes(),
+            "m+": this.getMinutes()
         };
         if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
         for (var k in o)
