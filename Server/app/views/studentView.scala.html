@@ -6,6 +6,7 @@
             }
         </style>
         <h1>Welcome! @student.getMatricNo</h1>
+        
         <div>
             @student.getRegistrationList.map{ registration =>
                 <h2>@registration.getCourse.getCourseCode: @registration.getCourse.getTitle</h2>
@@ -21,6 +22,7 @@
                 </ul>
             }
         </div>
+
         <table>
             <tr><th>Course</th><th style="min-width:300px;">Time</th><th>Action</th><th>Status</th></tr>
             @student.getRegistrationList.map{ registration =>
