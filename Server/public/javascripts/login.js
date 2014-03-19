@@ -1,5 +1,9 @@
 $(document).ready(function(){
-    $('#loginForm').submit(function(){
+
+    $('#loginForm').submit(
+    function()
+    {
+        // communicate with controller for /enter at route table
         var options = {
             url:"/enter",
             type:"POST",
@@ -19,10 +23,13 @@ $(document).ready(function(){
                 return true;
             },
             success: function(json){
-                if(json.error!=0){
+
+                // if authentication failed, display error msg 
+                if(json.error != 0){
                     $("#loginerror").text(json.error).slideDown();
                 }else{
-                    $("#loginerror").hide();
+                // if authentication succeed, redirect to the /index page 
+                    $("#loginerror").hide(); // Is this line necessary?
                     window.location.href="/index";
                 }
             },
@@ -30,6 +37,8 @@ $(document).ready(function(){
                 $("#loginerror").text("Sorry... the form submission failed.").slideDown();
             }
         };
+
+
         $(this).ajaxSubmit(options);
         return false;
     });

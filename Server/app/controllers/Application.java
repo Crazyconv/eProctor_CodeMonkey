@@ -12,11 +12,19 @@ import views.html.*;
 
 public class Application extends Controller {
 
+    // authentication is assumed to be checked before index()
+    // Description:
+    //     get username and domain from session record
+    //     render the index page based on username and domain and return it as response
+    // ------------------------------------------------------------------
     public static Result index() {
+
+        // realm of the seasion is auto defined, thus no authrisation checking is needed for other addresses?
         String CMUserString = session().get("cmuser");
         String domainString = session().get("domain");
         if(CMUserString==null || domainString==null){
             return unauthorized(login.render());
+
         }
 
         Integer CMUser = Integer.parseInt(CMUserString);
@@ -35,6 +43,12 @@ public class Application extends Controller {
         return unauthorized(login.render());
     }
 
+    // Description:
+    //      return authentication result by a JsonNode wrapped in a ok-object
+    // Fileds of JasonNode:
+    //      error: content;     #content==0 means no error, otherwise error
+    //                         #content==msg in case content!=0, content stores an error message 
+    // -------------------------------------------------------------------------------
     public static Result enter(){
         ObjectNode result = Json.newObject();
         DynamicForm loginForm = Form.form().bindFromRequest();
@@ -53,6 +67,7 @@ public class Application extends Controller {
             Integer CMUser = null;
             boolean verify = false;
             if(domain == Global.STUDENT){
+                // .login is a method of Studen Model, it checks whether the 2 parameters passed in is a valid usr-pwd pair
                 if(Student.login(username, password)){
                     Student student = Student.byMatricNo(username);
                     CMUser = student.getStudentId();
@@ -82,6 +97,9 @@ public class Application extends Controller {
         }catch(CMException e){
             result.put("error",e.getMessage());
         }
+
+        // ok is a static method of Results that returns a ok-result object that implements Result (note singular/plural/capital of result)
+        // ok() is overloaded to be able to take in a parameter of JasonNode/ObjectNode
         return ok(result);
     }
 
