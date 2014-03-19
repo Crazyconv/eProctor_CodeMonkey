@@ -7,7 +7,6 @@
 //         then supplied function defines a bunch of events js is monitoring
 // ----------------------------------------------------------------------
 $(document).ready(function(){
-<<<<<<< HEAD
 
     // Note:
     //         $('input[type=button][name="edit"]') is addressing this element in HTML:
@@ -20,7 +19,6 @@ $(document).ready(function(){
     //             and using this courseID to locate an HTML in server and load that HTML
     //             in the current HTML(embed in an element)
     // ----------------------------------------------------------------------
-=======
     //sort the table by exam time
     $("table").tablesorter( {sortList: [[1,0]]} );
 
@@ -38,7 +36,6 @@ $(document).ready(function(){
         return fmt;
     }
 
->>>>>>> FETCH_HEAD
     $('input[type=button][name="edit"]').click(function(){
         var $form = $(this).parent('form');
         var courseId = $form.get(0).courseId.value;
@@ -58,18 +55,15 @@ $(document).ready(function(){
         $form.ajaxSubmit(options);
     });
 
-<<<<<<< HEAD
+
     // Description:
     //         when any form of $(document) is submitted, the function passed in is activated
     //         what this function does:
     //             create an object variable, send this object variable out to send a request to the server
     // ----------------------------------------------------------------------
-=======
->>>>>>> FETCH_HEAD
     $(document).on('submit','form',function(){
         var courseId = $(this).get(0).courseId.value;
         var options = {
-<<<<<<< HEAD
             url:"/selectslot",          // the url this object should be sent to
             type:"POST",                // the HTTP method to send this object
             dataType:"json",            // expected data type of the response from server 
@@ -90,11 +84,6 @@ $(document).ready(function(){
             //         when server respond with a ok(xx) result(?), a function should be executed,
             //         and this function will examine the its json parameter, to alert user accordingly
             // ----------------------------------------------------------------------
-=======
-            url:"/selectslot",
-            type:"POST",
-            dataType:"json",
->>>>>>> FETCH_HEAD
             success: function(json){
                 if(json.error!=0){
                     $("#selecterror").text(json.error).show();

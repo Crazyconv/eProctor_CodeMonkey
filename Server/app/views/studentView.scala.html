@@ -9,27 +9,7 @@
             }
         </style>
         <h1>Welcome! @student.getMatricNo</h1>
-<<<<<<< HEAD
-        
-        <div>
-            @student.getRegistrationList.map{ registration =>
-                <h2>@registration.getCourse.getCourseCode: @registration.getCourse.getTitle</h2>
-                <ul>
-                    @registration.getCourse.getAvailableSlots.map{ slot =>
-                        <li>@slot.getStartTime.format("dd/MM/yyyy") @slot.getStartTime.format("kk:mm")-@slot.getEndTime.format("kk:mm")</li>
-                    }
-                </ul>
-                <ul>
-                    @registration.getCourse.getQuestionSet.map{ question =>
-                        <li>@question.getContent</li>
-                    }
-                </ul>
-            }
-        </div>
-
-=======
         <span id="selecterror" style="display:none;color:red;"></span><br/>
->>>>>>> FETCH_HEAD
         <table>
             <thead><tr><th>Course</th><th>Timestamp</th><th style="min-width:300px;">Time</th><th>Action</th><th>Status</th></tr></thead>
             <tbody>
