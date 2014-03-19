@@ -1,4 +1,19 @@
 $(document).ready(function(){
+    $("table").tablesorter( {sortList: [[1,0]]} );
+
+    Date.prototype.Format = function (fmt) {
+        var o = {
+            "M+": this.getMonth() + 1,
+            "d+": this.getDate(),
+            "h+": this.getHours(),
+            "m+": this.getMinutes(),
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+
     $('input[type=button][name="edit"]').click(function(){
         var $form = $(this).parent('form');
         var courseId = $form.get(0).courseId.value;
@@ -29,8 +44,13 @@ $(document).ready(function(){
                 }else{
                     $("#selecterror").hide();
                     $('#select'+courseId).hide();
-                    $('#slot'+courseId).text(json.date + ' ' + json.start + ' ' + json.end).show();
+                    var date = new Date(json.start).Format("dd/MM/yyyy");
+                    var start = new Date(json.start).Format("hh:mm");
+                    var end = new Date(json.end).Format("hh:mm");
+                    $('#hidden'+courseId).text(json.start);
+                    $('#slot'+courseId).text(date + ' ' + start + '-' + end).show();
                     $('#remove'+courseId).attr("disabled",false);
+                    $("table").tablesorter( {sortList: [[1,0]]} );
                 }
             },
             error: function(xhr,status){
@@ -60,7 +80,9 @@ $(document).ready(function(){
                 }else{
                     $("#selecterror").hide();
                     $('#slot'+courseId).text("");
+                    $('#hidden'+courseId).text("");
                     $('#remove'+courseId).attr("disabled",true);
+                    $("table").tablesorter( {sortList: [[1,0]]} );
                 }
             },
             error: function(xhr,status){

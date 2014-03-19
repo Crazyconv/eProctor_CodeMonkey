@@ -4,31 +4,36 @@
             table th,td{
                 padding:0 20px;
             }
+            th:nth-child(2),td:nth-child(2){
+                display:none;
+            }
         </style>
         <h1>Welcome! @student.getMatricNo</h1>
-        <div>
-            @student.getRegistrationList.map{ registration =>
-                <h2>@registration.getCourse.getCourseCode: @registration.getCourse.getTitle</h2>
-                <ul>
-                    @registration.getCourse.getAvailableSlots.map{ slot =>
-                        <li>@slot.getStartTime.format("dd/MM/yyyy") @slot.getStartTime.format("kk:mm")-@slot.getEndTime.format("kk:mm")</li>
-                    }
-                </ul>
-                <ul>
-                    @registration.getCourse.getQuestionSet.map{ question =>
-                        <li>@question.getContent</li>
-                    }
-                </ul>
-            }
-        </div>
+        <!--<div>-->
+            <!--@student.getRegistrationList.map{ registration =>-->
+                <!--<h2>@registration.getCourse.getCourseCode: @registration.getCourse.getTitle</h2>-->
+                <!--<ul>-->
+                    <!--@registration.getCourse.getAvailableSlots.map{ slot =>-->
+                        <!--<li>@slot.getStartTime.format("dd/MM/yyyy") @slot.getStartTime.format("kk:mm")-@slot.getEndTime.format("kk:mm")</li>-->
+                    <!--}-->
+                <!--</ul>-->
+                <!--<ul>-->
+                    <!--@registration.getCourse.getQuestionSet.map{ question =>-->
+                        <!--<li>@question.getContent</li>-->
+                    <!--}-->
+                <!--</ul>-->
+            <!--}-->
+        <!--</div>-->
         <span id="selecterror" style="display:none;color:red;"></span><br/>
         <table>
-            <tr><th>Course</th><th style="min-width:300px;">Time</th><th>Action</th><th>Status</th></tr>
+            <thead><tr><th>Course</th><th>Timestamp</th><th style="min-width:300px;">Time</th><th>Action</th><th>Status</th></tr></thead>
+            <tbody>
             @student.getRegistrationList.map{ registration =>
                 @defining(Exam.byStudentCourse(student,registration.getCourse)){ exam=>
                     @defining(registration.getCourse){ course =>
                         <tr>
                             <td>@course.getCourseCode: @course.getTitle</td>
+                            <td id="hidden@course.getCourseId">@if(exam != null){@exam.getStartTime.getTime}</td>
                             <td>
                                 <span id="slot@course.getCourseId">@if(exam != null){@exam.getStartTime.format("dd/MM/yyyy") @exam.getStartTime.format("kk:mm")-@exam.getEndTime.format("kk:mm")}</span>
                                 <span id="select@course.getCourseId" style="display:none;"></span>
@@ -44,6 +49,8 @@
                     }
                 }
             }
+            </tbody>
         </table>
         <script src="@routes.Assets.at("javascripts/student.js")" type="text/javascript"></script>
+
 }

@@ -68,4 +68,8 @@ public class Exam extends Model {
     public static Exam byStudentCourse(Student student, Course course){
         return Exam.find.where().eq("student",student).eq("course",course).findUnique();
     }
+
+    public static Integer occupied(Course course, TimeSlot slot){
+        return Exam.find.where().eq("course",course).eq("startTime",slot.getStartTime()).findRowCount();
+    }
 }

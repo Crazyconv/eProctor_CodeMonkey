@@ -11,6 +11,10 @@ import play.mvc.Controller;
 import play.mvc.Result;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class StudentController extends Controller {
 
@@ -29,7 +33,12 @@ public class StudentController extends Controller {
                 throw new CMException("Necessary data missing.");
             }
             Exam exam = Exam.byStudentCourse(student,course);
-            return ok(showSlot.render(course,exam));
+            List<TimeSlot> availableSlots = course.getAvailableSlots();
+            Map<TimeSlot,Integer> slotMap = new HashMap<TimeSlot,Integer>();
+            for(TimeSlot slot: availableSlots){
+                slotMap.put(slot,Exam.occupied(course,slot));
+            }
+            return ok(showSlot.render(courseId,slotMap,exam));
         }catch(CMException e){
             return ok(e.getMessage());
         }
@@ -58,18 +67,31 @@ public class StudentController extends Controller {
                 throw new CMException("Necessary data missing.");
             }
 
+            Integer capacity = slot.getCapacity();
+            Integer occupied = Exam.occupied(course,slot);
+
             Exam exam = Exam.byStudentCourse(student, course);
             if(exam==null){
+                if(capacity<=occupied){
+                    throw new CMException("The slot is full. Please select another one.");
+                }
                 exam = new Exam();
                 exam.setStudent(student);
                 exam.setCourse(course);
+                exam.setSlot(slot);
+                exam.save();
+            }else{
+                if(!exam.getStartTime().equals(slot.getStartTime())){
+                    if(capacity<=occupied){
+                        throw new CMException("The slot is full. Please select another one.");
+                    }
+                    exam.setSlot(slot);
+                    exam.save();
+                }
             }
-            exam.setSlot(slot);
-            exam.save();
             result.put("error",0);
-            result.put("date",new SimpleDateFormat("dd/MM/yyyy").format(slot.getStartTime()));
-            result.put("start",new SimpleDateFormat("kk:mm").format(slot.getStartTime()));
-            result.put("end",new SimpleDateFormat("kk:mm").format(slot.getEndTime()));
+            result.put("start",slot.getStartTime().getTime());
+            result.put("end",slot.getEndTime().getTime());
         }catch (CMException e){
             result.put("error",e.getMessage());
         }
