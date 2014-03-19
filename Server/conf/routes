@@ -3,25 +3,26 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index()
-GET     /index                      controllers.Application.index()
-GET     /login                      controllers.Application.index()
-POST    /enter                      controllers.Application.enter()
-GET     /logout                     controllers.Application.logout()
+GET     /                                controllers.Application.index()
+GET     /index                           controllers.Application.index()
+GET     /login                           controllers.Application.index()
+POST    /enter                           controllers.Application.enter()
+GET     /logout                          controllers.Application.logout()
 
 # Student page
-GET     /course/:courseId           controllers.StudentController.displaySlot(courseId: Integer)
-POST    /selectslot                 controllers.StudentController.selectSlot()
+POST    /showslot                        controllers.StudentController.showSlot()
+POST    /selectslot                      controllers.StudentController.selectSlot()
+POST    /deleteslot                      controllers.StudentController.deleteSlot()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file                    controllers.Assets.at(path="/public", file)
 
 # Sample Data
-GET    /adddata1                    controllers.data.DataController.addData1()
-GET    /adddata2                    controllers.data.DataController.addData2()
-POST   /addstudent                  controllers.data.DataController.addStudent()
-POST   /addcourse                   controllers.data.DataController.addCourse()
-POST   /addregistration             controllers.data.DataController.addRegistration()
-POST   /addquestion                 controllers.data.DataController.addQuestion()
-POST   /addslot                     controllers.data.DataController.addSlot()
-GET    /getphoto/:studentid         controllers.data.DataController.getPhoto(studentid: Integer)
+GET    /adddata1                         controllers.data.DataController.addData1()
+GET    /adddata2                         controllers.data.DataController.addData2()
+POST   /addstudent                       controllers.data.DataController.addStudent()
+POST   /addcourse                        controllers.data.DataController.addCourse()
+POST   /addregistration                  controllers.data.DataController.addRegistration()
+POST   /addquestion                      controllers.data.DataController.addQuestion()
+POST   /addslot                          controllers.data.DataController.addSlot()
+GET    /getphoto/:studentid              controllers.data.DataController.getPhoto(studentid: Integer)

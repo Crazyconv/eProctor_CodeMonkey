@@ -1,11 +1,15 @@
-@(student: Student)
+@(student: Student, examMap: Map[Integer,Exam])
 @main("student"){
         <style>
             table th,td{
                 padding:0 20px;
             }
+            th:nth-child(2),td:nth-child(2){
+                display:none;
+            }
         </style>
         <h1>Welcome! @student.getMatricNo</h1>
+<<<<<<< HEAD
         
         <div>
             @student.getRegistrationList.map{ registration =>
@@ -23,24 +27,34 @@
             }
         </div>
 
+=======
+        <span id="selecterror" style="display:none;color:red;"></span><br/>
+>>>>>>> FETCH_HEAD
         <table>
-            <tr><th>Course</th><th style="min-width:300px;">Time</th><th>Action</th><th>Status</th></tr>
+            <thead><tr><th>Course</th><th>Timestamp</th><th style="min-width:300px;">Time</th><th>Action</th><th>Status</th></tr></thead>
+            <tbody>
             @student.getRegistrationList.map{ registration =>
-                @defining(Exam.byStudentCourse(student,registration.getCourse)){ exam=>
-                    @defining(registration.getCourse){ course =>
+                @defining(registration.getCourse){ course =>
+                    @defining(examMap.get(course.getCourseId)){ exam=>
                         <tr>
                             <td>@course.getCourseCode: @course.getTitle</td>
-                            <td id="slot@course.getCourseId">@if(exam != null){@exam.getStartTime.format("dd/MM/yyyy") @exam.getStartTime.format("kk:mm")-@exam.getEndTime.format("kk:mm")}</td>
+                            <td id="hidden@course.getCourseId">@if(exam != null){@exam.getStartTime.getTime}</td>
+                            <td>
+                                <span id="slot@course.getCourseId">@if(exam != null){@exam.getStartTime.format("dd/MM/yyyy") @exam.getStartTime.format("kk:mm")-@exam.getEndTime.format("kk:mm")}</span>
+                                <span id="select@course.getCourseId" style="display:none;"></span>
+                            </td>
                             <td><form>
                                 <input type="hidden" name="courseId" value="@course.getCourseId"/>
+                                <input type="hidden" name="studentId" value="@student.getStudentId"/>
                                 <input type="button" name="edit" value="Edit"/>
-                                <input type="button" name="remove" value="Remove"/>
+                                <input type="button" name="remove" value="Remove" id="remove@course.getCourseId" @if(exam == null){disabled="disabled"} />
                             </form></td>
-                            <td>@if(exam != null){@if(exam.getStartTime.after(new Date())) {finish} else{<input type="button" value="Start"/>}}</td>
+                            <td>@if(exam != null){@if(exam.getStartTime.before(new Date())) {finish} else{<input type="button" value="Start"/>}}</td>
                         </tr>
                     }
                 }
             }
+            </tbody>
         </table>
         <script src="@routes.Assets.at("javascripts/student.js")" type="text/javascript"></script>
 }

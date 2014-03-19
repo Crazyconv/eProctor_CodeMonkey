@@ -30,7 +30,7 @@ public class SampleTestController implements Initializable {
         System.out.println("You clicked me!");
         label.setText("Hello World!");
         WebEngine webEngine = webView.getEngine();
-        webEngine.load("http://www.google.com");
+        webEngine.load("http://172.22.79.156:9000");
     }
     
     @Override
