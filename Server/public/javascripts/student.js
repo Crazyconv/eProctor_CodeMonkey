@@ -1,6 +1,8 @@
 $(document).ready(function(){
+    //sort the table by exam time
     $("table").tablesorter( {sortList: [[1,0]]} );
 
+    //date format for display
     Date.prototype.Format = function (fmt) {
         var o = {
             "M+": this.getMonth() + 1,
@@ -22,6 +24,7 @@ $(document).ready(function(){
             type:"POST",
             dataType:"html",
             success: function(html){
+                //hide the exam time and display the exam time selection form
                 $('#select' + courseId).html(html).show();
                 $('#slot'+courseId).hide();
             },
@@ -42,13 +45,16 @@ $(document).ready(function(){
                 if(json.error!=0){
                     $("#selecterror").text(json.error).show();
                 }else{
+                    //hide the previous error message and the exam slot selection form
                     $("#selecterror").hide();
                     $('#select'+courseId).hide();
+                    //update the exam time in html
                     var date = new Date(json.start).Format("dd/MM/yyyy");
                     var start = new Date(json.start).Format("hh:mm");
                     var end = new Date(json.end).Format("hh:mm");
                     $('#hidden'+courseId).text(json.start);
                     $('#slot'+courseId).text(date + ' ' + start + '-' + end).show();
+                    //enable the remove button and sort the table again
                     $('#remove'+courseId).attr("disabled",false);
                     $("table").tablesorter( {sortList: [[1,0]]} );
                 }
@@ -63,6 +69,7 @@ $(document).ready(function(){
 
     $(document).on('click','input[name="cancel"]',function(){
         var courseId = $(this).parent('form').get(0).courseId.value;
+        //hide the exam slot selection form and display the exam time
         $('#select'+courseId).hide();
         $('#slot'+courseId).show();
     });
@@ -78,9 +85,12 @@ $(document).ready(function(){
                 if(json.error!=0){
                     $("#selecterror").text(json.error).show();
                 }else{
+                    //hide the previous error message
                     $("#selecterror").hide();
+                    //clear the original exam time
                     $('#slot'+courseId).text("");
                     $('#hidden'+courseId).text("");
+                    //disable the remove button and sort the table again
                     $('#remove'+courseId).attr("disabled",true);
                     $("table").tablesorter( {sortList: [[1,0]]} );
                 }

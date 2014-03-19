@@ -32,8 +32,11 @@ public class StudentController extends Controller {
             if(course==null || student==null){
                 throw new CMException("Necessary data missing.");
             }
+            //the original exam slot that the student chose, may be null
             Exam exam = Exam.byStudentCourse(student,course);
             List<TimeSlot> availableSlots = course.getAvailableSlots();
+            //slotMap is used to know the number of students selecting this slot
+            //which will be displayed
             Map<TimeSlot,Integer> slotMap = new HashMap<TimeSlot,Integer>();
             for(TimeSlot slot: availableSlots){
                 slotMap.put(slot,Exam.occupied(course,slot));
@@ -48,6 +51,7 @@ public class StudentController extends Controller {
         ObjectNode result = Json.newObject();
         DynamicForm slotForm = Form.form().bindFromRequest();
         try{
+            //only student can perform the selectSlot operation, prevent possible unauthorized access
             String CMUserString = session().get("cmuser");
             String domainString = session().get("domain");
             if(CMUserString==null || domainString==null || Integer.parseInt(domainString)!=0){
@@ -71,6 +75,8 @@ public class StudentController extends Controller {
             Integer occupied = Exam.occupied(course,slot);
 
             Exam exam = Exam.byStudentCourse(student, course);
+            //if exam is null, namely student has not selected a slot for this course
+            //need to add a new exam record
             if(exam==null){
                 if(capacity<=occupied){
                     throw new CMException("The slot is full. Please select another one.");
@@ -81,6 +87,8 @@ public class StudentController extends Controller {
                 exam.setSlot(slot);
                 exam.save();
             }else{
+                //if exam is not full, just update the exam record but not create a new one
+                //but the updating only occurs when the slot selected is different from the original one
                 if(!exam.getStartTime().equals(slot.getStartTime())){
                     if(capacity<=occupied){
                         throw new CMException("The slot is full. Please select another one.");
@@ -90,6 +98,7 @@ public class StudentController extends Controller {
                 }
             }
             result.put("error",0);
+            //info used in javascript to update the html
             result.put("start",slot.getStartTime().getTime());
             result.put("end",slot.getEndTime().getTime());
         }catch (CMException e){
@@ -102,6 +111,7 @@ public class StudentController extends Controller {
         ObjectNode result = Json.newObject();
         DynamicForm slotForm = Form.form().bindFromRequest();
         try{
+            //access control
             String CMUserString = session().get("cmuser");
             String domainString = session().get("domain");
             if(CMUserString==null || domainString==null || Integer.parseInt(domainString)!=0){
@@ -123,6 +133,7 @@ public class StudentController extends Controller {
             if(exam==null){
                 throw new CMException("No such record.");
             }
+            //delete the exam slot
             exam.delete();
             result.put("error",0);
         }catch (CMException e){

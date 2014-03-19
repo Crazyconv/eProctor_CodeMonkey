@@ -6,6 +6,7 @@ $(document).ready(function(){
             dataType:"json",
             beforeSubmit: function(formData, jqForm, option){
                 var form = jqForm[0];
+                //check the field content before submission
                 if(form.username.value==""){
                     $("#loginerror").text("Please enter the username.").slideDown();
                     form.username.focus();
@@ -23,6 +24,7 @@ $(document).ready(function(){
                     $("#loginerror").text(json.error).slideDown();
                 }else{
                     $("#loginerror").hide();
+                    //redirect to the /index page
                     window.location.href="/index";
                 }
             },
