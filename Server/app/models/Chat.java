@@ -12,7 +12,6 @@ public class Chat extends Model{
     private Integer chatId;
 	private boolean fromStudent;
     private Integer senderId;
-	private Integer receiverId;
     private String message;
     private Date time;
     @ManyToOne
@@ -33,9 +32,6 @@ public class Chat extends Model{
 	}
     public Integer getSenderId(){
         return senderId;
-    }
-	public Integer getReceiverId(){
-        return receiverId;
     }
     public String getMessage(){
         return message;
