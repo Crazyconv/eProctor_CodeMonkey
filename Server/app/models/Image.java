@@ -12,6 +12,7 @@ public class Image extends Model{
     @Column(name = "image_id")
     private Integer imageId;
     private Date time;
+    @Transient
     private File picture;
     private String picturePath;
     @ManyToOne
