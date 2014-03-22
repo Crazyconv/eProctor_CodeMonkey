@@ -1,5 +1,7 @@
 CZ2006 Code_Monkey
 ==================
+Please create two databases: courseware, codemonkey
+And then restart the play server
 
 After starting the server:
 * type localhost:9000/adddata1 to add test data: student, course

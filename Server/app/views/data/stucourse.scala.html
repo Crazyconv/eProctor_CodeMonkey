@@ -1,5 +1,4 @@
-@(studentList: List[Student], courseList: List[Course])
-
+@(studentList: List[cw_models.Student], courseList: List[cw_models.Course])
 @main("Add student and course data") {
         <div id="student">
             <h1>Existing students</h1>
@@ -28,6 +27,7 @@
             <form id="courseForm">
                 course code: <input type="text" name="courseCode"/>
                 title: <input type="text" name="title"/>
+                number of questions per exam paper: <input type="text" name="questionNo"/>
                 <input type="submit" value="add"/>
             </form>
             <span id="courseerror" style="color:red;display:none;"></span>

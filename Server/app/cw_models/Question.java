@@ -1,4 +1,4 @@
-package models;
+package cw_models;
 
 import play.db.ebean.Model;
 import utils.CMException;
@@ -17,11 +17,11 @@ public class Question extends Model{
     @ManyToOne
     @JoinColumn(name="course_id")
     private Course course;
-    @OneToMany
+    @OneToMany(mappedBy="question")
     private List<Solution> solutionList = new ArrayList<Solution>();
 
     public static Finder<Integer, Question> find = new Finder<Integer, Question>(
-            Integer.class, Question.class
+            "cw", Integer.class, Question.class
     );
 
     public Question(){ }
@@ -36,7 +36,7 @@ public class Question extends Model{
         return course;
     }
     public List<Solution> getSolutionList(){
-        return solutionList;
+        return Solution.find.where().eq("question",this).findList();
     }
 
     public void setContent(String content) throws CMException{

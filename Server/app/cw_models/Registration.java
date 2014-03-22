@@ -1,4 +1,4 @@
-package models;
+package cw_models;
 
 import play.db.ebean.Model;
 import utils.CMException;
@@ -18,7 +18,7 @@ public class Registration extends Model{
     private Course course;
 
     public static Finder<Integer, Registration> find = new Finder<Integer, Registration>(
-            Integer.class, Registration.class
+            "cw", Integer.class, Registration.class
     );
 
     public Registration(){ }

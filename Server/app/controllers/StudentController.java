@@ -1,5 +1,8 @@
 package controllers;
 
+import cw_models.Course;
+import cw_models.Student;
+import cw_models.TimeSlot;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.*;
 import play.data.DynamicForm;
@@ -10,8 +13,6 @@ import views.html.*;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

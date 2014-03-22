@@ -1,10 +1,11 @@
 package models;
 
+import cw_models.Course;
+import cw_models.Student;
+import cw_models.TimeSlot;
 import play.db.ebean.Model;
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 public class Exam extends Model {
@@ -13,12 +14,8 @@ public class Exam extends Model {
     private Integer examId;
     private Date startTime;
     private Date endTime;
-    @ManyToOne
-    @JoinColumn(name="course_id")
-    private Course course;
-    @ManyToOne
-    @JoinColumn(name="stu_id")
-    private Student student;
+    private Integer courseId;
+    private Integer studentId;
     @ManyToOne
     @JoinColumn(name="invi_id")
     private Invigilator invigilator;
@@ -42,10 +39,10 @@ public class Exam extends Model {
         return endTime;
     }
     public Course getCourse(){
-        return course;
+        return Course.byId(courseId);
     }
     public Student getStudent(){
-        return student;
+        return Student.byId(studentId);
     }
     public Invigilator getInvigilator(){
         return invigilator;
@@ -55,10 +52,10 @@ public class Exam extends Model {
     }
 
     public void setStudent(Student student){
-        this.student = student;
+        this.studentId = student.getStudentId();
     }
     public void setCourse(Course course){
-        this.course = course;
+        this.courseId = course.getCourseId();
     }
     public void setSlot(TimeSlot slot){
         this.startTime  = slot.getStartTime();
@@ -66,10 +63,10 @@ public class Exam extends Model {
     }
 
     public static Exam byStudentCourse(Student student, Course course){
-        return Exam.find.where().eq("student",student).eq("course",course).findUnique();
+        return Exam.find.where().eq("studentId",student.getStudentId()).eq("courseId",course.getCourseId()).findUnique();
     }
 
     public static Integer occupied(Course course, TimeSlot slot){
-        return Exam.find.where().eq("course",course).eq("startTime",slot.getStartTime()).findRowCount();
+        return Exam.find.where().eq("courseId",course.getCourseId()).eq("startTime",slot.getStartTime()).findRowCount();
     }
 }

@@ -15,9 +15,15 @@ public class Report extends Model{
     private Exam exam;
     @Lob
     private String remark;
-    private boolean examStatus = false;
+    //0:student not signed in
+    //1:student signed in
+    //2:student verified
+    //3:student expelled
+    private Integer examStatus = 0;
     @OneToMany(mappedBy = "report")
     private List<Chat> chatList = new ArrayList<Chat>();
+    @OneToMany(mappedBy = "report")
+    private List<Image> ImageList = new ArrayList<Image>();
 
     public static Finder<Integer, Report> find = new Finder<Integer, Report>(
             Integer.class, Report.class
@@ -34,7 +40,7 @@ public class Report extends Model{
     public String getRemark(){
         return remark;
     }
-    public boolean getExamStatus(){
+    public Integer getExamStatus(){
         return examStatus;
     }
     public List<Chat> getChatList(){

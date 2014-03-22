@@ -1,6 +1,6 @@
-package models;
+package cw_models;
 
-import net.sf.ehcache.event.CacheManagerEventListener;
+import models.Exam;
 import play.db.ebean.Model;
 import utils.CMException;
 
@@ -16,21 +16,23 @@ public class Course extends Model{
     private Integer courseId;
     private String courseCode;
     private String title;
+    private Integer questionNo;
     @OneToMany(mappedBy="course")
     private List<Question> questionSet = new ArrayList<Question>();
     @OneToMany(mappedBy="course")
     private List<TimeSlot> availableSlots = new ArrayList<TimeSlot>();
     @OneToMany(mappedBy="course")
     private List<Registration> registrationList = new ArrayList<Registration>();
-    @OneToMany(mappedBy="course")
-    private List<Exam> examList = new ArrayList<Exam>();
 
     public static Finder<Integer, Course> find = new Finder<Integer, Course>(
-            Integer.class,Course.class
+            "cw", Integer.class,Course.class
     );
 
     public Course(){ }
 
+    public List<Exam> getExamList(){
+        return Exam.find.where().eq("courseId",courseId).findList();
+    }
     public Integer getCourseId(){
         return courseId;
     }
@@ -40,17 +42,15 @@ public class Course extends Model{
     public String getTitle(){
         return title;
     }
+    public Integer getQuestionNo(){return questionNo;}
     public List<Question> getQuestionSet(){
-        return questionSet;
+        return Question.find.where().eq("course",this).findList();
     }
     public List<TimeSlot> getAvailableSlots(){
-        return availableSlots;
+        return TimeSlot.find.where().eq("course",this).findList();
     }
     public List<Registration> getRegistrationList(){
-        return registrationList;
-    }
-    public List<Exam> getExamList(){
-        return examList;
+        return Registration.find.where().eq("course",this).findList();
     }
 
     public void setCourseCode(String courseCode) throws CMException{
@@ -71,8 +71,14 @@ public class Course extends Model{
         }
         this.title = title;
     }
+    public void setQuestionNo(Integer questionNo) throws CMException{
+        if(questionNo <= 0){
+            throw new CMException("Please enter a positive question number.");
+        }
+        this.questionNo = questionNo;
+    }
 
     public static Course byId(Integer courseId){
-        return Course.find.where().eq("courseId",courseId).join("examList").findUnique();
+        return Course.find.where().eq("courseId",courseId).findUnique();
     }
 }

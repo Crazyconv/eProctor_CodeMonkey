@@ -52,6 +52,20 @@ $(document).ready(function(){
             url:"/addcourse",
             type:"POST",
             dataType:"json",
+            beforeSubmit: function(formData, jqForm, option){
+                var form = jqForm[0];
+                if(form.questionNo.value=="" || form.title.value==""){
+                    $("#courseerror").text("Please fill the form.").slideDown();
+                    return false;
+                }
+                if(!(/^[a-zA-Z0-9]{5,7}$/.test(form.courseCode.value))){
+                    $("#courseerror").text("CourseCode should be 5-7 alphanumeric.").slideDown();
+                    form.courseCode.value="";
+                    form.courseCode.focus();
+                    return false;
+                }
+                return true;
+            },
             success: function(json){
                 if(json.error!=0){
                     $("#courseerror").text(json.error).slideDown();

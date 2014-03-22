@@ -1,5 +1,6 @@
 package controllers.data;
 
+import cw_models.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.data.DynamicForm;
 import play.data.Form;
@@ -10,7 +11,6 @@ import play.mvc.Result;
 import utils.CMException;
 import utils.StringGenerator;
 import views.html.data.*;
-import models.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -73,7 +73,7 @@ public class DataController extends Controller {
 
             student.setPhoto(photo);
             student.setPhotoPath(photo.getPath());
-            student.save();
+            student.save("cw");
 
             //matricNo and studentId are sent to client to display
             result.put("error",0);
@@ -105,10 +105,12 @@ public class DataController extends Controller {
             }
             String courseCode = courseForm.get("courseCode");
             String title = courseForm.get("title");
+            Integer questionNo = Integer.parseInt(courseForm.get("questionNo"));
             Course course = new Course();
             course.setCourseCode(courseCode);
             course.setTitle(title);
-            course.save();
+            course.setQuestionNo(questionNo);
+            course.save("cw");
 
             result.put("error",0);
             result.put("courseCode",courseCode);
@@ -140,7 +142,7 @@ public class DataController extends Controller {
 
             Registration registration = new Registration();
             registration.register(student, course);
-            registration.save();
+            registration.save("cw");
 
             result.put("error",0);
             result.put("studentId",studentId);
@@ -169,7 +171,7 @@ public class DataController extends Controller {
             Question question = new Question();
             question.setContent(content);
             question.setCourse(course);
-            question.save();
+            question.save("cw");
             result.put("courseId", courseId);
             result.put("content",content);
             result.put("error",0);
@@ -209,7 +211,7 @@ public class DataController extends Controller {
             TimeSlot slot = new TimeSlot();
             slot.setSlot(course,startTime,endTime);
             slot.setCapacity(capacity);
-            slot.save();
+            slot.save("cw");
             result.put("error",0);
             result.put("courseId",courseId);
             result.put("date",new SimpleDateFormat("dd/MM/yyyy").format(startTime));

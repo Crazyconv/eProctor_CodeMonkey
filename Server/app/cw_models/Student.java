@@ -1,5 +1,6 @@
-package models;
+package cw_models;
 
+import models.Exam;
 import play.db.ebean.Model;
 import utils.CMException;
 
@@ -21,16 +22,17 @@ public class Student extends Model {
     @OneToMany(mappedBy = "student")
     private List<Registration> registrationList = new ArrayList<Registration>();
     @OneToMany(mappedBy = "student")
-    private List<Exam> examList = new ArrayList<Exam>();
-    @OneToMany(mappedBy = "student")
     private List<Solution> solutionList = new ArrayList<Solution>();
 
     public static Finder<Integer, Student> find = new Finder<Integer, Student>(
-            Integer.class, Student.class
+            "cw", Integer.class, Student.class
     );
 
     public Student(){ }
 
+    public List<Exam> getExamList(){
+        return Exam.find.where().eq("studentId",studentId).findList();
+    }
     public Integer getStudentId(){
         return studentId;
     }
@@ -51,9 +53,6 @@ public class Student extends Model {
     }
     public List<Registration> getRegistrationList(){
         return registrationList;
-    }
-    public List<Exam> getExamList(){
-        return examList;
     }
     public List<Solution> getSolutionList(){
         return solutionList;
@@ -82,7 +81,6 @@ public class Student extends Model {
         return Student.find.where().eq("studentId",studentId)
                 .join("registrationList").fetch("registrationList.course")
                 .fetch("registrationList.course.availableSlots").fetch("registrationList.course.questionSet")
-                .fetch("examList").fetch("examList.course").fetch("examList.invigilator")
                 .findUnique();
     }
 

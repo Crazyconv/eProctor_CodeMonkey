@@ -1,4 +1,4 @@
-package models;
+package cw_models;
 
 import play.db.ebean.Model;
 import utils.CMException;
@@ -19,7 +19,7 @@ public class TimeSlot extends Model{
     private Integer capacity;
 
     public static Finder<Integer, TimeSlot> find = new Finder<Integer, TimeSlot>(
-            Integer.class, TimeSlot.class
+            "cw", Integer.class, TimeSlot.class
     );
 
     public TimeSlot(){ }

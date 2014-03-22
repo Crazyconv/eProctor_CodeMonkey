@@ -1,4 +1,4 @@
-package models;
+package cw_models;
 
 import play.db.ebean.Model;
 
@@ -18,7 +18,7 @@ public class Solution extends Model {
     private Student student;
 
     public static Finder<Integer, Solution> find = new Finder<Integer, Solution>(
-            Integer.class, Solution.class
+            "cw", Integer.class, Solution.class
     );
 
     public Solution(){ }
