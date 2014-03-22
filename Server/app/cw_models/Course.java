@@ -23,6 +23,8 @@ public class Course extends Model{
     private List<TimeSlot> availableSlots = new ArrayList<TimeSlot>();
     @OneToMany(mappedBy="course")
     private List<Registration> registrationList = new ArrayList<Registration>();
+    @Transient
+    private List<Exam> examList = new ArrayList<Exam>();
 
     public static Finder<Integer, Course> find = new Finder<Integer, Course>(
             "cw", Integer.class,Course.class

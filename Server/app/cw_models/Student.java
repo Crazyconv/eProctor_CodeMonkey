@@ -23,6 +23,8 @@ public class Student extends Model {
     private List<Registration> registrationList = new ArrayList<Registration>();
     @OneToMany(mappedBy = "student")
     private List<Solution> solutionList = new ArrayList<Solution>();
+    @Transient
+    private List<Exam> examList = new ArrayList<Exam>();
 
     public static Finder<Integer, Student> find = new Finder<Integer, Student>(
             "cw", Integer.class, Student.class
