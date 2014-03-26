@@ -25,3 +25,4 @@ Thumbs.db
 
 /public/uploads/*
 /Todo.txt
+/conf/evolutions/*
