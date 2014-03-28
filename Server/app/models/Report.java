@@ -23,7 +23,7 @@ public class Report extends Model{
     @OneToMany(mappedBy = "report")
     private List<Chat> chatList = new ArrayList<Chat>();
     @OneToMany(mappedBy = "report")
-    private List<Image> ImageList = new ArrayList<Image>();
+    private List<Image> imageList = new ArrayList<Image>();
 
     public static Finder<Integer, Report> find = new Finder<Integer, Report>(
             Integer.class, Report.class
@@ -45,5 +45,8 @@ public class Report extends Model{
     }
     public List<Chat> getChatList(){
         return chatList;
+    }
+    public List<Image> getImageList() {
+        return imageList;
     }
 }

@@ -14,6 +14,10 @@ POST    /showslot                        controllers.StudentController.showSlot(
 POST    /selectslot                      controllers.StudentController.selectSlot()
 POST    /deleteslot                      controllers.StudentController.deleteSlot()
 
+POST    /takeexam                        controllers.StudentController.takeExam()
+POST    /saveanswer                      controllers.StudentController.saveAnswer()
+POST    /storeimage                      controllers.StudentController.storeImage()
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                    controllers.Assets.at(path="/public", file)
 
@@ -26,3 +30,6 @@ POST   /addregistration                  controllers.data.DataController.addRegi
 POST   /addquestion                      controllers.data.DataController.addQuestion()
 POST   /addslot                          controllers.data.DataController.addSlot()
 GET    /getphoto/:studentid              controllers.data.DataController.getPhoto(studentid: Integer)
+
+# Test Client
+GET    /testclient                       controllers.data.DataController.testClient()

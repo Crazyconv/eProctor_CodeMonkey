@@ -1,0 +1,59 @@
+@(exam: Exam, questionList: List[Question])
+<style>
+    #question{
+        float:left;
+        width:800px;
+        border:2px solid #ccc;
+    }
+    #interact{
+        margin-left:810px;
+        width:300px;
+        border:2px solid #ccc;
+    }
+    textarea{
+        width:750px;
+        height:100px;
+    }
+    #video{
+        width:200px;
+        height:150px;
+    }
+    #video img{
+        max-width:100%;
+        max-height:100%;
+    }
+    #ready{
+        font-weight: bold;
+    }
+</style>
+<div id="question">
+    <div>
+        **reserved for exam instruction
+    </div>
+    @questionList.map{ question =>
+        <div>
+            <div>
+                @question.getContent
+            </div>
+            <form>
+                <input type="hidden" name="questionId" value="@question.getQuestionId"/>
+                <textarea name="answer"></textarea><br/>
+                <input type="button" name="saveanswer" value="save"/>
+                <span name="answererror" style="color:red;display:none;"></span>
+                <span name="answersuccess" style="display:none;"></span>
+            </form>
+        </div>
+    }
+</div>
+<div id="interact">
+    <div id="notice">
+        <span id="ready"></span>
+        <span id="wait">Please wait for the camera to get ready. This will take a few seconds...</span>
+    </div>
+    <div id="video">
+
+    </div>
+    <div id="chatting">
+
+    </div>
+</div>

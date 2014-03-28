@@ -52,4 +52,8 @@ public class Question extends Model{
     public void setCourse(Course course){
         this.course = course;
     }
+
+    public static Question byId(Integer questionId){
+        return Question.find.where().eq("questionId",questionId).findUnique();
+    }
 }

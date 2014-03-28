@@ -225,4 +225,8 @@ public class DataController extends Controller {
         }
         return ok(result);
     }
+
+    public static Result testClient(){
+        return ok(testclient.render());
+    }
 }

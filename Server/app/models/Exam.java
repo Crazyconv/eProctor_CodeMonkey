@@ -61,6 +61,12 @@ public class Exam extends Model {
         this.startTime  = slot.getStartTime();
         this.endTime = slot.getEndTime();
     }
+    public void setInvigilator(Invigilator invigilator){
+        this.invigilator = invigilator;
+    }
+    public void setReport(Report report){
+        this.report = report;
+    }
 
     public static Exam byStudentCourse(Student student, Course course){
         return Exam.find.where().eq("studentId",student.getStudentId()).eq("courseId",course.getCourseId()).findUnique();
@@ -68,5 +74,12 @@ public class Exam extends Model {
 
     public static Integer occupied(Course course, TimeSlot slot){
         return Exam.find.where().eq("courseId",course.getCourseId()).eq("startTime",slot.getStartTime()).findRowCount();
+    }
+
+    public static Exam byId(Integer examId){
+        return Exam.find.where().eq("examId",examId)
+                .join("invigilator")
+                .fetch("report").fetch("report.chatList").fetch("report.imageList")
+                .findUnique();
     }
 }

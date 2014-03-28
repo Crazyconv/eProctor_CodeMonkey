@@ -66,19 +66,7 @@ $(document).ready(function(){
         var options = {
             url:"/selectslot",          // the url this object should be sent to
             type:"POST",                // the HTTP method to send this object
-            dataType:"json",            // expected data type of the response from server 
-//            beforeSubmit: function(formData, jqForm, option){
-//                var form = jqForm[0];
-//                if(form.content.value==""){
-//                    $("#questionerror").text("Please enter the question.").slideDown();
-//                    return false;
-//                }
-//                if(form.content.value.length > 5000){
-//                    $("#questionerror").text("The question exceeds 5000 characters.").slideDown();
-//                    return false;
-//                }
-//                return true;
-//            },
+            dataType:"json",            // expected data type of the response from server
 
             // Description:
             //         when server respond with a ok(xx) result(?), a function should be executed,
@@ -95,11 +83,15 @@ $(document).ready(function(){
                     var date = new Date(json.start).Format("dd/MM/yyyy");
                     var start = new Date(json.start).Format("hh:mm");
                     var end = new Date(json.end).Format("hh:mm");
+                    var remain = parseInt((new Date(json.start) - new Date())/(1000*60*60*24));
                     $('#hidden'+courseId).text(json.start);
                     $('#slot'+courseId).text(date + ' ' + start + '-' + end).show();
+                    $('#exam'+courseId).text(json.examId);
                     //enable the remove button and sort the table again
                     $('#remove'+courseId).attr("disabled",false);
                     $("table").tablesorter( {sortList: [[1,0]]} );
+                    //add the status info
+                    $('#status'+courseId).html(remain + " days");
                 }
             },
             // similar to success clause
@@ -113,7 +105,8 @@ $(document).ready(function(){
     });
 
     $(document).on('click','input[name="cancel"]',function(){
-        var courseId = $(this).parent('form').get(0).courseId.value;
+        var courseId = this.form.courseId.value;
+        //ar courseId = $(this).parent('form').get(0).courseId.value;
         //hide the exam slot selection form and display the exam time
         $('#select'+courseId).hide();
         $('#slot'+courseId).show();
@@ -135,6 +128,9 @@ $(document).ready(function(){
                     //clear the original exam time
                     $('#slot'+courseId).text("");
                     $('#hidden'+courseId).text("");
+                    $('#exam'+courseId).text("");
+                    //remove the status info
+                    $('#status'+courseId).text("");
                     //disable the remove button and sort the table again
                     $('#remove'+courseId).attr("disabled",true);
                     $("table").tablesorter( {sortList: [[1,0]]} );
@@ -146,4 +142,110 @@ $(document).ready(function(){
         };
         $form.ajaxSubmit(options);
     });
+
+    //====================================================================
+    //this part is to display the sign in button in real time
+    function toStart(courseId,examId){
+        return function(){
+            $form = ('<form>' +
+                '<input type="hidden" name="examId" value="'+ examId +'"/>' +
+                '<input type="button" value="Sign in" name="signin"/>' +
+                '</form>');
+            $('#status'+courseId).html($form);
+        }
+    }
+    function toFinish(id){
+        return function(){
+            $('#status'+id).html("finish");
+        }
+    }
+    var nowTime = new Date();
+    var intervalLimit = 2*24*60*60*1000;
+    var timestamps = document.getElementsByName("hidden");
+    var length = timestamps.length;
+    var courseIds = Array(length);
+    var examIds = Array(length);
+    var toStartTimers = Array(length);
+    var toFinishTimers = Array(length);
+    for(var i=0;i<length;i++){
+        courseIds[i] = (timestamps[i].id).replace("hidden","");
+        examIds[i] = $('#exam'+courseIds[i]).text();
+        toStartTimers[i] = timestamps[i].innerHTML - nowTime - 15*60*1000;
+        toFinishTimers[i] = timestamps[i].innerHTML - nowTime;
+        if(toStartTimers[i]>0 && toStartTimers[i]<intervalLimit){
+            setTimeout(toStart(courseIds[i],examIds[i]),toStartTimers[i]);
+        }
+        if(toFinishTimers[i]>0 && toFinishTimers[i]<intervalLimit){
+            setTimeout(toFinish(courseIds[i]),toFinishTimers[i]);
+        }
+    }
+    //====================================================================
+
+    //sign in -> start grabbing image
+    var startCamera = false;
+    var timerEvent;
+    var toSent = false;
+    function timerTask(examId){
+        return function(){
+            if(toSent){
+                if(startCamera==false){
+                    if(grab.start()){
+                        startCamera = true;
+                        $('<p>Camera is ready!</p>').appendTo($('#ready'));
+                        $('#wait').text("Please wait for the invigilator to verify your identity");
+                    }
+                }else{
+                    var imageString = grab.grab();
+                    if(imageString!=""){
+                        $('#video').html('<img src="data:image/jpeg;base64,' + imageString + '" />');
+                        $.ajax({
+                            url:"/storeimage",
+                            type:"POST",
+                            data:{image: imageString, examId: examId},
+                            dataType:"json",
+                            success:function(json){
+                                if(json.error!=0){
+                                    $('#wait').text("Video connection error.");
+                                }
+                            },
+                            error:function(xhr,status){
+                                $('#wait').text("Video connection error.");
+                            }
+                        });
+                    }
+                }
+                timerEvent = setTimeout(timerTask(examId),500);
+            }
+        }
+    }
+    function startTimer(examId){
+        toSent = true;
+        timerEvent = setTimeout(timerTask(examId),500);
+    }
+    function stopTimer(){
+        toSent = false;
+        clearTimeout(timerEvent);
+        startCamera = false;
+        grab.stop();
+    }
+
+    $(document).on('click','input[name="signin"]',function(){
+        var $form = $(this).parent('form');
+        var examId = $form.get(0).examId.value;
+        var options={
+            url:"/takeexam",
+            type:"POST",
+            dataType:"html",
+            success: function(html){
+                $('#beforeexam').toggle();
+                $('#inexam').html(html);
+                startTimer(examId);
+            },
+            error: function(xhr,status){
+                $("#selecterror").text("Sorry... the form submission failed.").show();
+            }
+        };
+        $form.ajaxSubmit(options);
+    });
+
 });

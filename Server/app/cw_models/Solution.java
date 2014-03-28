@@ -35,4 +35,18 @@ public class Solution extends Model {
     public Student getStudent(){
         return student;
     }
+
+    public void setQuestion(Question question){
+        this.question = question;
+    }
+    public void setAnswer(String answer){
+        this.answer = answer;
+    }
+    public void setStudent(Student student){
+        this.student = student;
+    }
+
+    public static Solution byStudentQuestion(Student student, Question question){
+        return Solution.find.where().eq("student",student).eq("question",question).findUnique();
+    }
 }

@@ -24,10 +24,26 @@ public class Image extends Model{
             Integer.class, Image.class
     );
 
+    public Integer getImageId(){
+        return imageId;
+    }
+
     public File getPicture(){
         if(picturePath!=null && (picture==null || !picture.getPath().equals(picturePath))){
             picture = new File(picturePath);
         }
         return picture;
+    }
+
+    public void setTime(Date time){
+        this.time = time;
+    }
+
+    public void setPicturePath(String picturePath){
+        this.picturePath = picturePath;
+    }
+
+    public void setReport(Report report){
+        this.report = report;
     }
 }
