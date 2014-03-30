@@ -12,6 +12,7 @@ public class Solution extends Model {
     @ManyToOne
     @JoinColumn(name="ques_id")
     private Question question;
+    @Lob
     private String answer;
     @ManyToOne
     @JoinColumn(name="stu_id")

@@ -163,10 +163,10 @@ $(document).ready(function(){
     var intervalLimit = 2*24*60*60*1000;
     var timestamps = document.getElementsByName("hidden");
     var length = timestamps.length;
-    var courseIds = Array(length);
-    var examIds = Array(length);
-    var toStartTimers = Array(length);
-    var toFinishTimers = Array(length);
+    var courseIds = new Array(length);
+    var examIds = new Array(length);
+    var toStartTimers = new Array(length);
+    var toFinishTimers = new Array(length);
     for(var i=0;i<length;i++){
         courseIds[i] = (timestamps[i].id).replace("hidden","");
         examIds[i] = $('#exam'+courseIds[i]).text();
@@ -180,72 +180,5 @@ $(document).ready(function(){
         }
     }
     //====================================================================
-
-    //sign in -> start grabbing image
-    var startCamera = false;
-    var timerEvent;
-    var toSent = false;
-    function timerTask(examId){
-        return function(){
-            if(toSent){
-                if(startCamera==false){
-                    if(grab.start()){
-                        startCamera = true;
-                        $('<p>Camera is ready!</p>').appendTo($('#ready'));
-                        $('#wait').text("Please wait for the invigilator to verify your identity");
-                    }
-                }else{
-                    var imageString = grab.grab();
-                    if(imageString!=""){
-                        $('#video').html('<img src="data:image/jpeg;base64,' + imageString + '" />');
-                        $.ajax({
-                            url:"/storeimage",
-                            type:"POST",
-                            data:{image: imageString, examId: examId},
-                            dataType:"json",
-                            success:function(json){
-                                if(json.error!=0){
-                                    $('#wait').text("Video connection error.");
-                                }
-                            },
-                            error:function(xhr,status){
-                                $('#wait').text("Video connection error.");
-                            }
-                        });
-                    }
-                }
-                timerEvent = setTimeout(timerTask(examId),500);
-            }
-        }
-    }
-    function startTimer(examId){
-        toSent = true;
-        timerEvent = setTimeout(timerTask(examId),500);
-    }
-    function stopTimer(){
-        toSent = false;
-        clearTimeout(timerEvent);
-        startCamera = false;
-        grab.stop();
-    }
-
-    $(document).on('click','input[name="signin"]',function(){
-        var $form = $(this).parent('form');
-        var examId = $form.get(0).examId.value;
-        var options={
-            url:"/takeexam",
-            type:"POST",
-            dataType:"html",
-            success: function(html){
-                $('#beforeexam').toggle();
-                $('#inexam').html(html);
-                startTimer(examId);
-            },
-            error: function(xhr,status){
-                $("#selecterror").text("Sorry... the form submission failed.").show();
-            }
-        };
-        $form.ajaxSubmit(options);
-    });
 
 });

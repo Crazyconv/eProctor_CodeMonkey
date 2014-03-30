@@ -5,6 +5,7 @@ import play.db.ebean.Model;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import utils.Global;
 
 @Entity
 public class Report extends Model{
@@ -19,10 +20,12 @@ public class Report extends Model{
     //1:student signed in
     //2:student verified
     //3:student expelled
-    private Integer examStatus = 0;
+    private Integer examStatus = Global.NOTSIGNEDIN;
     @OneToMany(mappedBy = "report")
+    @OrderBy("chatId desc")
     private List<Chat> chatList = new ArrayList<Chat>();
     @OneToMany(mappedBy = "report")
+    @OrderBy("imageId desc")
     private List<Image> imageList = new ArrayList<Image>();
 
     public static Finder<Integer, Report> find = new Finder<Integer, Report>(
@@ -48,5 +51,12 @@ public class Report extends Model{
     }
     public List<Image> getImageList() {
         return imageList;
+    }
+
+    public void setExamStatus(Integer examStatus){
+        this.examStatus = examStatus;
+    }
+    public void setRemark(String remark){
+        this.remark = remark;
     }
 }

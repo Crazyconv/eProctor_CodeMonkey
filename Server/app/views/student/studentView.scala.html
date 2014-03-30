@@ -30,20 +30,28 @@
                                     <input type="button" name="edit" value="Edit"/>
                                     <input type="button" name="remove" value="Remove" id="remove@course.getCourseId" @if(exam == null){disabled="disabled"} />
                                 </form></td>
+                                <!--<td id="status@course.getCourseId">-->
+                                    <!--@if(exam != null){-->
+                                        <!--@if(exam.getStartTime.before(new Date())){-->
+                                            <!--finish-->
+                                        <!--} else {-->
+                                            <!--@if(exam.getStartTime.after(new Date((new Date()).getTime + 15*60*1000))){-->
+                                                <!--@((exam.getStartTime.getTime - (new Date()).getTime)/(24*60*60*1000)) days-->
+                                            <!--} else {-->
+                                                <!--<form>-->
+                                                    <!--<input type="hidden" name="examId" value="@exam.getExamId"/>-->
+                                                    <!--<input type="button" name= "signin" value="Sign in"/>-->
+                                                <!--</form>-->
+                                            <!--}-->
+                                        <!--}-->
+                                    <!--}-->
+                                <!--</td>-->
                                 <td id="status@course.getCourseId">
                                     @if(exam != null){
-                                        @if(exam.getStartTime.before(new Date())){
-                                            finish
-                                        } else {
-                                            @if(exam.getStartTime.after(new Date((new Date()).getTime + 15*60*1000))){
-                                                @((exam.getStartTime.getTime - (new Date()).getTime)/(24*60*60*1000)) days
-                                            } else {
-                                                <form>
-                                                    <input type="hidden" name="examId" value="@exam.getExamId"/>
-                                                    <input type="button" name= "signin" value="Sign in"/>
-                                                </form>
-                                            }
-                                        }
+                                    <form>
+                                        <input type="hidden" name="examId" value="@exam.getExamId"/>
+                                        <input type="button" name= "signin" value="Sign in"/>
+                                    </form>
                                     }
                                 </td>
                             </tr>

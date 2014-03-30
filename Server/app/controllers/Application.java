@@ -2,14 +2,19 @@ package controllers;
 
 import cw_models.Student;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import models.*;
+import models.Exam;
+import models.Invigilator;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.libs.Json;
-import play.mvc.*;
+import play.mvc.Controller;
+import play.mvc.Result;
 import utils.CMException;
 import utils.Global;
-import views.html.*;
+import views.html.admin.adminView;
+import views.html.invigilator.invigilatorView;
+import views.html.login;
+import views.html.student.studentView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +52,7 @@ public class Application extends Controller {
                 Integer courseId = exam.getCourse().getCourseId();
                 examMap.put(courseId,exam);
             }
-            return ok(studentView.render(student,examMap));
+            return ok(studentView.render(student, examMap));
         }
         if(domain==1){
             Invigilator invigilator = Invigilator.byId(CMUser);

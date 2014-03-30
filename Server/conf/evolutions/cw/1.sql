@@ -8,6 +8,7 @@ create table course (
   course_code               varchar(255),
   title                     varchar(255),
   question_no               integer,
+  instruction               longtext,
   constraint pk_course primary key (course_id))
 ;
 
@@ -28,7 +29,7 @@ create table registration (
 create table solution (
   sol_id                    integer auto_increment not null,
   ques_id                   integer,
-  answer                    varchar(255),
+  answer                    longtext,
   stu_id                    integer,
   constraint pk_solution primary key (sol_id))
 ;

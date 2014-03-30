@@ -6,7 +6,6 @@
 create table chat (
   chat_id                   integer auto_increment not null,
   from_student              tinyint(1) default 0,
-  sender_id                 integer,
   message                   varchar(255),
   time                      datetime,
   report_id                 integer,

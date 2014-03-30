@@ -77,9 +77,6 @@ public class Exam extends Model {
     }
 
     public static Exam byId(Integer examId){
-        return Exam.find.where().eq("examId",examId)
-                .join("invigilator")
-                .fetch("report").fetch("report.chatList").fetch("report.imageList")
-                .findUnique();
+        return Exam.find.where().eq("examId",examId).findUnique();
     }
 }

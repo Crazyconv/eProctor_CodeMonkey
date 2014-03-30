@@ -46,4 +46,8 @@ public class Image extends Model{
     public void setReport(Report report){
         this.report = report;
     }
+
+    public static Image byId(Integer imageId){
+        return Image.find.where().eq("imageId",imageId).findUnique();
+    }
 }

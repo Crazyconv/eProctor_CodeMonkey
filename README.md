@@ -11,9 +11,13 @@ After starting the server:
 When a student is added, by now the system just set the password to be the matricNo but UPPERCASE.
 Admin account and password are "admin".
 
-Student can only sign in from 15 minutes before the exam.
-So you need to change exam time directly in database to test this functionality.
+For testing purpose:
+Lockdown window of client is disabled.
+Student can sign in at any time.
+
 After student sign in, camera start to grab photos. This will take a few seconds...
 Camera can only be started in client, namely, you should run the CodeMonkey.java in client folder.
 After testing, you can find the grabbed photos in public/videos.
-Communication with invigilator has not been done yet...
+
+By now, invigilator can invigilate and communicate with students.
+However, exam is not auto started or finished yet.

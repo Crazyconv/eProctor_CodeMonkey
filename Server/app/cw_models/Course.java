@@ -17,6 +17,8 @@ public class Course extends Model{
     private String courseCode;
     private String title;
     private Integer questionNo;
+    @Lob
+    private String instruction;
     @OneToMany(mappedBy="course")
     private List<Question> questionSet = new ArrayList<Question>();
     @OneToMany(mappedBy="course")
@@ -45,6 +47,9 @@ public class Course extends Model{
         return title;
     }
     public Integer getQuestionNo(){return questionNo;}
+    public String getInstruction(){
+        return instruction;
+    }
     public List<Question> getQuestionSet(){
         return Question.find.where().eq("course",this).findList();
     }
@@ -78,6 +83,9 @@ public class Course extends Model{
             throw new CMException("Please enter a positive question number.");
         }
         this.questionNo = questionNo;
+    }
+    public void setInstruction(String instruction){
+        this.instruction = instruction;
     }
 
     public static Course byId(Integer courseId){

@@ -1,6 +1,5 @@
 package models;
 
-import cw_models.Student;
 import play.db.ebean.Model;
 import javax.persistence.*;
 import java.util.Date;
@@ -11,7 +10,6 @@ public class Chat extends Model{
     @Column(name = "chat_id")
     private Integer chatId;
 	private boolean fromStudent;
-    private Integer senderId;
     private String message;
     private Date time;
     @ManyToOne
@@ -30,28 +28,23 @@ public class Chat extends Model{
 	public boolean isFromStudent(){
 	    return fromStudent;
 	}
-    public Integer getSenderId(){
-        return senderId;
-    }
     public String getMessage(){
         return message;
     }
     public Date getTime(){
         return time;
     }
-    public Report getReport(){
-        return report;
+
+    public void setMessage(String message){
+        this.message = message;
     }
-    public Student getStudent(){
-        if(fromStudent){
-            return Student.byId(senderId);
-        }
-        return null;
+    public void setTime(Date time){
+        this.time = time;
     }
-    public Invigilator getInvigilator(){
-        if(!fromStudent){
-            return Invigilator.byId(senderId);
-        }
-        return null;
+    public void setReport(Report report){
+        this.report = report;
+    }
+    public void setFromStudent(boolean fromStudent){
+        this.fromStudent = fromStudent;
     }
 }

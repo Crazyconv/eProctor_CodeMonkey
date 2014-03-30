@@ -87,15 +87,6 @@ public class DataController extends Controller {
         return ok(result);
     }
 
-    public static Result getPhoto(Integer studentId){
-        Student student = Student.find.byId(studentId);
-        try{
-            return ok(new FileInputStream(student.getPhoto()));
-        }catch(FileNotFoundException e){
-            return ok("Error: photo not found");
-        }
-    }
-
     public static Result addCourse(){
         ObjectNode result = Json.newObject();
         DynamicForm courseForm = Form.form().bindFromRequest();
@@ -106,10 +97,12 @@ public class DataController extends Controller {
             String courseCode = courseForm.get("courseCode");
             String title = courseForm.get("title");
             Integer questionNo = Integer.parseInt(courseForm.get("questionNo"));
+            String instruction = courseForm.get("instruction");
             Course course = new Course();
             course.setCourseCode(courseCode);
             course.setTitle(title);
             course.setQuestionNo(questionNo);
+            course.setInstruction(instruction);
             course.save("cw");
 
             result.put("error",0);
@@ -196,7 +189,7 @@ public class DataController extends Controller {
             }
             Integer capacity = Integer.parseInt(slotForm.get("capacity"));
             if(capacity==0){
-                throw new CMException("Please enter n valid capacity");
+                throw new CMException("Please enter a valid capacity");
             }
 
             String date = slotForm.get("date");

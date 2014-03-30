@@ -3,12 +3,12 @@
     #question{
         float:left;
         width:800px;
-        border:2px solid #ccc;
+        border:1px solid #ccc;
     }
     #interact{
         margin-left:810px;
         width:300px;
-        border:2px solid #ccc;
+        border:1px solid #ccc;
     }
     textarea{
         width:750px;
@@ -17,6 +17,8 @@
     #video{
         width:200px;
         height:150px;
+        margin-left: 30px;
+        border:1px solid #ccc;
     }
     #video img{
         max-width:100%;
@@ -25,10 +27,28 @@
     #ready{
         font-weight: bold;
     }
+    #interact textarea{
+        width:270px;
+    }
+    #history{
+        height:300px;
+        overflow-y:auto;
+        border:1px solid #ccc;
+    }
+    .invigilator{
+        text-align:left;
+        color:blue;
+        margin-left: 10px;
+    }
+    .student{
+        text-align:right;
+        color:green;
+        margin-right: 10px;
+    }
 </style>
 <div id="question">
     <div>
-        **reserved for exam instruction
+        @exam.getCourse.getInstruction
     </div>
     @questionList.map{ question =>
         <div>
@@ -37,6 +57,7 @@
             </div>
             <form>
                 <input type="hidden" name="questionId" value="@question.getQuestionId"/>
+                <input type="hidden" name="examId" value="@exam.getExamId"/>
                 <textarea name="answer"></textarea><br/>
                 <input type="button" name="saveanswer" value="save"/>
                 <span name="answererror" style="color:red;display:none;"></span>
@@ -54,6 +75,14 @@
 
     </div>
     <div id="chatting">
+        <div id="history">
 
+        </div>
+        <form>
+            <input type="hidden" name="examId" value="@exam.getExamId" />
+            <textarea name="message"></textarea>
+            <input type="button" name="sendmessage" value="send" />
+            <span name="messageerror" style="color:red"></span>
+        </form>
     </div>
 </div>
