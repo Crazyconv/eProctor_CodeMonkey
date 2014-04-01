@@ -1,13 +1,11 @@
 package cw_models;
 
-import models.Exam;
 import play.db.ebean.Model;
 import utils.CMException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Entity
 public class Course extends Model{
@@ -19,14 +17,12 @@ public class Course extends Model{
     private Integer questionNo;
     @Lob
     private String instruction;
+    @ManyToMany(mappedBy = "courseList")
+    private List<Student> students = new ArrayList<Student>();
     @OneToMany(mappedBy="course")
     private List<Question> questionSet = new ArrayList<Question>();
-    @OneToMany(mappedBy="course")
-    private List<TimeSlot> availableSlots = new ArrayList<TimeSlot>();
-    @OneToMany(mappedBy="course")
-    private List<Registration> registrationList = new ArrayList<Registration>();
-    @Transient
-    private List<Exam> examList = new ArrayList<Exam>();
+    @OneToMany(mappedBy = "course")
+    private List<Allocation> allocationList = new ArrayList<Allocation>();
 
     public static Finder<Integer, Course> find = new Finder<Integer, Course>(
             "cw", Integer.class,Course.class
@@ -34,9 +30,6 @@ public class Course extends Model{
 
     public Course(){ }
 
-    public List<Exam> getExamList(){
-        return Exam.find.where().eq("courseId",courseId).findList();
-    }
     public Integer getCourseId(){
         return courseId;
     }
@@ -51,13 +44,10 @@ public class Course extends Model{
         return instruction;
     }
     public List<Question> getQuestionSet(){
-        return Question.find.where().eq("course",this).findList();
+        return questionSet;
     }
-    public List<TimeSlot> getAvailableSlots(){
-        return TimeSlot.find.where().eq("course",this).findList();
-    }
-    public List<Registration> getRegistrationList(){
-        return Registration.find.where().eq("course",this).findList();
+    public List<Allocation> getAllocationList(){
+        return allocationList;
     }
 
     public void setCourseCode(String courseCode) throws CMException{

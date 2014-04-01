@@ -1,8 +1,5 @@
 import java.awt.Frame;
 import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -54,7 +51,7 @@ public class CodeMonkey extends javafx.application.Application {
         jFrame.add(fxPanel);
         jFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
         jFrame.setUndecorated(true);
-        //jFrame.setAlwaysOnTop(true);
+//        jFrame.setAlwaysOnTop(true);
         jFrame.setVisible(true);
         jFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
@@ -76,7 +73,7 @@ public class CodeMonkey extends javafx.application.Application {
                     }
                 }
             );
-            webEngine.load("http://localhost:9000/");
+            webEngine.load("http://172.22.117.199:9000/");
             getChildren().add(browser);
         }
         @Override 

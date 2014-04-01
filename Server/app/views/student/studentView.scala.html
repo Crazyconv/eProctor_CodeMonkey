@@ -14,48 +14,46 @@
             <table>
                 <thead><tr><th>Course</th><th>Timestamp</th><th>ExamId</th><th style="min-width:350px;">Time</th><th>Action</th><th>Status</th></tr></thead>
                 <tbody>
-                @student.getRegistrationList.map{ registration =>
-                    @defining(registration.getCourse){ course =>
-                        @defining(examMap.get(course.getCourseId)){ exam=>
-                            <tr>
-                                <td>@course.getCourseCode: @course.getTitle</td>
-                                <td id="hidden@course.getCourseId" name="hidden">@if(exam != null){@exam.getStartTime.getTime}</td>
-                                <td id="exam@course.getCourseId">@if(exam != null){@exam.getExamId}</td>
-                                <td>
-                                    <span id="slot@course.getCourseId">@if(exam != null){@exam.getStartTime.format("dd/MM/yyyy") @exam.getStartTime.format("kk:mm")-@exam.getEndTime.format("kk:mm")}</span>
-                                    <span id="select@course.getCourseId" style="display:none;"></span>
-                                </td>
-                                <td><form>
-                                    <input type="hidden" name="courseId" value="@course.getCourseId"/>
-                                    <input type="button" name="edit" value="Edit"/>
-                                    <input type="button" name="remove" value="Remove" id="remove@course.getCourseId" @if(exam == null){disabled="disabled"} />
-                                </form></td>
-                                <!--<td id="status@course.getCourseId">-->
-                                    <!--@if(exam != null){-->
-                                        <!--@if(exam.getStartTime.before(new Date())){-->
-                                            <!--finish-->
-                                        <!--} else {-->
-                                            <!--@if(exam.getStartTime.after(new Date((new Date()).getTime + 15*60*1000))){-->
-                                                <!--@((exam.getStartTime.getTime - (new Date()).getTime)/(24*60*60*1000)) days-->
-                                            <!--} else {-->
-                                                <!--<form>-->
-                                                    <!--<input type="hidden" name="examId" value="@exam.getExamId"/>-->
-                                                    <!--<input type="button" name= "signin" value="Sign in"/>-->
-                                                <!--</form>-->
-                                            <!--}-->
-                                        <!--}-->
-                                    <!--}-->
-                                <!--</td>-->
-                                <td id="status@course.getCourseId">
-                                    @if(exam != null){
-                                    <form>
-                                        <input type="hidden" name="examId" value="@exam.getExamId"/>
-                                        <input type="button" name= "signin" value="Sign in"/>
-                                    </form>
+                @student.getCourseList.map{ course =>
+                    @defining(examMap.get(course.getCourseId)){ exam=>
+                        <tr>
+                            <td>@course.getCourseCode: @course.getTitle</td>
+                            <td id="hidden@course.getCourseId" name="hidden">@if(exam != null){@exam.getTimeSlot.getStartTime.getTime}</td>
+                            <td id="exam@course.getCourseId">@if(exam != null){@exam.getExamId}</td>
+                            <td>
+                                <span id="slot@course.getCourseId">@if(exam != null){@exam.getTimeSlot.getStartTime.format("dd/MM/yyyy") @exam.getTimeSlot.getStartTime.format("kk:mm")-@exam.getTimeSlot.getEndTime.format("kk:mm")}</span>
+                                <span id="select@course.getCourseId" style="display:none;"></span>
+                            </td>
+                            <td><form>
+                                <input type="hidden" name="courseId" value="@course.getCourseId"/>
+                                <input type="button" name="edit" value="Edit"/>
+                                <input type="button" name="remove" value="Remove" id="remove@course.getCourseId" @if(exam == null){disabled="disabled"} />
+                            </form></td>
+                            <td id="status@course.getCourseId">
+                                @if(exam != null){
+                                    @if(exam.getTimeSlot.getStartTime.before(new Date())){
+                                        finish
+                                    } else {
+                                        @if(exam.getTimeSlot.getStartTime.after(new Date((new Date()).getTime + 15*60*1000))){
+                                            @((exam.getTimeSlot.getStartTime.getTime - (new Date()).getTime)/(24*60*60*1000)) days
+                                        } else {
+                                            <form>
+                                                <input type="hidden" name="examId" value="@exam.getExamId"/>
+                                                <input type="button" name= "signin" value="Sign in"/>
+                                            </form>
+                                        }
                                     }
-                                </td>
-                            </tr>
-                        }
+                                }
+                            </td>
+                            <!--<td id="status@course.getCourseId">-->
+                                <!--@if(exam != null){-->
+                                <!--<form>-->
+                                    <!--<input type="hidden" name="examId" value="@exam.getExamId"/>-->
+                                    <!--<input type="button" name= "signin" value="Sign in"/>-->
+                                <!--</form>-->
+                                <!--}-->
+                            <!--</td>-->
+                        </tr>
                     }
                 }
                 </tbody>

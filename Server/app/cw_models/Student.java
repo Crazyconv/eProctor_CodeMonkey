@@ -19,8 +19,14 @@ public class Student extends Model {
     @Transient  //meaning that it won't be bound to database
     private File photo;
     private String photoPath;
-    @OneToMany(mappedBy = "student")
-    private List<Registration> registrationList = new ArrayList<Registration>();
+    @ManyToMany
+    @JoinTable(name = "registration",
+            joinColumns=
+            @JoinColumn(name="stu_id", referencedColumnName="stu_id"),
+            inverseJoinColumns=
+            @JoinColumn(name="course_id", referencedColumnName="course_id")
+    )
+    private List<Course> courseList = new ArrayList<Course>();
     @OneToMany(mappedBy = "student")
     private List<Solution> solutionList = new ArrayList<Solution>();
     @Transient
@@ -53,8 +59,8 @@ public class Student extends Model {
         }
         return photo;
     }
-    public List<Registration> getRegistrationList(){
-        return registrationList;
+    public List<Course> getCourseList(){
+        return courseList;
     }
     public List<Solution> getSolutionList(){
         return solutionList;
@@ -79,11 +85,19 @@ public class Student extends Model {
         this.photo = photo;
     }
 
+    public void registerCourse(Course course) throws CMException{
+        if (courseList.contains(course)){
+            throw new CMException(course.getCourseCode() + " has been registered to " + matricNo);
+        }
+        courseList.add(course);
+    }
+
     public static Student byId(Integer studentId){
-        return Student.find.where().eq("studentId",studentId)
-                .join("registrationList").fetch("registrationList.course")
-                .fetch("registrationList.course.availableSlots").fetch("registrationList.course.questionSet")
-                .findUnique();
+//        return Student.find.where().eq("studentId",studentId).join("courseList")
+//                .fetch("courseList.allocationList").fetch("courseList.allocationList.timeSlot")
+//                .fetch("courseList.questionSet")
+//                .findUnique();
+        return Student.find.where().eq("studentId",studentId).findUnique();
     }
 
     public static Student byMatricNo(String matricNo){

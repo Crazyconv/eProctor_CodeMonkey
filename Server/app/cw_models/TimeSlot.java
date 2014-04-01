@@ -4,19 +4,19 @@ import play.db.ebean.Model;
 import utils.CMException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class TimeSlot extends Model{
     @Id
-    @Column(name = "time_id")
+    @Column(name = "slot_id")
     private Integer timeSlotId;
     private Date startTime;
     private Date endTime;
-    @ManyToOne
-    @JoinColumn(name="course_id")
-    private Course course;
-    private Integer capacity;
+    @OneToMany(mappedBy = "timeSlot")
+    private List<Allocation> allocationList = new ArrayList<Allocation>();
 
     public static Finder<Integer, TimeSlot> find = new Finder<Integer, TimeSlot>(
             "cw", Integer.class, TimeSlot.class
@@ -33,24 +33,14 @@ public class TimeSlot extends Model{
     public Date getEndTime(){
         return endTime;
     }
-    public Course getCourse(){
-        return course;
-    }
-    public Integer getCapacity(){
-        return capacity;
-    }
 
-    public void setCapacity(Integer capacity){
-        this.capacity = capacity;
-    }
-    public void setSlot(Course course, Date startTime, Date endTime) throws CMException{
+    public void setTime(Date startTime, Date endTime) throws CMException{
         if(endTime.before(startTime)){
             throw new CMException("Time setting error.");
         }
-        if(TimeSlot.find.where().eq("startTime", startTime).eq("course",course).findRowCount()!=0){
-            throw new CMException("This timeslot has been added to course " + course.getCourseCode() + " or has overlapping.");
+        if(TimeSlot.find.where().eq("startTime", startTime).eq("endTime",endTime).findRowCount()!=0){
+            throw new CMException("This time slot has already exist.");
         }
-        this.course = course;
         this.startTime = startTime;
         this.endTime = endTime;
     }

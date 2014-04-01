@@ -1,4 +1,4 @@
-@(studentList: List[cw_models.Student], courseList: List[cw_models.Course])
+@(studentList: List[cw_models.Student], courseList: List[cw_models.Course], slotList: List[cw_models.TimeSlot])
 @main("Add registration, question and timeslot data"){
         <style>
             .record{
@@ -28,8 +28,8 @@
                 <div class="record">
                     <h3>@student.getMatricNo</h3>
                     <ul id="student@student.getStudentId">
-                        @student.getRegistrationList.map{registration =>
-                            <li>@registration.getCourse.getCourseCode</li>
+                        @student.getCourseList.map{course =>
+                            <li>@course.getCourseCode</li>
                         }
                     </ul>
 
@@ -65,25 +65,14 @@
             <h2>Add timeslots for courses</h2>
             <form id="slotForm">
                 Course: <select name="courseId">
-                @courseList.map{ course =>
-                <option value="@course.getCourseId">@course.getCourseCode : @course.getTitle</option>
-                }
+                    @courseList.map{ course =>
+                        <option value="@course.getCourseId">@course.getCourseCode : @course.getTitle</option>
+                    }
             </select><br/>
-                Date: <select name="date">
-                    @for(i <- 1 to 31){
-                        <option value="@i/05/2014">@i/05/2014</option>
+                TimeSlot: <select name="slotId">
+                    @slotList.map{ slot =>t
+                        <option value="@slot.getTimeSlotId">@slot.getStartTime.format("dd/MM/yyyy") @slot.getStartTime.format("kk:mm")-@slot.getEndTime.format("kk:mm")</option>
                     }
-                </select>
-                Start: <select name="start">
-                    @for(i <- 8 to 20){
-                        <option value="@i:00:00">@i:00</option>
-                        <option value="@i:30:00">@i:30</option>
-                    }
-                </select>
-                Period: <select name="period">
-                    <option value="2">2 hour</option>
-                    <option value="2.5">2.5 hours</option>
-                    <option value="3">3 hours</option>
                 </select>
                 Capacity: <input type="text" name="capacity"/>
                 <input type="submit" value="Add"/>
@@ -93,8 +82,8 @@
                 <div>
                     <h3>@course.getCourseCode : @course.getTitle</h3>
                     <ul id="slot@course.getCourseId">
-                        @course.getAvailableSlots.map{ slot =>
-                            <li>@slot.getStartTime.format("dd/MM/yyyy") @slot.getStartTime.format("kk:mm")-@slot.getEndTime.format("kk:mm") capacity:@slot.getCapacity</li>
+                        @course.getAllocationList.map{ allocation =>
+                            <li>@allocation.getTimeSlot.getStartTime.format("dd/MM/yyyy") @allocation.getTimeSlot.getStartTime.format("kk:mm")-@allocation.getTimeSlot.getEndTime.format("kk:mm") capacity:@allocation.getCapacity</li>
                         }
                     </ul>
                 </div>

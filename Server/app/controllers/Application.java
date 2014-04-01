@@ -19,6 +19,7 @@ import views.html.student.studentView;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.DataFormatException;
 
 public class Application extends Controller {
 
@@ -40,28 +41,41 @@ public class Application extends Controller {
 
         }
 
-        Integer CMUser = Integer.parseInt(CMUserString);
-        Integer domain = Integer.parseInt(domainString);
-        //check the user type and go to the respective page
-        if(domain==0){
-            Student student = Student.byId(CMUser);
-            List<Exam> examList = student.getExamList();
-            //the examMap is used in the html to get the exam time for a course.
-            Map<Integer,Exam> examMap = new HashMap<Integer, Exam>();
-            for(Exam exam: examList){
-                Integer courseId = exam.getCourse().getCourseId();
-                examMap.put(courseId,exam);
+        try{
+            Integer CMUser = Integer.parseInt(CMUserString);
+            Integer domain = Integer.parseInt(domainString);
+            //check the user type and go to the respective page
+            if(domain==0){
+                Student student = Student.byId(CMUser);
+                if(student==null){
+                    throw new CMException("Student does not exist.");
+                }
+
+                List<Exam> examList = student.getExamList();
+                //the examMap is used in the html to get the exam time for a course.
+                Map<Integer,Exam> examMap = new HashMap<Integer, Exam>();
+                for(Exam exam: examList){
+                    Integer courseId = exam.getCourse().getCourseId();
+                    examMap.put(courseId,exam);
+                }
+                return ok(studentView.render(student, examMap));
             }
-            return ok(studentView.render(student, examMap));
+            if(domain==1){
+                Invigilator invigilator = Invigilator.byId(CMUser);
+                if(invigilator==null){
+                    throw new CMException("Invigilator does not exist.");
+                }
+                return ok(invigilatorView.render(invigilator));
+            }
+            if(domain==2){
+                return ok(adminView.render());
+            }
+            return unauthorized(login.render());
+        }catch (CMException e){
+            return ok(e.getMessage());
+        }catch (NumberFormatException e){
+            return ok("invalid request!");
         }
-        if(domain==1){
-            Invigilator invigilator = Invigilator.byId(CMUser);
-            return ok(invigilatorView.render(invigilator));
-        }
-        if(domain==2){
-            return ok(adminView.render());
-        }
-        return unauthorized(login.render());
     }
 
     // Description:
@@ -121,6 +135,8 @@ public class Application extends Controller {
         }catch(CMException e){
             //the error message is later used in javascript to display in html
             result.put("error",e.getMessage());
+        }catch (NumberFormatException e){
+            result.put("error","invalid request!");
         }
 
         // ok is a static method of Results that returns a ok-result object that implements Result (note singular/plural/capital of result)

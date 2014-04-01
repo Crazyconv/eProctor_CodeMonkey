@@ -1,10 +1,7 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import cw_models.Course;
-import cw_models.Question;
-import cw_models.Student;
-import cw_models.TimeSlot;
+import cw_models.*;
 import models.Exam;
 import models.Report;
 import play.data.DynamicForm;
@@ -38,16 +35,23 @@ public class StudentController extends Controller {
             if(course==null || student==null){
                 throw new CMException("Necessary data missing.");
             }
+
             //the original exam slot that the student chose, may be null
+            TimeSlot slot = null;
             Exam exam = Exam.byStudentCourse(student, course);
-            List<TimeSlot> availableSlots = course.getAvailableSlots();
-            //slotMap is used to know the number of students selecting this slot
-            //which will be displayed
-            Map<TimeSlot,Integer> slotMap = new HashMap<TimeSlot,Integer>();
-            for(TimeSlot slot: availableSlots){
-                slotMap.put(slot,Exam.occupied(course,slot));
+            if(exam!=null){
+                slot = exam.getTimeSlot();
             }
-            return ok(showSlot.render(courseId, slotMap, exam));
+
+            List<Allocation> allocationList = course.getAllocationList();
+
+            //allocationMap is used to know the number of students selecting this slot
+            //which will be displayed
+            Map<Allocation,Integer> allocationMap = new HashMap<Allocation,Integer>();
+            for(Allocation allocation: allocationList){
+                allocationMap.put(allocation,Exam.occupied(allocation));
+            }
+            return ok(showSlot.render(courseId, allocationMap, slot));
         }catch(CMException e){
             return ok(e.getMessage());
         }catch(NumberFormatException e){
@@ -65,17 +69,18 @@ public class StudentController extends Controller {
             if(slotForm.hasErrors()){
                 throw new CMException("Form submit error.");
             }
+
             Integer courseId = Integer.parseInt(slotForm.get("courseId"));
-            Integer slotId = Integer.parseInt(slotForm.get("slotId"));
-            Student student = Student.byId(studentId);
+            Integer allocationId = Integer.parseInt(slotForm.get("allocationId"));
             Course course = Course.byId(courseId);
-            TimeSlot slot = TimeSlot.byId(slotId);
-            if(student==null || course==null || slot==null){
+            Student student = Student.byId(studentId);
+            Allocation allocation = Allocation.byId(allocationId);
+            if(student==null || course==null || allocation==null){
                 throw new CMException("Necessary data missing.");
             }
 
-            Integer capacity = slot.getCapacity();
-            Integer occupied = Exam.occupied(course,slot);
+            Integer capacity = allocation.getCapacity();
+            Integer occupied = Exam.occupied(allocation);
 
             Exam exam = Exam.byStudentCourse(student, course);
             //if exam is null, namely student has not selected a slot for this course
@@ -86,25 +91,24 @@ public class StudentController extends Controller {
                 }
                 exam = new Exam();
                 exam.setStudent(student);
-                exam.setCourse(course);
-                exam.setSlot(slot);
+                exam.setAllocation(allocation);
                 exam.save();
             }else{
                 //if exam is not full, just update the exam record but not create a new one
                 //but the updating only occurs when the slot selected is different from the original one
-                if(!exam.getStartTime().equals(slot.getStartTime())){
+                if(!exam.getAllocation().equals(allocation)){
                     if(capacity<=occupied){
                         throw new CMException("The slot is full. Please select another one.");
                     }
-                    exam.setSlot(slot);
+                    exam.setAllocation(allocation);
                     exam.save();
                 }
             }
             result.put("error",0);
             //info used in javascript to update the html
             result.put("examId",exam.getExamId());
-            result.put("start",slot.getStartTime().getTime());
-            result.put("end",slot.getEndTime().getTime());
+            result.put("start",allocation.getTimeSlot().getStartTime().getTime());
+            result.put("end",allocation.getTimeSlot().getEndTime().getTime());
         }catch (CMException e){
             result.put("error",e.getMessage());
         }catch(NumberFormatException e){
@@ -162,7 +166,7 @@ public class StudentController extends Controller {
             }
 
 //            Date now = new Date();
-//            Date startTime = exam.getStartTime();
+//            Date startTime = exam.getTimeSlot().getStartTime();
 //            if(startTime.before(now)){
 //                throw new CMException("Sorry,the exam has already started");
 //            }

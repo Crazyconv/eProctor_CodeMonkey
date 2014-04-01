@@ -1,4 +1,4 @@
-@(studentList: List[cw_models.Student], courseList: List[cw_models.Course])
+@(studentList: List[cw_models.Student], courseList: List[cw_models.Course], slotList: List[cw_models.TimeSlot] )
 @main("Add student and course data") {
         <div id="student">
             <h1>Existing students</h1>
@@ -28,10 +28,39 @@
                 course code: <input type="text" name="courseCode"/>
                 title: <input type="text" name="title"/>
                 number of questions per exam paper: <input type="text" name="questionNo"/><br/>
-                <textarea name="instruction" ></textarea>
+                exam instruction: <textarea name="instruction" ></textarea>
                 <input type="submit" value="add"/>
             </form>
             <span id="courseerror" style="color:red;display:none;"></span>
+        </div>
+        <div id="timeslot">
+            <h1>Existing time slots</h1>
+            <ul id="existingslots">
+                @slotList.map{ slot=>
+                <li>@slot.getStartTime.format("dd/MM/yyyy") @slot.getStartTime.format("kk:mm")-@slot.getEndTime.format("kk:mm")</li>
+                }
+            </ul>
+            <h2>Add time slot data</h2>
+            <form id="slotForm">
+                Date: <select name="date">
+                    @for(i <- 1 to 31){
+                    <option value="@i/05/2014">@i/05/2014</option>
+                    }
+                </select>
+                Start: <select name="start">
+                    @for(i <- 8 to 20){
+                    <option value="@i:00:00">@i:00</option>
+                    <option value="@i:30:00">@i:30</option>
+                    }
+                </select>
+                Period: <select name="period">
+                    <option value="2">2 hour</option>
+                    <option value="2.5">2.5 hours</option>
+                    <option value="3">3 hours</option>
+                </select>
+                <input type="submit" value="add"/>
+            </form>
+            <span id="sloterror" style="color:red;display:none;"></span>
         </div>
         <script src="@routes.Assets.at("javascripts/data/stucourse.js")" type="text/javascript"></script>
 }

@@ -1,5 +1,7 @@
 import com.googlecode.javacv.FrameGrabber;
 import com.googlecode.javacv.cpp.opencv_core;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,8 +31,12 @@ public class Grabber{
             opencv_core.IplImage img = grabber.grab();
             if(img != null){
                 BufferedImage buf = img.getBufferedImage();
+                BufferedImage resize = new BufferedImage(buf.getWidth()/2, buf.getHeight()/2, buf.getType());
+                Graphics2D g = resize.createGraphics();
+                AffineTransform at = AffineTransform.getScaleInstance(0.5,0.5);
+                g.drawRenderedImage(buf, at);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(buf, "jpg", baos);
+                ImageIO.write(resize, "jpg", baos);
                 baos.flush();
                 byte[] imageBytes = baos.toByteArray();
                 baos.close();

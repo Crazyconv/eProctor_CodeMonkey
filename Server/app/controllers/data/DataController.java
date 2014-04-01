@@ -23,13 +23,15 @@ public class DataController extends Controller {
     public static Result addData1(){
         List<Student> studentList = Student.find.all();
         List<Course> courseList = Course.find.all();
-        return ok(stucourse.render(studentList,courseList));
+        List<TimeSlot> slotList = TimeSlot.find.all();
+        return ok(stucourse.render(studentList,courseList,slotList));
     }
 
     public static Result addData2(){
-        List<Student> studentList = Student.find.fetch("registrationList").fetch("registrationList.course").findList();
-        List<Course> courseList = Course.find.fetch("questionSet").fetch("availableSlots").findList();
-        return ok(regquestime.render(studentList,courseList));
+        List<Student> studentList = Student.find.fetch("courseList").findList();
+        List<Course> courseList = Course.find.fetch("questionSet").fetch("allocationList").fetch("allocationList.timeSlot").findList();
+        List<TimeSlot> slotList = TimeSlot.find.all();
+        return ok(regquestime.render(studentList,courseList,slotList));
     }
 
     public static Result addStudent(){
@@ -114,6 +116,36 @@ public class DataController extends Controller {
         return ok(result);
     }
 
+    public static Result addSlot(){
+        ObjectNode result = Json.newObject();
+        DynamicForm slotForm = Form.form().bindFromRequest();
+        try{
+            if(slotForm.hasErrors()){
+                throw new CMException("Form submit error.");
+            }
+            String date = slotForm.get("date");
+            String start = slotForm.get("start");
+            double period = new Double(slotForm.get("period"));
+            SimpleDateFormat format = new SimpleDateFormat("d/MM/yyyy k:mm:ss");
+            String dateString = date + " " + start;
+            Date startTime = format.parse(dateString);
+            long addition = (long) period*60*60*1000;
+            Date endTime = new Date(startTime.getTime() + addition);
+
+            TimeSlot slot = new TimeSlot();
+            slot.setTime(startTime, endTime);
+            slot.save("cw");
+            result.put("error",0);
+            result.put("start",startTime.getTime());
+            result.put("end",endTime.getTime());
+        }catch (CMException e){
+            result.put("error", e.getMessage());
+        }catch (Exception e){
+            result.put("error", e.getMessage());
+        }
+        return ok(result);
+    }
+
     public static Result addRegistration(){
         ObjectNode result = Json.newObject();
         DynamicForm registrationForm = Form.form().bindFromRequest();
@@ -133,9 +165,8 @@ public class DataController extends Controller {
                 throw new CMException("Course does not exist!");
             }
 
-            Registration registration = new Registration();
-            registration.register(student, course);
-            registration.save("cw");
+            student.registerCourse(course);
+            student.save("cw");
 
             result.put("error",0);
             result.put("studentId",studentId);
@@ -174,7 +205,7 @@ public class DataController extends Controller {
         return ok(result);
     }
 
-    public static Result addSlot(){
+    public static Result allocateSlot(){
         ObjectNode result = Json.newObject();
         DynamicForm slotForm = Form.form().bindFromRequest();
         try{
@@ -183,33 +214,26 @@ public class DataController extends Controller {
             }
 
             Integer courseId = Integer.parseInt(slotForm.get("courseId"));
+            Integer slotId = Integer.parseInt(slotForm.get("slotId"));
             Course course = Course.byId(courseId);
-            if(course==null){
+            TimeSlot timeSlot = TimeSlot.byId(slotId);
+            if(course==null || timeSlot==null){
                 throw new CMException("Course does not exist.");
             }
+
             Integer capacity = Integer.parseInt(slotForm.get("capacity"));
             if(capacity==0){
                 throw new CMException("Please enter a valid capacity");
             }
 
-            String date = slotForm.get("date");
-            String start = slotForm.get("start");
-            double period = Double.valueOf(slotForm.get("period"));
-            SimpleDateFormat format = new SimpleDateFormat("d/MM/yyyy k:mm:ss");
-            String dateString = date + " " + start;
-            Date startTime = format.parse(dateString);
-            long addition = (long) period*60*60*1000;
-            Date endTime = new Date(startTime.getTime() + addition);
-
-            TimeSlot slot = new TimeSlot();
-            slot.setSlot(course,startTime,endTime);
-            slot.setCapacity(capacity);
-            slot.save("cw");
+            Allocation allocation = new Allocation();
+            allocation.allocate(course, timeSlot);
+            allocation.setCapacity(capacity);
+            allocation.save("cw");
             result.put("error",0);
             result.put("courseId",courseId);
-            result.put("date",new SimpleDateFormat("dd/MM/yyyy").format(startTime));
-            result.put("start",new SimpleDateFormat("kk:mm").format(startTime));
-            result.put("end",new SimpleDateFormat("kk:mm").format(endTime));
+            result.put("start",timeSlot.getStartTime().getTime());
+            result.put("end",timeSlot.getEndTime().getTime());
             result.put("capacity",capacity);
         }catch (CMException e){
             result.put("error", e.getMessage());

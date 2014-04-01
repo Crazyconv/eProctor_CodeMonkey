@@ -200,7 +200,6 @@ public class ExamController extends Controller{
 
             Integer examId = Integer.parseInt(pollForm.get("examId"));
             Integer lastChatId = Integer.parseInt(pollForm.get("lastChatId"));
-            System.out.println(examId+"----"+lastChatId);
             Exam exam = Exam.byId(examId);
             if(exam==null){
                 throw new CMException("Exam does not exist");
