@@ -18,7 +18,7 @@ public class Course extends Model{
     @Lob
     private String instruction;
     @ManyToMany(mappedBy = "courseList")
-    private List<Student> students = new ArrayList<Student>();
+    private List<Student> studentList = new ArrayList<Student>();
     @OneToMany(mappedBy="course")
     private List<Question> questionSet = new ArrayList<Question>();
     @OneToMany(mappedBy = "course")
