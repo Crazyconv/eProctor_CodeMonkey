@@ -1,4 +1,17 @@
 $(document).ready(function(){
+    Date.prototype.Format = function (fmt) {
+        var o = {
+            "M+": this.getMonth() + 1,
+            "d+": this.getDate(),
+            "h+": this.getHours(),
+            "m+": this.getMinutes()
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+
     $("#regForm").submit(function(){
         var options = {
             url:"/addregistration",
@@ -56,7 +69,7 @@ $(document).ready(function(){
 
     $("#slotForm").submit(function(){
         var options = {
-            url:"/addslot",
+            url:"/allocateslot",
             type:"POST",
             dataType:"json",
             beforeSubmit: function(formData, jqForm, option){
@@ -73,7 +86,10 @@ $(document).ready(function(){
                     $("#sloterror").text(json.error).slideDown();
                 }else{
                     $("#sloterror").hide()
-                    $('<li>' + json.date + ' ' + json.start + '-' + json.end + ' capacity:' + json.capacity +'</li>').appendTo("#slot" + json.courseId);
+                    var date = new Date(json.start).Format("dd/MM/yyyy");
+                    var start = new Date(json.start).Format("hh:mm");
+                    var end = new Date(json.end).Format("hh:mm");
+                    $('<li>' + date + ' ' + start + '-' + end + ' capacity:' + json.capacity +'</li>').appendTo("#slot" + json.courseId);
                     $("#slotForm input[type='text']").clearFields();
                 }
             },

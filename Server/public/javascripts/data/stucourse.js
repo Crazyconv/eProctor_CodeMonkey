@@ -1,4 +1,17 @@
 $(document).ready(function(){
+    Date.prototype.Format = function (fmt) {
+        var o = {
+            "M+": this.getMonth() + 1,
+            "d+": this.getDate(),
+            "h+": this.getHours(),
+            "m+": this.getMinutes()
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+
     $("#studentForm").submit(function(){
         var options = {
             url:"/addstudent",
@@ -54,7 +67,7 @@ $(document).ready(function(){
             dataType:"json",
             beforeSubmit: function(formData, jqForm, option){
                 var form = jqForm[0];
-                if(form.questionNo.value=="" || form.title.value==""){
+                if(form.questionNo.value=="" || form.title.value=="" || form.instruction.value==""){
                     $("#courseerror").text("Please fill the form.").slideDown();
                     return false;
                 }
@@ -78,6 +91,30 @@ $(document).ready(function(){
                 $("#courseerror").text("Sorry... the form submission failed.").slideDown();
             },
             clearForm: true
+        };
+        $(this).ajaxSubmit(options);
+        return false;
+    });
+
+    $("#slotForm").submit(function(){
+        var options = {
+            url:"/addslot",
+            type:"POST",
+            dataType:"json",
+            success: function(json){
+                if(json.error!=0){
+                    $("#sloterror").text(json.error).slideDown();
+                }else{
+                    var date = new Date(json.start).Format("dd/MM/yyyy");
+                    var start = new Date(json.start).Format("hh:mm");
+                    var end = new Date(json.end).Format("hh:mm");
+                    $('<li/>').text(date + ' ' + start + '-' + end).appendTo("#existingslots");
+                    $("#sloterror").hide();
+                }
+            },
+            error: function(xhr,status){
+                $("#sloterror").text("Sorry... the form submission failed.").slideDown();
+            }
         };
         $(this).ajaxSubmit(options);
         return false;

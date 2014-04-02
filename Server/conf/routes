@@ -40,9 +40,11 @@ GET    /adddata1                         controllers.data.DataController.addData
 GET    /adddata2                         controllers.data.DataController.addData2()
 POST   /addstudent                       controllers.data.DataController.addStudent()
 POST   /addcourse                        controllers.data.DataController.addCourse()
+POST   /addslot                          controllers.data.DataController.addSlot()
 POST   /addregistration                  controllers.data.DataController.addRegistration()
 POST   /addquestion                      controllers.data.DataController.addQuestion()
-POST   /addslot                          controllers.data.DataController.addSlot()
+POST   /allocateslot                     controllers.data.DataController.allocateSlot()
+
 
 # Test Client
 GET    /testclient                       controllers.data.DataController.testClient()

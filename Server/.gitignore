@@ -27,3 +27,5 @@ Thumbs.db
 /public/videos/*
 /Todo.txt
 /conf/evolutions/*
+/conf/evolutions/cw/*
+/conf/evolutions/default/*

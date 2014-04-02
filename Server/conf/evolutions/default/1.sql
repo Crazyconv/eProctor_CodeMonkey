@@ -14,9 +14,7 @@ create table chat (
 
 create table exam (
   exam_id                   integer auto_increment not null,
-  start_time                datetime,
-  end_time                  datetime,
-  course_id                 integer,
+  allocation_id             integer,
   student_id                integer,
   invi_id                   integer,
   report_id                 integer,

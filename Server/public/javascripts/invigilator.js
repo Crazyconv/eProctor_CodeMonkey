@@ -50,7 +50,7 @@ $(document).ready(function(){
                                 updateMessageImage(key,value.chatList,value.imageId);
                             }
                         });
-                        setTimeout(pollMessageImage(examIds,lastChatId,lastImageId),500);
+                        setTimeout(pollMessageImage(examIds,lastChatId,lastImageId),1000);
                     }
                 },
                 error:function(xhr,status){
@@ -66,7 +66,7 @@ $(document).ready(function(){
         examIdsArray[i] = examIdsInfo[i].id;
     }
     var examIds = examIdsArray.join(",");
-    setTimeout(pollMessageImage(examIds,0,0),500);
+    setTimeout(pollMessageImage(examIds,0,0),1000);
 
 
     //verify student identity
