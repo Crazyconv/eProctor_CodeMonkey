@@ -1,0 +1,23 @@
+@()
+@main("Edit Invigilator"){
+    <script>
+        function validate() {
+            var content = document.getElementById("Email").value;
+
+            if (content == null || content == "") {
+
+                alert("You need to type in invigilator's email");
+                return false;
+            }
+            return true;
+        }
+    </script>
+
+    <form action="resetpassword" method="post" onsubmit="return validate()">
+        Email: <input id="Email" type="text" name="email"/><br/>
+        Password: <input type="password" name="password"/><br/>
+        <input type="submit" value="reset"/>
+    </form>
+
+    <a href='login'><input value="Back" type=button></a>
+}

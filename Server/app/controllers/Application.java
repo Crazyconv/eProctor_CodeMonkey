@@ -19,7 +19,6 @@ import views.html.student.studentView;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.DataFormatException;
 
 public class Application extends Controller {
 
@@ -93,6 +92,7 @@ public class Application extends Controller {
             if(loginForm.hasErrors()){
                 throw new CMException("Request failed.");
             }
+
             String username = loginForm.get("username");
             String password = loginForm.get("password");
             if(username=="" || password==""){

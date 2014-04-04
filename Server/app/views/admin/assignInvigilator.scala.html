@@ -1,0 +1,52 @@
+@()
+
+@main("Assign Invigilator"){
+
+<link href="@routes.Assets.at("stylesheets/query-ui-1.9.2.custom.min.css")" rel="stylesheet" type="text/css" />
+
+<script src="@routes.Assets.at("javascript/jquery-1.8.3.js")" type="text/javascript"></script>
+
+<script src="@routes.Assets.at("javascript/jquery-ui-1.9.2.custom.min.js")" type="text/javascript"></script>
+
+<script>
+
+$(function(){
+
+  $.datepicker.setDefaults(
+
+    $.extend($.datepicker.regional[''])
+
+  );
+
+  $('#datepicker').datepicker();
+
+});
+
+</script>
+
+<body>
+
+<br/>
+<h3>Assign Invigilator</h3>
+<br/>
+ <p>Invigilator:
+ 	
+<form action="">
+<select name="Invigilators">
+<option value="Mike">Volvo</option>
+<option value="Sam">Saab</option>
+<option value="Dean">Fiat</option>
+<option value="Brew">Audi</option>
+</select>
+<br/>
+<br/>
+<p>Date: <input type="text" id="datepicker" name="date" style="float: center"></p>
+<input type="button" value="Assign" style="float: right">
+</form>
+
+</p>
+
+ 
+ 
+</body>
+}
