@@ -371,6 +371,8 @@ public class ExamController extends Controller{
         return ok(result);
     }
 
+
+    
     public static Result getPhoto(Integer studentId){
         Student student = Student.byId(studentId);
         try{
