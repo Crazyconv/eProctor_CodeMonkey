@@ -73,7 +73,7 @@ public class CodeMonkey extends javafx.application.Application {
                     }
                 }
             );
-            webEngine.load("http://172.22.117.199:9000/");
+            webEngine.load("http://localhost:9000/");
             getChildren().add(browser);
         }
         @Override 

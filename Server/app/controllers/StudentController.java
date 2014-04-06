@@ -29,6 +29,7 @@ public class StudentController extends Controller {
             if(slotForm.hasErrors()){
                 throw new CMException("Form submit error.");
             }
+
             Integer courseId = Integer.parseInt(slotForm.get("courseId"));
             Course course = Course.byId(courseId);
             Student student = Student.byId(studentId);

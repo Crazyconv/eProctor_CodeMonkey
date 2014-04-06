@@ -40,8 +40,32 @@ public class Invigilator extends Model{
         return examList;
     }
 
+    public void setAccount(String account) throws CMException{
+        if(!account.matches("^\\s*\\w+(?:\\.?[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$")){
+            throw new CMException("Invalid email format.");
+        }
+        if(Invigilator.find.where().eq("account",account).findRowCount()!=0){
+            throw new CMException("Account " + account + " already exist.");
+        }
+        this.account = account.toLowerCase();
+    }
+
+    public void setPassword(String password) throws CMException{
+        if(password.length()<5 || password.length()>16){
+            throw new CMException("Password should contain 6-15 characters.");
+        }
+        this.password = password;
+    }
+
+    public void setName(String name) throws CMException{
+        if(!name.matches("^[\\w\\s]{4,20}$")){
+            throw new CMException(name);
+        }
+        this.name = name.toLowerCase();
+    }
+
     public static boolean login(String account, String password){
-        if(Invigilator.find.where().eq("account",account).eq("password",password).findRowCount()==0){
+        if(Invigilator.find.where().eq("account",account.toLowerCase()).eq("password",password).findRowCount()==0){
             return false;
         }
         return true;
