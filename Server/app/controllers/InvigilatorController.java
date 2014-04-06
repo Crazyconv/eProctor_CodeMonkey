@@ -20,7 +20,7 @@ import java.util.*;
 
 public class InvigilatorController extends Controller {
     /**
-     * It signs in the invigilator for exams specified in the form received and bring him to a new page.
+     * Signs in the current invigilator for exams specified in the form received and bring him to a new page.
      *
      * Information expected from the form received.
      *<ul>
@@ -55,7 +55,7 @@ public class InvigilatorController extends Controller {
     }
 
     /**
-     * It fetches a batch of images and chats that haven't been read by the current invigilator.
+     * Gets the latest unseen image and all unread images for all {@link Exam exam record} currently being invigilated.
      *
      * <p>Executing this method once will give: 
      * <ul>

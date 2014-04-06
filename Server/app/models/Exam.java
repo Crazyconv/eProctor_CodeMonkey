@@ -9,13 +9,51 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * An exam record.
+ * 
+ * <p>An exam record is not confined to a "record" only. It in fact refers to a specific activity that a
+ * particular student sits in for a particular exam session.</p>
+ * 
+ * <p>Thus it makes sense to design the database in a way that an exam session contains multiple exam records,
+ * as there are multiple test-taking activities happening concurrently in that exam session.<br/>
+ * And it also makes sense to say "studentA checks in for exam_recordX", which means studentA starts
+ * that particular test-taking activity.</br>
+ * However, one can also say "studentA checks in for exam session", it's just this way of putting it isn't
+ * as specific as the fommer one.</br></p>
+ *
+ * <p>Similarly, it is logical to say "InvigilatorA is invigilating exam recordX", which simply means InvigilatorA
+ * is invigilating an specific avtivity. And in fact this way of puting it is more precise than saying "InvigilatorA
+ * is invilating studentB", which miss out the information of exam session (simply put, "on which subject and at what
+ * time is this InviglatorA invigilating studentB?").
+ * </p>
+ * 
+ * 
+ */
 @Entity
 public class Exam extends Model {
+
+    /**
+     * ID of the exam, used to uniquely identify an exam record.
+     */
     @Id
     @Column(name = "exam_id")
     private Integer examId;
+
+    /**
+     * ID of the {@link Allocation exam session} this exam record refers to.
+     */
     private Integer allocationId;
+
+    /**
+     * ID of the {@link Student} this exam record refers to.
+     */
     private Integer studentId;
+
+    /**
+     *
+     * 
+     */
     @ManyToOne
     @JoinColumn(name="invi_id")
     private Invigilator invigilator;

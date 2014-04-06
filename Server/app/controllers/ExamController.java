@@ -34,12 +34,19 @@ import java.util.List;
 public class ExamController extends Controller{
 
     /**
-     * Checks whether an exam{} has been checked in.
+     * Checks whether the current student has checked in for an {@link Exam exam record}.
      *
-     * Caller of this method is suppose to pass in the {@link Exam#examId} of the query.
-     * The approach is very similar to that of enter() in Application
-     * @see Application#enter()
-     * @return A JsonNode that carring an error field, whose semantic is similar to that of enter() in Application
+     * <p>Infomration expected from the form received:
+     * <ul>
+     *     <li>examId: id of the exam record, whose status is being queried on.</li>
+     * </ul></p>
+     * 
+     * @return A JsonNode wrapped in an ok HTTP response which has 2 fields:
+     * <ul>
+     *     <li>error: its semantic is similar to that of enter() in Application</li>
+     * </ul>
+     *
+     * @see Application#enter()     
      */
     public static Result checkExamStatus(){
         DynamicForm statusForm = Form.form().bindFromRequest();
@@ -50,7 +57,6 @@ public class ExamController extends Controller{
             if(statusForm.hasErrors()){
                 throw new CMException("Form submit error.");
             }
-
             Integer examId = Integer.parseInt(statusForm.get("examId"));
             Exam exam = Exam.byId(examId);
             if(exam==null){
@@ -74,7 +80,7 @@ public class ExamController extends Controller{
     }
 
     /**
-     * Validates and store the anwser submitted as an {@link Answer object} in database.
+     * Validates and stores the anwser submitted as an {@link Answer object} in database.
      *
      * Expects 3 pieces of information from the caller
      * <ul>
@@ -87,7 +93,7 @@ public class ExamController extends Controller{
      * found alredy existent in the database, old answer will be overwritten
      * 
      * @see Application#enter()
-     * @return A JsonNode wrapped in a ok HTTP response carring an error field, whose semantic is similar to that of enter() in Application
+     * @return A JsonNode wrapped in an ok HTTP response carring an error field to indicate whether the answer is sucessfully stored in server, whose semantic is similar to that of enter() in Application.
      */
     public static Result saveAnswer(){
         DynamicForm questionForm = Form.form().bindFromRequest();
@@ -157,7 +163,7 @@ public class ExamController extends Controller{
      * creates in database an object of {@link Image Image model}(which is basically a pointer) to that file, and link this pointer
      * with the {@link Report Report model} of the student sending out this image.
      *
-     * @return A JsonNode wrapped in a ok HTTP response carring an error field, whose semantic is similar to that of enter() in Application.
+     * @return A JsonNode wrapped in a ok HTTP response carring an error field to indicate whether the image is succesfully stored in server, whose semantic is similar to that of enter() in Application.
      *
      * @see  Student
      * @see  Exam
@@ -252,7 +258,7 @@ public class ExamController extends Controller{
     }
 
     /**
-     * It gets from database all unread messages of an {@link Exam exam record}.
+     * Gets from database all unread messages of an {@link Exam exam record}.
      *
      * Information expected from the form received:
      * <ul>
@@ -317,7 +323,7 @@ public class ExamController extends Controller{
     }
 
     /**
-     * It puts into database a message sent by student.
+     * Puts into database a message sent by student.
      * 
      * <p>Information expected from the form received:
      * <ul>

@@ -18,19 +18,47 @@ import views.html.student.takeExam;
 
 import java.util.*;
 
+/**
+ * Contains all methods needed for student-side application before checking in for an exam.
+ */
 public class StudentController extends Controller {
 
+    /**
+     * Gets the exam session the current student has registered for a course and the availability of all other sessions. 
+     * 
+     * <p>Information expected from the form received:
+     * <ul>
+     *     <li>courseId: id of the course whose exam sessions are queried on</li>
+     * </ul>
+     * Information expected from current session(done by a utility method provided by Authentication class):
+     * <ul>
+     *     <li>studenId: id of the student who is querying on the sexam session</li>
+     * </ul></p>
+     * 
+     * @return an HTML block(not a full page) wrapped in an ok reponse, which is rendered with 3 parameters:
+     * <ul>
+     *     <li>courseId: id of the course whose exam sessions have been queried on</li>
+     *     <li>allocationMap: a mapping from {@link Allocation exam session} to its availability. which shows the availability of each exam session of a course</li>
+     *     <li>slot: the time slot of the exam session that the current student is registered for; null if him/she haven't done so </li>
+     * </ul>
+     *
+     * @see Authentication#authorize(Integer)
+     * @see Course
+     */
     public static Result showSlot(){
         DynamicForm slotForm = Form.form().bindFromRequest();
 
         try{
+            // get studentId from current session
             Integer studentId = Authentication.authorize(Global.STUDENT);
 
             if(slotForm.hasErrors()){
                 throw new CMException("Form submit error.");
             }
-
+            // get courseId from form received
             Integer courseId = Integer.parseInt(slotForm.get("courseId"));
+
+            // locate 
             Course course = Course.byId(courseId);
             Student student = Student.byId(studentId);
             if(course==null || student==null){
@@ -44,14 +72,15 @@ public class StudentController extends Controller {
                 slot = exam.getTimeSlot();
             }
 
+            // get all allocations of a course, which the current student is registered for
             List<Allocation> allocationList = course.getAllocationList();
 
-            //allocationMap is used to know the number of students selecting this slot
-            //which will be displayed
+            // for every allocation, get its availability and finally produce a map consisting of allocation-availability pairs
             Map<Allocation,Integer> allocationMap = new HashMap<Allocation,Integer>();
             for(Allocation allocation: allocationList){
                 allocationMap.put(allocation,Exam.occupied(allocation));
             }
+
             return ok(showSlot.render(courseId, allocationMap, slot));
         }catch(CMException e){
             return ok(e.getMessage());
@@ -60,11 +89,45 @@ public class StudentController extends Controller {
         }
     }
 
+    /**
+     * Tries to register the current student for a requested exam session.
+     *
+     * There are 3 possible execution paths:
+     * <p><ul>
+     *     <li>If the exam session the current student requestes to book has no more vacancy,
+     *         this methods returns immediately with an error message.</li>
+     *     <li>If the current student hasn't booked an exam session for a course, a new exam
+     *         record will be created and gets linked up with the requested exam session.</li>
+     *     <li>If the current student is found to have booked an exam session for a course,
+     *         the corresponding existing exam record will be changed to link with the requested
+     *         exam session, and 'detach' from the previously-booked session</li>
+     * </ul></p>
+     * 
+     * <p>Information expected from the form received:
+     * <ul>
+     *     <li>courseId: id of the course whose exam sessions are queried on</li>
+     *     <li>allocationId: id of the exam session the current student requestes to register for</li>
+     * </ul>
+     * Information expected from current session, done by a utility method provided by Authentication class:
+     * <ul>
+     *     <li>studenId: id of the student who is requesting to register for an exam session</li>
+     * </ul></p>
+     * 
+     * @return A JsonNode wrapped in an ok HTTP response, which has 4 fields.
+     * <ul>
+     *     <li>examId: id of the exam record that the current student has for the course indicated in the request form</li>
+     *     <li>start: the start time of the exam session the current students requests to register for</li>
+     *     <li>end: the end time of the exam session the current students requests to register for</li>
+     *     <li>error: indicates whether the registration is successful, has similar semantics as enter() in Application</li>
+     * </ul>
+     *
+     * @see Application#enter()
+     */
     public static Result selectSlot(){
         ObjectNode result = Json.newObject();
         DynamicForm slotForm = Form.form().bindFromRequest();
         try{
-            //only student can perform the selectSlot operation, prevent possible unauthorized access
+            // only student can perform the selectSlot operation, prevent possible unauthorized access
             Integer studentId = Authentication.authorize(Global.STUDENT);
 
             if(slotForm.hasErrors()){
@@ -94,9 +157,9 @@ public class StudentController extends Controller {
                 exam.setStudent(student);
                 exam.setAllocation(allocation);
                 exam.save();
+            //if exam is not full, just update the exam record but not create a new one
             }else{
-                //if exam is not full, just update the exam record but not create a new one
-                //but the updating only occurs when the slot selected is different from the original one
+                // updating only occurs when the slot selected is different from the original one
                 if(!exam.getAllocation().equals(allocation)){
                     if(capacity<=occupied){
                         throw new CMException("The slot is full. Please select another one.");
@@ -118,6 +181,24 @@ public class StudentController extends Controller {
         return ok(result);
     }
 
+    /**
+     * It unbooks a registered exam session for the current student.
+     *
+     * <p>Information expected from the form received:
+     * <ul>
+     *     <li>courseId: id of the course whose exam session the current student requests to unbook</li>
+     * </ul>
+     * Information expected from session history(extracted by a utility method provided in Authentication class):
+     * <ul>
+     *     <li>studentId: id of the current student.</li>
+     * </ul></p>
+     * 
+     * @return A JsonNode wrapped in a ok HTTP response carring an error field to indicate 
+     *         whether the session is sucessfully unbooked, whose semantic is similar to 
+     *         that of enter() in Application.
+     *
+     * @see Application#enter()
+     */
     public static Result deleteSlot(){
         ObjectNode result = Json.newObject();
         DynamicForm slotForm = Form.form().bindFromRequest();
@@ -129,6 +210,7 @@ public class StudentController extends Controller {
                 throw new CMException("Form submit error.");
             }
 
+            // locate the exam record with information extracted from the form received and session history
             Integer courseId = Integer.parseInt(slotForm.get("courseId"));
             Student student = Student.byId(studentId);
             Course course = Course.byId(courseId);
@@ -139,7 +221,8 @@ public class StudentController extends Controller {
             if(exam==null){
                 throw new CMException("No such record.");
             }
-            //delete the exam slot
+
+            //delete the exam record
             exam.delete();
             result.put("error",0);
         }catch (CMException e){
@@ -150,6 +233,20 @@ public class StudentController extends Controller {
         return ok(result);
     }
 
+
+    /**
+     * Signs in the current student for an exam record and displays a list of questions.
+     *
+     * <p>Signing in will fail if the exam session hasn't started yet. Signing in a student
+     * is done by setting the flag in the {@link Report} of the {@link Exam exam record}
+     * that the student requests to sign in for.</p>
+     *
+     *  @return a takeExam HTML block(not a full page) wrapped in an ok response and rendered with 2 parameters:
+     *  <ul>
+     *      <li>exam: an {@link Exam} object indicating the exam record during which those retrieved questions should be presented. </li>
+     *      <li>questionList: A list of questions that will be presented to the current student.</li>
+     *  </ul>
+     */
     public static Result takeExam(){
         DynamicForm examForm = Form.form().bindFromRequest();
 
@@ -157,9 +254,10 @@ public class StudentController extends Controller {
             Integer studentId = Authentication.authorize(Global.STUDENT);
 
             if(examForm.hasErrors()){
-                throw new CMException("Form submit error.");
+                throw new CMException("Form submission error.");
             }
 
+            // locate the on-going exam record
             Integer examId = Integer.parseInt(examForm.get("examId"));
             Exam exam = Exam.byId(examId);
             if(exam==null){
@@ -172,6 +270,8 @@ public class StudentController extends Controller {
 //                throw new CMException("Sorry,the exam has already started");
 //            }
 
+            // create an exam report for the current student if haven't done so
+            // sign in the current student for an exam record (by setting the flag in the associated exam report)
             Report report = exam.getReport();
             if(report==null){
                 report = new Report();
@@ -183,6 +283,8 @@ public class StudentController extends Controller {
                 report.setExamStatus(Global.SIGNEDIN);
                 report.save();
             }
+
+            //randomly pick k questions in the question pool of a course (k is defined by the course) 
             Course course = exam.getCourse();
             List<Question> questionSet = course.getQuestionSet();
             List<Question> questionList = new ArrayList<Question>();
