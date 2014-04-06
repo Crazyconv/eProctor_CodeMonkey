@@ -28,7 +28,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * This class contains a set of static methods that will handle all kinds of operations perfermed by a student in an on-going exam.
+ */
 public class ExamController extends Controller{
+
+    /**
+     * Checks whether an exam{} has been checked in.
+     *
+     * Caller of this method is suppose to pass in the {@link Exam#examId} of the query.
+     * The approach is very similar to that of enter() in Application
+     * @see Application#enter()
+     * @return A JsonNode that carring an error field, whose semantic is similar to that of enter() in Application
+     */
     public static Result checkExamStatus(){
         DynamicForm statusForm = Form.form().bindFromRequest();
         ObjectNode result = Json.newObject();
@@ -61,6 +73,22 @@ public class ExamController extends Controller{
         return ok(result);
     }
 
+    /**
+     * Validates and store the anwser submitted as an {@link Answer object} in database.
+     *
+     * Expects 3 pieces of information from the caller
+     * <ul>
+     *     <li>the content of the answer submitted by student</li>
+     *     <li>the {@link Question question} to which this answer corresponds</li>
+     *     <li>the {@link Exam exam record} during which this answer is submitted</li>
+     * </ul>
+     * An answer is uniquely identified by the question and the student, 
+     * which are derived from the information above. If such an answer is
+     * found alredy existent in the database, old answer will be overwritten
+     * 
+     * @see Application#enter()
+     * @return A JsonNode wrapped in a ok HTTP response carring an error field, whose semantic is similar to that of enter() in Application
+     */
     public static Result saveAnswer(){
         DynamicForm questionForm = Form.form().bindFromRequest();
         ObjectNode result = Json.newObject();
@@ -71,10 +99,12 @@ public class ExamController extends Controller{
                 throw new CMException("Form submit error.");
             }
 
+            // retrive info from form received
             String answer = questionForm.get("answer");
             Integer questionId = Integer.parseInt(questionForm.get("questionId"));
             Integer examId = Integer.parseInt(questionForm.get("examId"));
 
+            // use info retrieved to access models
             Exam exam = Exam.byId(examId);
             if(exam==null){
                 throw new CMException("Exam does not exist.");
@@ -84,9 +114,8 @@ public class ExamController extends Controller{
                 throw new CMException("Sorry, you haven't signed in.");
             }
             if(report.getExamStatus()!=Global.VERIFIED){
-                throw new CMException("Sorry, you identification is not verified.");
+                throw new CMException("Sorry, your identification is not verified.");
             }
-
             Question question = Question.byId(questionId);
             Student student = Student.byId(studentId);
             if(student==null){
@@ -96,14 +125,19 @@ public class ExamController extends Controller{
                 throw new CMException("Question does not exist.");
             }
 
+            // use model info to uniquely identify an Solution(aka. answer) object in database, if can not identify, construct a new one
             Solution solution = Solution.byStudentQuestion(student,question);
             if(solution==null){
                 solution = new Solution();
                 solution.setQuestion(question);
                 solution.setStudent(student);
             }
+
+            // store the answer to the located Solution object
             solution.setAnswer(answer);
             solution.save("cw");
+
+
 
 
             result.put("error",0);
@@ -115,17 +149,35 @@ public class ExamController extends Controller{
         return ok(result);
     }
 
+    /**
+     * Processes and stores the image-string from the form received.
+     *
+     * When the server receives an image string POSTed from the web, this controller is activated. It checks whether the POSTer
+     * is a student. If yes, it re-assembles the string into an image and store it on students's local file system, at the same time,
+     * creates in database an object of {@link Image Image model}(which is basically a pointer) to that file, and link this pointer
+     * with the {@link Report Report model} of the student sending out this image.
+     *
+     * @return A JsonNode wrapped in a ok HTTP response carring an error field, whose semantic is similar to that of enter() in Application.
+     *
+     * @see  Student
+     * @see  Exam
+     * @see  Authentication#authorize(Integer)
+     * @see  Application#enter()
+     */
     public static Result storeImage(){
         DynamicForm imageForm = Form.form().bindFromRequest();
         ObjectNode result = Json.newObject();
         try{
             Integer studentId = Authentication.authorize(Global.STUDENT);
 
+            // form error checking
             if(imageForm.hasErrors()){
                 throw new CMException("Form submit error.");
             }
-
+            // extract image as a string from form received
             String imageString = imageForm.get("image");
+
+            // extract exam and course info from form received
             Integer examId = Integer.parseInt(imageForm.get("examId"));
             Exam exam = Exam.byId(examId);
             if(exam==null){
@@ -137,16 +189,23 @@ public class ExamController extends Controller{
                 throw new CMException("Course or student dose not exist.");
             }
 
-            //get the image ready
+            // transform the image string that is extracted and put it into a image buffer
             BufferedImage bufferedImage = ImageDecoder.decodeToImage(imageString);
 
-            //image path
+            // locate model objects by info extracted just now
             String courseCode = course.getCourseCode();
             String matricNo = student.getMatricNo();
+
+            // make a directory to contain image files(for video emulation) of all students, if not created yet
             File videoDir = new File("public/videos");
             if(!videoDir.exists() || !videoDir.isDirectory()){
                 videoDir.mkdir();
             }
+
+            // make a directory to contain all the image files(for video emulation) specific to an exam record
+            // note:
+            //      examRec-specific files are stored in public/videos/course/matric, and
+            //      course + matric can uniquely identify an exam record, since it's on student's computer, simply a course is enought alr?
             String upDirName = "public/videos/"+courseCode;
             String downDirName = upDirName+"/"+matricNo;
             File upDir = new File(upDirName);
@@ -157,7 +216,7 @@ public class ExamController extends Controller{
             if(!downDir.exists() || !downDir.isDirectory()){
                 downDir.mkdir();
             }
-
+            // if there is no report associted with current exam record, create one and link them up 
             Report report = exam.getReport();
             if(report==null){
                 report = new Report();
@@ -165,13 +224,17 @@ public class ExamController extends Controller{
                 exam.setReport(report);
                 exam.save();
             }
+
+            // create a new image model object in database
             Image image = new Image();
             image.save();
 
+            // write the image file in buffer to disk
             String picturePath = downDirName + "/" + image.getImageId() + ".jpg";
             File picture = new File(picturePath);
             ImageIO.write(bufferedImage, "jpg", picture);
 
+            // set the image model object just created to point to that image file on disk.
             image.setPicturePath(picturePath);
             image.setReport(report);
             image.setTime(new Date());
@@ -188,6 +251,23 @@ public class ExamController extends Controller{
         return ok(result);
     }
 
+    /**
+     * It gets from database all unread messages of an {@link Exam exam record}.
+     *
+     * Information expected from the form received:
+     * <ul>
+     *     <li>examId: id of the exam records whose chats are to be fetched</li>
+     *     <li>lastChatId: id of the last chat that has been read by student, used to identify unread messages</li>
+     * </ul>
+     * 
+     * @see  Application#enter()
+     * @return A JsonNode wrapped in an ok HTTP response, it has 3 fields:
+     * <ul>
+     *     <li>chatList: a list of unread chat messages in Json format</li>
+     *     <li>lastChatId: he latest chat among the chatList</li>
+     *     <li>error: similar semantics as enter() in Application</li>
+     * </ul>
+     */
     public static Result pollMessage(){
         DynamicForm pollForm = Form.form().bindFromRequest();
         ObjectNode result = Json.newObject();
@@ -195,11 +275,14 @@ public class ExamController extends Controller{
             Integer studentId = Authentication.authorize(Global.STUDENT);
 
             if(pollForm.hasErrors()){
-                throw new CMException("Form submit error.");
+                throw new CMException("Form submission error.");
             }
 
+            // extract info from form received
             Integer examId = Integer.parseInt(pollForm.get("examId"));
             Integer lastChatId = Integer.parseInt(pollForm.get("lastChatId"));
+
+            // use info extracted to locate the Report model in database, who contains all the chats
             Exam exam = Exam.byId(examId);
             if(exam==null){
                 throw new CMException("Exam does not exist");
@@ -209,6 +292,7 @@ public class ExamController extends Controller{
                 throw new CMException("Message error");
             }
 
+            // get all unread chats from the Report model located and the id of the latest chat and put them in the JsonNode
             List<Chat> chatList = report.getChatList();
             List<Chat> newChatList = new ArrayList<Chat>();
             Integer newChatId = lastChatId;
@@ -232,6 +316,21 @@ public class ExamController extends Controller{
         return ok(result);
     }
 
+    /**
+     * It puts into database a message sent by student.
+     * 
+     * <p>Information expected from the form received:
+     * <ul>
+     *     <li>examId: The {@link Exam exam record} during which the message is sent.</li>
+     *     <li>message: The content of the message</li>
+     * </ul></p>
+     * 
+     * @return A JsonNode wrapped in a ok HTTP response carring an error field, whose semantic is similar to that of enter() in Application.
+     *
+     * @see Report
+     * @see Chat
+     * @see Application#enter()
+     */
     public static Result sendMessage(){
         DynamicForm messageForm = Form.form().bindFromRequest();
         ObjectNode result = Json.newObject();
@@ -242,6 +341,7 @@ public class ExamController extends Controller{
                 throw new CMException("Form submit error.");
             }
 
+            // extract examId from form received and locate the Report it concerns
             Integer examId = Integer.parseInt(messageForm.get("examId"));
             Exam exam = Exam.byId(examId);
             if(exam==null){
@@ -252,14 +352,15 @@ public class ExamController extends Controller{
                 throw new CMException("Message error");
             }
 
+            // extract the message from form received
             String message = messageForm.get("message");
+            // initialise a Chat in database to hold the message and link with the Report it concerns
             Chat chat = new Chat();
             chat.setMessage(message);
             chat.setReport(report);
             chat.setTime(new Date());
             chat.setFromStudent(true);
             chat.save();
-            //no need for sender id?
 
             result.put("error",0);
         }catch(CMException e){

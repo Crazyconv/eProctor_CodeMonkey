@@ -1,3 +1,4 @@
+
 package controllers;
 
 import cw_models.Student;
@@ -21,13 +22,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.DataFormatException;
 
+/**
+ * A control class that performs domain-free generic operations such as login and deny access.
+ */
 public class Application extends Controller {
-
-    // authentication is assumed to be checked before index()
-    // Description:
-    //     get username and domain from session record
-    //     render the index page based on username and domain and return it as response
-    // ------------------------------------------------------------------
+    /**
+     * Render index page based on username and domain of current session.
+     * 
+     * Assumption: the stored session is assumed to be a validated session,
+     * as it was checked by {@link #enter()}
+     * @return
+     * 1 of the 2:
+     *<ul>
+     *  <li>unauthorized(login.render()) </li>                
+     *  <li>ok(admin/student/ivigilatorView.render())</li>
+     *</ul>
+     */
     public static Result index() {
         // realm of the seasion is auto defined, thus no authrisation checking is needed for other addresses?
         //session is used for access control
@@ -78,12 +88,28 @@ public class Application extends Controller {
         }
     }
 
-    // Description:
-    //      return authentication result by a JsonNode wrapped in a ok-object
-    // Fileds of JasonNode:
-    //      error: content;     #content==0 means no error, otherwise error
-    //                         #content==msg in case content!=0, content stores an error message 
-    // -------------------------------------------------------------------------------
+    /**
+     * Tries to login in a user and register the session when successful.
+     * 
+     * Logging is done by performing variaous checks and validations, which includes:
+     * <ul>
+     *     <li>authentication, which is done by querying the login methods in data models
+     *         <ul><li>{@link Student#login(String,String)} </li>
+     *         <li>{@link Invigilator#login(String,String)}</li>
+     *         <li>{@link Admin#login(String,String)}</li>
+     *         </ul>
+     *     </li>
+     *     <li>login form validity</li>
+     *     <li>login form completeness</li>
+     *     <li>domain existence</li>
+     * </ul>
+     * 
+     * @return JsonNode wrapped in a ok-object. It has one filed - error, which has 2 possibilities, either a 0, or a string. 
+     *     <ul>
+     *         <li>If it is 0, it means loggin is successful</li>
+     *         <li>if it's a string, it means loggin is unsuccessful and the string itself is the error message</li>
+     *     </ul>
+     */
     public static Result enter(){
         //contentType of response is a json object
         ObjectNode result = Json.newObject();
@@ -144,6 +170,11 @@ public class Application extends Controller {
         return ok(result);
     }
 
+    /**
+     * remove session.
+     * 
+     * @return login page wrapped in an ok HTTP reponse
+     */
     public static Result logout(){
         //clear session and go to the login page
         session().clear();

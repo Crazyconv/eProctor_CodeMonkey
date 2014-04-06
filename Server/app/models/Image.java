@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.io.File;
 import java.util.Date;
 
+// Image is a class is a linker to actual image file, 1 object of Image corresponds to 1 image file
 @Entity
 public class Image extends Model{
     @Id
