@@ -2,7 +2,7 @@ package controllers;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import cw_models.*;
-import models.Exam;
+import models.ExamRecord;
 import models.Report;
 import play.data.DynamicForm;
 import play.data.Form;
@@ -38,7 +38,7 @@ public class StudentController extends Controller {
      * @return an HTML block(not a full page) wrapped in an ok reponse, which is rendered with 3 parameters:
      * <ul>
      *     <li>courseId: id of the course whose exam sessions have been queried on</li>
-     *     <li>allocationMap: a mapping from {@link Allocation exam session} to its availability. which shows the availability of each exam session of a course</li>
+     *     <li>allocationMap: a mapping from {@link cw_models.ExamSession exam session} to its availability. which shows the availability of each exam session of a course</li>
      *     <li>slot: the time slot of the exam session that the current student is registered for; null if him/she haven't done so </li>
      * </ul>
      *
@@ -65,23 +65,23 @@ public class StudentController extends Controller {
                 throw new CMException("Necessary data missing.");
             }
 
-            //the original exam slot that the student chose, may be null
+            //the original examRecord slot that the student chose, may be null
             TimeSlot slot = null;
-            Exam exam = Exam.byStudentCourse(student, course);
-            if(exam!=null){
-                slot = exam.getTimeSlot();
+            ExamRecord examRecord = ExamRecord.byStudentCourse(student, course);
+            if(examRecord !=null){
+                slot = examRecord.getTimeSlot();
             }
 
             // get all allocations of a course, which the current student is registered for
-            List<Allocation> allocationList = course.getAllocationList();
+            List<ExamSession> examSessionList = course.getExamSessionList();
 
             // for every allocation, get its availability and finally produce a map consisting of allocation-availability pairs
-            Map<Allocation,Integer> allocationMap = new HashMap<Allocation,Integer>();
-            for(Allocation allocation: allocationList){
-                allocationMap.put(allocation,Exam.occupied(allocation));
+            Map<ExamSession,Integer> examSessionMap = new HashMap<ExamSession,Integer>();
+            for(ExamSession examSession: examSessionList){
+                examSessionMap.put(examSession, ExamRecord.occupied(examSession));
             }
 
-            return ok(showSlot.render(courseId, allocationMap, slot));
+            return ok(showSlot.render(courseId, examSessionMap, slot));
         }catch(CMException e){
             return ok(e.getMessage());
         }catch(NumberFormatException e){
@@ -135,44 +135,44 @@ public class StudentController extends Controller {
             }
 
             Integer courseId = Integer.parseInt(slotForm.get("courseId"));
-            Integer allocationId = Integer.parseInt(slotForm.get("allocationId"));
+            Integer examSessionId = Integer.parseInt(slotForm.get("examSessionId"));
             Course course = Course.byId(courseId);
             Student student = Student.byId(studentId);
-            Allocation allocation = Allocation.byId(allocationId);
-            if(student==null || course==null || allocation==null){
+            ExamSession examSession = ExamSession.byId(examSessionId);
+            if(student==null || course==null || examSession==null){
                 throw new CMException("Necessary data missing.");
             }
 
-            Integer capacity = allocation.getCapacity();
-            Integer occupied = Exam.occupied(allocation);
+            Integer capacity = examSession.getCapacity();
+            Integer occupied = ExamRecord.occupied(examSession);
 
-            Exam exam = Exam.byStudentCourse(student, course);
-            //if exam is null, namely student has not selected a slot for this course
-            //need to add a new exam record
-            if(exam==null){
+            ExamRecord examRecord = ExamRecord.byStudentCourse(student, course);
+            //if examRecord is null, namely student has not selected a slot for this course
+            //need to add a new examRecord record
+            if(examRecord ==null){
                 if(capacity<=occupied){
                     throw new CMException("The slot is full. Please select another one.");
                 }
-                exam = new Exam();
-                exam.setStudent(student);
-                exam.setAllocation(allocation);
-                exam.save();
-            //if exam is not full, just update the exam record but not create a new one
+                examRecord = new ExamRecord();
+                examRecord.setStudent(student);
+                examRecord.setExamSession(examSession);
+                examRecord.save();
+            //if examRecord is not full, just update the examRecord record but not create a new one
             }else{
                 // updating only occurs when the slot selected is different from the original one
-                if(!exam.getAllocation().equals(allocation)){
+                if(!examRecord.getExamSession().equals(examSession)){
                     if(capacity<=occupied){
                         throw new CMException("The slot is full. Please select another one.");
                     }
-                    exam.setAllocation(allocation);
-                    exam.save();
+                    examRecord.setExamSession(examSession);
+                    examRecord.save();
                 }
             }
             result.put("error",0);
             //info used in javascript to update the html
-            result.put("examId",exam.getExamId());
-            result.put("start",allocation.getTimeSlot().getStartTime().getTime());
-            result.put("end",allocation.getTimeSlot().getEndTime().getTime());
+            result.put("examId", examRecord.getExamRecordId());
+            result.put("start", examSession.getTimeSlot().getStartTime().getTime());
+            result.put("end",examSession.getTimeSlot().getEndTime().getTime());
         }catch (CMException e){
             result.put("error",e.getMessage());
         }catch(NumberFormatException e){
@@ -210,20 +210,20 @@ public class StudentController extends Controller {
                 throw new CMException("Form submit error.");
             }
 
-            // locate the exam record with information extracted from the form received and session history
+            // locate the examRecord record with information extracted from the form received and session history
             Integer courseId = Integer.parseInt(slotForm.get("courseId"));
             Student student = Student.byId(studentId);
             Course course = Course.byId(courseId);
             if(student==null || course==null){
                 throw new CMException("Necessary data missing.");
             }
-            Exam exam = Exam.byStudentCourse(student,course);
-            if(exam==null){
+            ExamRecord examRecord = ExamRecord.byStudentCourse(student, course);
+            if(examRecord ==null){
                 throw new CMException("No such record.");
             }
 
-            //delete the exam record
-            exam.delete();
+            //delete the examRecord record
+            examRecord.delete();
             result.put("error",0);
         }catch (CMException e){
             result.put("error",e.getMessage());
@@ -238,12 +238,12 @@ public class StudentController extends Controller {
      * Signs in the current student for an exam record and displays a list of questions.
      *
      * <p>Signing in will fail if the exam session hasn't started yet. Signing in a student
-     * is done by setting the flag in the {@link Report} of the {@link Exam exam record}
+     * is done by setting the flag in the {@link Report} of the {@link models.ExamRecord exam record}
      * that the student requests to sign in for.</p>
      *
      *  @return a takeExam HTML block(not a full page) wrapped in an ok response and rendered with 2 parameters:
      *  <ul>
-     *      <li>exam: an {@link Exam} object indicating the exam record during which those retrieved questions should be presented. </li>
+     *      <li>exam: an {@link models.ExamRecord} object indicating the exam record during which those retrieved questions should be presented. </li>
      *      <li>questionList: A list of questions that will be presented to the current student.</li>
      *  </ul>
      */
@@ -257,35 +257,35 @@ public class StudentController extends Controller {
                 throw new CMException("Form submission error.");
             }
 
-            // locate the on-going exam record
-            Integer examId = Integer.parseInt(examForm.get("examId"));
-            Exam exam = Exam.byId(examId);
-            if(exam==null){
-                throw new CMException("Exam does not exist.");
+            // locate the on-going examRecord record
+            Integer examRecordId = Integer.parseInt(examForm.get("examRecordId"));
+            ExamRecord examRecord = ExamRecord.byId(examRecordId);
+            if(examRecord ==null){
+                throw new CMException("ExamRecord does not exist.");
             }
 
 //            Date now = new Date();
-//            Date startTime = exam.getTimeSlot().getStartTime();
+//            Date startTime = examRecord.getTimeSlot().getStartTime();
 //            if(startTime.before(now)){
-//                throw new CMException("Sorry,the exam has already started");
+//                throw new CMException("Sorry,the examRecord has already started");
 //            }
 
-            // create an exam report for the current student if haven't done so
-            // sign in the current student for an exam record (by setting the flag in the associated exam report)
-            Report report = exam.getReport();
+            // create an examRecord report for the current student if haven't done so
+            // sign in the current student for an examRecord record (by setting the flag in the associated examRecord report)
+            Report report = examRecord.getReport();
             if(report==null){
                 report = new Report();
                 report.setExamStatus(Global.SIGNEDIN);
                 report.save();
-                exam.setReport(report);
-                exam.save();
+                examRecord.setReport(report);
+                examRecord.save();
             }else{
                 report.setExamStatus(Global.SIGNEDIN);
                 report.save();
             }
 
             //randomly pick k questions in the question pool of a course (k is defined by the course) 
-            Course course = exam.getCourse();
+            Course course = examRecord.getCourse();
             List<Question> questionSet = course.getQuestionSet();
             List<Question> questionList = new ArrayList<Question>();
             Integer questionNo = course.getQuestionNo();
@@ -294,7 +294,7 @@ public class StudentController extends Controller {
                 questionList.add(questionSet.get(randomNo.next()));
             }
 
-            return ok(takeExam.render(exam, questionList));
+            return ok(takeExam.render(examRecord, questionList));
         }catch(CMException e){
             return ok(e.getMessage());
         }catch(NumberFormatException e){

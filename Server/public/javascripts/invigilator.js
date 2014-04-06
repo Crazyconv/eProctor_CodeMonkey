@@ -8,10 +8,10 @@ $(document).ready(function(){
     });
 
     //update message and image
-    function updateMessageImage(examId,chatList,imageId){
+    function updateMessageImage(examRecordId,chatList,imageId){
         if(chatList!=null){
             $.each(chatList, function(index,chat){
-                var messagehistory = $('#'+examId).find(".history");
+                var messagehistory = $('#'+examRecordId).find(".history");
                 if(chat.fromStudent){
                     $('<p class="student">' + chat.message + '</p>').appendTo(messagehistory);
                 }else{
@@ -21,7 +21,7 @@ $(document).ready(function(){
             });
         }
         if(imageId!=null){
-            var _img = $('#'+examId).find(".video").find("img").get(0);
+            var _img = $('#'+examRecordId).find(".video").find("img").get(0);
             var newImg = new Image;
             newImg.src = '/getimage/'+imageId;
             newImg.onload = function() {
@@ -31,12 +31,12 @@ $(document).ready(function(){
     }
 
     //poll message and image
-    function pollMessageImage(examIds,lastChatId,lastImageId){
+    function pollMessageImage(examRecordIds,lastChatId,lastImageId){
         return function(){
             $.ajax({
                 url:"/pollmessageimage",
                 type:"POST",
-                data:{examIds: examIds, lastChatId: lastChatId, lastImageId: lastImageId},
+                data:{examRecordIds: examRecordIds, lastChatId: lastChatId, lastImageId: lastImageId},
                 dataType:"json",
                 success:function(json){
                     if(json.error!=0){
@@ -50,7 +50,7 @@ $(document).ready(function(){
                                 updateMessageImage(key,value.chatList,value.imageId);
                             }
                         });
-                        setTimeout(pollMessageImage(examIds,lastChatId,lastImageId),1000);
+                        setTimeout(pollMessageImage(examRecordIds,lastChatId,lastImageId),1000);
                     }
                 },
                 error:function(xhr,status){
@@ -60,13 +60,14 @@ $(document).ready(function(){
         }
     }
 
-    var examIdsInfo = document.getElementsByName("forjs");
-    var examIdsArray = new Array(examIdsInfo.length);
-    for(var i=0;i<examIdsInfo.length;i++){
-        examIdsArray[i] = examIdsInfo[i].id;
+    var examRecordIdsInfo = document.getElementsByName("forjs");
+    var examRecordIdsArray = new Array(examRecordIdsInfo.length);
+    for(var i=0;i<examRecordIdsInfo.length;i++){
+        examRecordIdsArray[i] = examRecordIdsInfo[i].id;
     }
-    var examIds = examIdsArray.join(",");
-    setTimeout(pollMessageImage(examIds,0,0),1000);
+    var examRecordIds = examRecordIdsArray.join(",");
+    console.log(examRecordIds);
+    setTimeout(pollMessageImage(examRecordIds,0,0),1000);
 
 
     //verify student identity

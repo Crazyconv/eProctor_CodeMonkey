@@ -16,7 +16,7 @@ public class Invigilator extends Model{
     private String password;
     private String name;
     @OneToMany(mappedBy = "invigilator")
-    private List<Exam> examList = new ArrayList<Exam>();
+    private List<ExamRecord> examRecordList = new ArrayList<ExamRecord>();
 
     public static Finder<Integer, Invigilator> find = new Finder<Integer, Invigilator>(
             Integer.class, Invigilator.class
@@ -36,8 +36,8 @@ public class Invigilator extends Model{
     public String getName(){
         return name;
     }
-    public List<Exam> getExamList(){
-        return examList;
+    public List<ExamRecord> getExamRecordList(){
+        return examRecordList;
     }
 
     public void setAccount(String account) throws CMException{

@@ -13,8 +13,6 @@ import utils.StringGenerator;
 import views.html.data.*;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -28,8 +26,8 @@ public class DataController extends Controller {
     }
 
     public static Result addData2(){
-        List<Student> studentList = Student.find.fetch("courseList").findList();
-        List<Course> courseList = Course.find.fetch("questionSet").fetch("allocationList").fetch("allocationList.timeSlot").findList();
+        List<Student> studentList = Student.find.all();
+        List<Course> courseList = Course.find.all();
         List<TimeSlot> slotList = TimeSlot.find.all();
         return ok(regquestime.render(studentList,courseList,slotList));
     }
@@ -226,7 +224,7 @@ public class DataController extends Controller {
                 throw new CMException("Please enter a valid capacity");
             }
 
-            Allocation allocation = new Allocation();
+            ExamSession allocation = new ExamSession();
             allocation.allocate(course, timeSlot);
             allocation.setCapacity(capacity);
             allocation.save("cw");

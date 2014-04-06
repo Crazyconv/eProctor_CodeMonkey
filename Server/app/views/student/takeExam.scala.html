@@ -1,4 +1,4 @@
-@(exam: Exam, questionList: List[Question])
+@(examRecord: ExamRecord, questionList: List[Question])
 <style>
     #question{
         float:left;
@@ -48,7 +48,7 @@
 </style>
 <div id="question">
     <div>
-        @exam.getCourse.getInstruction
+        @examRecord.getCourse.getInstruction
     </div>
     @questionList.map{ question =>
         <div>
@@ -57,7 +57,7 @@
             </div>
             <form>
                 <input type="hidden" name="questionId" value="@question.getQuestionId"/>
-                <input type="hidden" name="examId" value="@exam.getExamId"/>
+                <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId"/>
                 <textarea name="answer"></textarea><br/>
                 <input type="button" name="saveanswer" value="save"/>
                 <span name="answererror" style="color:red;display:none;"></span>
@@ -79,7 +79,7 @@
 
         </div>
         <form>
-            <input type="hidden" name="examId" value="@exam.getExamId" />
+            <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId" />
             <textarea name="message"></textarea>
             <input type="button" name="sendmessage" value="send" />
             <span name="messageerror" style="color:red"></span>

@@ -1,10 +1,10 @@
-@(courseId: Integer, allocationMap: Map[Allocation,Integer], slot: TimeSlot)
+@(courseId: Integer, examSessionMap: Map[ExamSession,Integer], slot: TimeSlot)
 <form id="slotForm@courseId">
     <input type="hidden" name="courseId" value="@courseId"/>
-    <select name="allocationId">
-        @allocationMap.map{ map=>
+    <select name="examSessionId">
+        @examSessionMap.map{ map=>
         <option @if(slot!=null && map._1.getTimeSlot.getTimeSlotId==slot.getTimeSlotId){selected="selected"}
-                value="@map._1.getAllocationId">@map._1.getTimeSlot.getStartTime.format("dd/MM/yyyy") @map._1.getTimeSlot.getStartTime.format("kk:mm")-@map._1.getTimeSlot.getEndTime.format("kk:mm")
+                value="@map._1.getExamSessionId">@map._1.getTimeSlot.getStartTime.format("dd/MM/yyyy") @map._1.getTimeSlot.getStartTime.format("kk:mm")-@map._1.getTimeSlot.getEndTime.format("kk:mm")
                 (@map._2/@map._1.getCapacity)</option>
         }
     </select>

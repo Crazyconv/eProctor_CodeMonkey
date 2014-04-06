@@ -12,13 +12,13 @@ create table chat (
   constraint pk_chat primary key (chat_id))
 ;
 
-create table exam (
-  exam_id                   integer auto_increment not null,
-  allocation_id             integer,
+create table exam_record (
+  exam_record_id            integer auto_increment not null,
+  exam_session_id           integer,
   student_id                integer,
   invi_id                   integer,
   report_id                 integer,
-  constraint pk_exam primary key (exam_id))
+  constraint pk_exam_record primary key (exam_record_id))
 ;
 
 create table image (
@@ -53,10 +53,10 @@ create table setting (
 
 alter table chat add constraint fk_chat_report_1 foreign key (report_id) references report (report_id) on delete restrict on update restrict;
 create index ix_chat_report_1 on chat (report_id);
-alter table exam add constraint fk_exam_invigilator_2 foreign key (invi_id) references invigilator (invi_id) on delete restrict on update restrict;
-create index ix_exam_invigilator_2 on exam (invi_id);
-alter table exam add constraint fk_exam_report_3 foreign key (report_id) references report (report_id) on delete restrict on update restrict;
-create index ix_exam_report_3 on exam (report_id);
+alter table exam_record add constraint fk_exam_record_invigilator_2 foreign key (invi_id) references invigilator (invi_id) on delete restrict on update restrict;
+create index ix_exam_record_invigilator_2 on exam_record (invi_id);
+alter table exam_record add constraint fk_exam_record_report_3 foreign key (report_id) references report (report_id) on delete restrict on update restrict;
+create index ix_exam_record_report_3 on exam_record (report_id);
 alter table image add constraint fk_image_report_4 foreign key (report_id) references report (report_id) on delete restrict on update restrict;
 create index ix_image_report_4 on image (report_id);
 
@@ -68,7 +68,7 @@ SET FOREIGN_KEY_CHECKS=0;
 
 drop table chat;
 
-drop table exam;
+drop table exam_record;
 
 drop table image;
 

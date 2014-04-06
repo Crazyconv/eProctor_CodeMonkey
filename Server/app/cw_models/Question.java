@@ -18,7 +18,7 @@ public class Question extends Model{
     @JoinColumn(name="course_id")
     private Course course;
     @OneToMany(mappedBy="question")
-    private List<Solution> solutionList = new ArrayList<Solution>();
+    private List<Answer> AnswerList = new ArrayList<Answer>();
 
     public static Finder<Integer, Question> find = new Finder<Integer, Question>(
             "cw", Integer.class, Question.class
@@ -35,8 +35,8 @@ public class Question extends Model{
     public Course getCourse(){
         return course;
     }
-    public List<Solution> getSolutionList(){
-        return Solution.find.where().eq("question",this).findList();
+    public List<Answer> getAnswerList(){
+        return Answer.find.where().eq("question",this).findList();
     }
 
     public void setContent(String content) throws CMException{

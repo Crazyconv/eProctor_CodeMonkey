@@ -5,10 +5,10 @@ import play.db.ebean.Model;
 import javax.persistence.*;
 
 @Entity
-public class Solution extends Model {
+public class Answer extends Model {
     @Id
-    @Column(name = "sol_id")
-    private Integer solutionId;
+    @Column(name = "answer_id")
+    private Integer answerId;
     @ManyToOne
     @JoinColumn(name="ques_id")
     private Question question;
@@ -18,14 +18,14 @@ public class Solution extends Model {
     @JoinColumn(name="stu_id")
     private Student student;
 
-    public static Finder<Integer, Solution> find = new Finder<Integer, Solution>(
-            "cw", Integer.class, Solution.class
+    public static Finder<Integer, Answer> find = new Finder<Integer, Answer>(
+            "cw", Integer.class, Answer.class
     );
 
-    public Solution(){ }
+    public Answer(){ }
 
-    public Integer getSolutionId(){
-        return solutionId;
+    public Integer getAnswerId(){
+        return answerId;
     }
     public Question getQuestion(){
         return question;
@@ -47,7 +47,7 @@ public class Solution extends Model {
         this.student = student;
     }
 
-    public static Solution byStudentQuestion(Student student, Question question){
-        return Solution.find.where().eq("student",student).eq("question",question).findUnique();
+    public static Answer byStudentQuestion(Student student, Question question){
+        return Answer.find.where().eq("student",student).eq("question",question).findUnique();
     }
 }

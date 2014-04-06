@@ -22,7 +22,7 @@ public class Course extends Model{
     @OneToMany(mappedBy="course")
     private List<Question> questionSet = new ArrayList<Question>();
     @OneToMany(mappedBy = "course")
-    private List<Allocation> allocationList = new ArrayList<Allocation>();
+    private List<ExamSession> examSessionList = new ArrayList<ExamSession>();
 
     public static Finder<Integer, Course> find = new Finder<Integer, Course>(
             "cw", Integer.class,Course.class
@@ -46,8 +46,8 @@ public class Course extends Model{
     public List<Question> getQuestionSet(){
         return questionSet;
     }
-    public List<Allocation> getAllocationList(){
-        return allocationList;
+    public List<ExamSession> getExamSessionList(){
+        return examSessionList;
     }
 
     public void setCourseCode(String courseCode) throws CMException{

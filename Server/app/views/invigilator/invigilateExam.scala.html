@@ -1,4 +1,4 @@
-@(examList: List[Exam])
+@(examRecordList: List[ExamRecord])
 @main("Invigilator"){
         <style>
             div{
@@ -60,8 +60,8 @@
                 margin-right: 10px;
             }
         </style>
-        @examList.map{ exam=>
-            <div class="out" name="forjs" id="@exam.getExamId">
+        @examRecordList.map{ examRecord=>
+            <div class="out" name="forjs" id="@examRecord.getExamRecordId">
                 <div class="video">
                     <img/>
                 </div>
@@ -70,10 +70,10 @@
                     <p name="comm_header">Communication</p>
                     <div class="interact">
                         <div class="info">
-                            <p>@exam.getStudent.getMatricNo</p>
-                            <img src="/getphoto/@exam.getStudent.getStudentId" /><br/>
+                            <p>@examRecord.getStudent.getMatricNo</p>
+                            <img src="/getphoto/@examRecord.getStudent.getStudentId" /><br/>
                             <form>
-                                <input type="hidden" name="examId" value="@exam.getExamId" />
+                                <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId" />
                                 <input type="radio" name="status" value="1" checked="checked"/> Authenticate <br/>
                                 <input type="radio" name="status" value="0"/> Expel <br/>
                                 <input type="button" name="verify" value="Submit"/>
@@ -81,21 +81,20 @@
                         </div>
                         <div class="message">
                             <form>
-                                <input type="hidden" name="examId" value="@exam.getExamId" />
+                                <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId" />
                                 <input type="text" name="message"/>
                                 <input type="button" name="sendmessage" value="Send" />
                                 <span name="messageerror" style="color:red"></span>
                             </form>
                             <div class="history">
-                                <!--<div class="content" style="overflow:hidden;"></div>-->
-                                <!--<div class="end" style="height:0px; overflow:hidden;"></div>-->
+
                             </div>
                         </div>
                     </div>
                     <div class="remark">
                         <p name="remarkheader">Remark</p>
                         <form>
-                            <input type="hidden" name="examId" value="@exam.getExamId" />
+                            <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId" />
                             <textarea name="remark"></textarea><br/>
                             <input type="button" name="submitremark" value="Submit" />
                             <span name="remarkerror" style="color:red"></span>

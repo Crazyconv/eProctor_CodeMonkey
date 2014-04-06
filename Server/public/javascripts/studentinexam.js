@@ -1,12 +1,12 @@
 $(document).ready(function(){
 
     //poll examStatus, namely, whether the student has been verified
-    function checkVerification(examId){
+    function checkVerification(examRecordId){
         return function(){
             $.ajax({
                 url:"/checkexamstatus",
                 type:"POST",
-                data:{examId: examId},
+                data:{examRecordId: examRecordId},
                 dataType:"json",
                 success:function(json){
                     if(json.error!=0){
@@ -16,11 +16,11 @@ $(document).ready(function(){
                             $('<p>You identity has been verified.</p>').appendTo($('#ready'));
                             $('#wait').text("");
                         }else if(json.examStatus == 3){
-                            stopTimer(examId);
+                            stopTimer(examRecordId);
                             $('<p>Identity verification failed, please appeal to your school.</p>').appendTo($('#ready'));
                             $('#wait').text("");
                         }else{
-                            setTimeout(checkVerification(examId),5000);
+                            setTimeout(checkVerification(examRecordId),5000);
                         }
                     }
                 },
@@ -32,12 +32,12 @@ $(document).ready(function(){
     }
 
     //poll message
-    function pollMessage(examId,lastChatId){
+    function pollMessage(examRecordId,lastChatId){
         return function(){
             $.ajax({
                 url:"/pollmessage",
                 type:"POST",
-                data:{examId: examId, lastChatId: lastChatId},
+                data:{examRecordId: examRecordId, lastChatId: lastChatId},
                 dataType:"json",
                 success:function(json){
                     if(json.error!=0){
@@ -52,7 +52,7 @@ $(document).ready(function(){
                             }
                             $('#history').get(0).scrollTop = $('#history').get(0).scrollHeight;
                         });
-                        setTimeout(pollMessage(examId,lastChatId),1000);
+                        setTimeout(pollMessage(examRecordId,lastChatId),1000);
                     }
                 },
                 error:function(xhr,status){
@@ -66,7 +66,7 @@ $(document).ready(function(){
     var startCamera = false;
     var timerEvent;
     var toSent = false;
-    function timerTask(examId){
+    function timerTask(examRecordId){
         return function(){
             if(toSent){
                 if(startCamera==false){
@@ -74,7 +74,7 @@ $(document).ready(function(){
                         startCamera = true;
                         $('<p>Camera is ready!</p>').appendTo($('#ready'));
                         $('#wait').text("Please wait for the invigilator to verify your identity");
-                        setTimeout(checkVerification(examId),5000);
+                        setTimeout(checkVerification(examRecordId),5000);
                     }
                 }else{
                     var imageString = grab.grab();
@@ -83,7 +83,7 @@ $(document).ready(function(){
                         $.ajax({
                             url:"/storeimage",
                             type:"POST",
-                            data:{image: imageString, examId: examId},
+                            data:{image: imageString, examRecordId: examRecordId},
                             dataType:"json",
                             success:function(json){
                                 if(json.error!=0){
@@ -96,15 +96,15 @@ $(document).ready(function(){
                         });
                     }
                 }
-                timerEvent = setTimeout(timerTask(examId),500);
+                timerEvent = setTimeout(timerTask(examRecordId),500);
             }
         }
     }
-    function startTimer(examId){
+    function startTimer(examRecordId){
         toSent = true;
-        timerEvent = setTimeout(timerTask(examId),500);
+        timerEvent = setTimeout(timerTask(examRecordId),500);
     }
-    function stopTimer(examId){
+    function stopTimer(examRecordId){
         if(startCamera==true){
             toSent = false;
             clearTimeout(timerEvent);
@@ -116,7 +116,7 @@ $(document).ready(function(){
     //sign in
     $(document).on('click','input[name="signin"]',function(){
         var $form = $(this).parent('form');
-        var examId = $form.get(0).examId.value;
+        var examRecordId = $form.get(0).examRecordId.value;
         var options={
             url:"/takeexam",
             type:"POST",
@@ -124,8 +124,8 @@ $(document).ready(function(){
             success: function(html){
                 $('#beforeexam').toggle();
                 $('#inexam').html(html);
-                startTimer(examId);
-                setTimeout(pollMessage(examId,0),1000);
+                startTimer(examRecordId);
+                setTimeout(pollMessage(examRecordId,0),1000);
             },
             error: function(xhr,status){
                 $("#selecterror").text("Internal server error").show();

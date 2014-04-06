@@ -13,7 +13,7 @@ public class Report extends Model{
     @Column(name = "report_id")
     private Integer reportId;
     @OneToOne(mappedBy = "report")
-    private Exam exam;
+    private ExamRecord examRecord;
     @Lob
     private String remark;
     //0:student not signed in
@@ -37,8 +37,8 @@ public class Report extends Model{
     public Integer getReportId(){
         return reportId;
     }
-    public Exam getExam(){
-        return exam;
+    public ExamRecord getExamRecord(){
+        return examRecord;
     }
     public String getRemark(){
         return remark;

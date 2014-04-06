@@ -3,10 +3,10 @@ package controllers;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import cw_models.Course;
 import cw_models.Question;
-import cw_models.Solution;
+import cw_models.Answer;
 import cw_models.Student;
 import models.Chat;
-import models.Exam;
+import models.ExamRecord;
 import models.Image;
 import models.Report;
 import play.data.DynamicForm;
@@ -34,7 +34,7 @@ import java.util.List;
 public class ExamController extends Controller{
 
     /**
-     * Checks whether the current student has checked in for an {@link Exam exam record}.
+     * Checks whether the current student has checked in for an {@link models.ExamRecord exam record}.
      *
      * <p>Infomration expected from the form received:
      * <ul>
@@ -57,12 +57,12 @@ public class ExamController extends Controller{
             if(statusForm.hasErrors()){
                 throw new CMException("Form submit error.");
             }
-            Integer examId = Integer.parseInt(statusForm.get("examId"));
-            Exam exam = Exam.byId(examId);
-            if(exam==null){
-                throw new CMException("Exam does not exist");
+            Integer examRecordId = Integer.parseInt(statusForm.get("examRecordId"));
+            ExamRecord examRecord = ExamRecord.byId(examRecordId);
+            if(examRecord ==null){
+                throw new CMException("ExamRecord does not exist");
             }
-            Report report = exam.getReport();
+            Report report = examRecord.getReport();
             if(report==null){
                 throw new CMException("Status error");
             }
@@ -86,7 +86,7 @@ public class ExamController extends Controller{
      * <ul>
      *     <li>the content of the answer submitted by student</li>
      *     <li>the {@link Question question} to which this answer corresponds</li>
-     *     <li>the {@link Exam exam record} during which this answer is submitted</li>
+     *     <li>the {@link models.ExamRecord exam record} during which this answer is submitted</li>
      * </ul>
      * An answer is uniquely identified by the question and the student, 
      * which are derived from the information above. If such an answer is
@@ -100,7 +100,7 @@ public class ExamController extends Controller{
         ObjectNode result = Json.newObject();
         try{
             Integer studentId = Authentication.authorize(Global.STUDENT);
-
+            System.out.println("======"+studentId+"=======");
             if(questionForm.hasErrors()){
                 throw new CMException("Form submit error.");
             }
@@ -108,14 +108,16 @@ public class ExamController extends Controller{
             // retrive info from form received
             String answer = questionForm.get("answer");
             Integer questionId = Integer.parseInt(questionForm.get("questionId"));
-            Integer examId = Integer.parseInt(questionForm.get("examId"));
+            System.out.println("======"+questionId+"=======");
+            Integer examRecordId = Integer.parseInt(questionForm.get("examRecordId"));
+            System.out.println("======"+examRecordId+"=======");
 
             // use info retrieved to access models
-            Exam exam = Exam.byId(examId);
-            if(exam==null){
-                throw new CMException("Exam does not exist.");
+            ExamRecord examRecord = ExamRecord.byId(examRecordId);
+            if(examRecord ==null){
+                throw new CMException("ExamRecord does not exist.");
             }
-            Report report = exam.getReport();
+            Report report = examRecord.getReport();
             if(report==null){
                 throw new CMException("Sorry, you haven't signed in.");
             }
@@ -131,20 +133,17 @@ public class ExamController extends Controller{
                 throw new CMException("Question does not exist.");
             }
 
-            // use model info to uniquely identify an Solution(aka. answer) object in database, if can not identify, construct a new one
-            Solution solution = Solution.byStudentQuestion(student,question);
+            // use model info to uniquely identify an Answer(aka. answer) object in database, if can not identify, construct a new one
+            Answer solution = Answer.byStudentQuestion(student, question);
             if(solution==null){
-                solution = new Solution();
+                solution = new Answer();
                 solution.setQuestion(question);
                 solution.setStudent(student);
             }
 
-            // store the answer to the located Solution object
+            // store the answer to the located Answer object
             solution.setAnswer(answer);
             solution.save("cw");
-
-
-
 
             result.put("error",0);
         }catch(CMException e){
@@ -166,7 +165,7 @@ public class ExamController extends Controller{
      * @return A JsonNode wrapped in a ok HTTP response carring an error field to indicate whether the image is succesfully stored in server, whose semantic is similar to that of enter() in Application.
      *
      * @see  Student
-     * @see  Exam
+     * @see  models.ExamRecord
      * @see  Authentication#authorize(Integer)
      * @see  Application#enter()
      */
@@ -183,13 +182,13 @@ public class ExamController extends Controller{
             // extract image as a string from form received
             String imageString = imageForm.get("image");
 
-            // extract exam and course info from form received
-            Integer examId = Integer.parseInt(imageForm.get("examId"));
-            Exam exam = Exam.byId(examId);
-            if(exam==null){
-                throw new CMException("Exam dose not exist.");
+            // extract examRecord and course info from form received
+            Integer examRecordId = Integer.parseInt(imageForm.get("examRecordId"));
+            ExamRecord examRecord = ExamRecord.byId(examRecordId);
+            if(examRecord ==null){
+                throw new CMException("ExamRecord dose not exist.");
             }
-            Course course = exam.getCourse();
+            Course course = examRecord.getCourse();
             Student student = Student.byId(studentId);
             if(course==null || student==null){
                 throw new CMException("Course or student dose not exist.");
@@ -208,10 +207,10 @@ public class ExamController extends Controller{
                 videoDir.mkdir();
             }
 
-            // make a directory to contain all the image files(for video emulation) specific to an exam record
+            // make a directory to contain all the image files(for video emulation) specific to an examRecord record
             // note:
             //      examRec-specific files are stored in public/videos/course/matric, and
-            //      course + matric can uniquely identify an exam record, since it's on student's computer, simply a course is enought alr?
+            //      course + matric can uniquely identify an examRecord record, since it's on student's computer, simply a course is enought alr?
             String upDirName = "public/videos/"+courseCode;
             String downDirName = upDirName+"/"+matricNo;
             File upDir = new File(upDirName);
@@ -222,13 +221,13 @@ public class ExamController extends Controller{
             if(!downDir.exists() || !downDir.isDirectory()){
                 downDir.mkdir();
             }
-            // if there is no report associted with current exam record, create one and link them up 
-            Report report = exam.getReport();
+            // if there is no report associted with current examRecord record, create one and link them up
+            Report report = examRecord.getReport();
             if(report==null){
                 report = new Report();
                 report.save();
-                exam.setReport(report);
-                exam.save();
+                examRecord.setReport(report);
+                examRecord.save();
             }
 
             // create a new image model object in database
@@ -258,7 +257,7 @@ public class ExamController extends Controller{
     }
 
     /**
-     * Gets from database all unread messages of an {@link Exam exam record}.
+     * Gets from database all unread messages of an {@link models.ExamRecord exam record}.
      *
      * Information expected from the form received:
      * <ul>
@@ -285,15 +284,15 @@ public class ExamController extends Controller{
             }
 
             // extract info from form received
-            Integer examId = Integer.parseInt(pollForm.get("examId"));
+            Integer examRecordId = Integer.parseInt(pollForm.get("examRecordId"));
             Integer lastChatId = Integer.parseInt(pollForm.get("lastChatId"));
 
             // use info extracted to locate the Report model in database, who contains all the chats
-            Exam exam = Exam.byId(examId);
-            if(exam==null){
-                throw new CMException("Exam does not exist");
+            ExamRecord examRecord = ExamRecord.byId(examRecordId);
+            if(examRecord ==null){
+                throw new CMException("ExamRecord does not exist");
             }
-            Report report = exam.getReport();
+            Report report = examRecord.getReport();
             if(report==null){
                 throw new CMException("Message error");
             }
@@ -327,7 +326,7 @@ public class ExamController extends Controller{
      * 
      * <p>Information expected from the form received:
      * <ul>
-     *     <li>examId: The {@link Exam exam record} during which the message is sent.</li>
+     *     <li>examId: The {@link models.ExamRecord exam record} during which the message is sent.</li>
      *     <li>message: The content of the message</li>
      * </ul></p>
      * 
@@ -348,12 +347,12 @@ public class ExamController extends Controller{
             }
 
             // extract examId from form received and locate the Report it concerns
-            Integer examId = Integer.parseInt(messageForm.get("examId"));
-            Exam exam = Exam.byId(examId);
-            if(exam==null){
-                throw new CMException("Exam does not exist");
+            Integer examRecordId = Integer.parseInt(messageForm.get("examRecordId"));
+            ExamRecord examRecord = ExamRecord.byId(examRecordId);
+            if(examRecord ==null){
+                throw new CMException("ExamRecord does not exist");
             }
-            Report report = exam.getReport();
+            Report report = examRecord.getReport();
             if(report==null){
                 throw new CMException("Message error");
             }

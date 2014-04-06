@@ -82,8 +82,8 @@
                 <div>
                     <h3>@course.getCourseCode : @course.getTitle</h3>
                     <ul id="slot@course.getCourseId">
-                        @course.getAllocationList.map{ allocation =>
-                            <li>@allocation.getTimeSlot.getStartTime.format("dd/MM/yyyy") @allocation.getTimeSlot.getStartTime.format("kk:mm")-@allocation.getTimeSlot.getEndTime.format("kk:mm") capacity:@allocation.getCapacity</li>
+                        @course.getExamSessionList.map{ examSession =>
+                            <li>@examSession.getTimeSlot.getStartTime.format("dd/MM/yyyy") @examSession.getTimeSlot.getStartTime.format("kk:mm")-@examSession.getTimeSlot.getEndTime.format("kk:mm") capacity:@examSession.getCapacity</li>
                         }
                     </ul>
                 </div>

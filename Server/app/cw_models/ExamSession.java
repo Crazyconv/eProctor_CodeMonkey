@@ -1,6 +1,6 @@
 package cw_models;
 
-import models.Exam;
+import models.ExamRecord;
 import play.db.ebean.Model;
 import utils.CMException;
 
@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Allocation extends Model{
+public class ExamSession extends Model{
     @Id
-    @Column(name = "allocation_id")
-    private Integer allocationId;
+    @Column(name = "exam_session_id")
+    private Integer examSessionId;
     private Integer capacity;
     @ManyToOne
     @JoinColumn(name="course_id")
@@ -21,16 +21,16 @@ public class Allocation extends Model{
     @JoinColumn(name="slot_id")
     private TimeSlot timeSlot;
     @Transient
-    private List<Exam> examList = new ArrayList<Exam>();
+    private List<ExamRecord> examRecordList = new ArrayList<ExamRecord>();
 
-    public static Finder<Integer, Allocation> find = new Finder<Integer, Allocation>(
-            "cw", Integer.class, Allocation.class
+    public static Finder<Integer, ExamSession> find = new Finder<Integer, ExamSession>(
+            "cw", Integer.class, ExamSession.class
     );
 
-    public Allocation(){ }
+    public ExamSession(){ }
 
-    public Integer getAllocationId(){
-        return allocationId;
+    public Integer getExamSessionId(){
+        return examSessionId;
     }
     public Integer getCapacity(){
        return capacity;
@@ -46,18 +46,18 @@ public class Allocation extends Model{
         this.capacity = capacity;
     }
     public void allocate(Course course, TimeSlot timeSlot) throws CMException{
-        if(Allocation.find.where().eq("course",course).eq("timeSlot",timeSlot).findRowCount()!=0){
+        if(ExamSession.find.where().eq("course",course).eq("timeSlot",timeSlot).findRowCount()!=0){
             throw new CMException("This timeSlot has been allocated to course " + course.getCourseCode());
         }
         this.course = course;
         this.timeSlot = timeSlot;
     }
 
-    public static Allocation byCourseSlot(Course course, TimeSlot timeSlot){
-        return Allocation.find.where().eq("course",course).eq("timeSlot",timeSlot).findUnique();
+    public static ExamSession byCourseSlot(Course course, TimeSlot timeSlot){
+        return ExamSession.find.where().eq("course",course).eq("timeSlot",timeSlot).findUnique();
     }
 
-    public static Allocation byId(Integer allocationId){
-        return Allocation.find.where().eq("allocationId",allocationId).findUnique();
+    public static ExamSession byId(Integer examSessionId){
+        return ExamSession.find.where().eq("examSessionId",examSessionId).findUnique();
     }
 }

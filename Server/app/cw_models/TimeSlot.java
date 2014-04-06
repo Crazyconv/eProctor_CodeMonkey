@@ -16,7 +16,7 @@ public class TimeSlot extends Model{
     private Date startTime;
     private Date endTime;
     @OneToMany(mappedBy = "timeSlot")
-    private List<Allocation> allocationList = new ArrayList<Allocation>();
+    private List<ExamSession> examSessionList = new ArrayList<ExamSession>();
 
     public static Finder<Integer, TimeSlot> find = new Finder<Integer, TimeSlot>(
             "cw", Integer.class, TimeSlot.class

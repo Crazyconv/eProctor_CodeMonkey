@@ -1,6 +1,6 @@
 package cw_models;
 
-import models.Exam;
+import models.ExamRecord;
 import play.db.ebean.Model;
 import utils.CMException;
 
@@ -33,9 +33,9 @@ public class Student extends Model {
     )
     private List<Course> courseList = new ArrayList<Course>();
     @OneToMany(mappedBy = "student")
-    private List<Solution> solutionList = new ArrayList<Solution>();
+    private List<Answer> solutionList = new ArrayList<Answer>();
     @Transient
-    private List<Exam> examList = new ArrayList<Exam>();
+    private List<ExamRecord> examRecordList = new ArrayList<ExamRecord>();
 
     public static Finder<Integer, Student> find = new Finder<Integer, Student>(
             "cw", Integer.class, Student.class
@@ -43,8 +43,8 @@ public class Student extends Model {
 
     public Student(){ }
 
-    public List<Exam> getExamList(){
-        return Exam.find.where().eq("studentId",studentId).findList();
+    public List<ExamRecord> getExamRecordList(){
+        return ExamRecord.find.where().eq("studentId",studentId).findList();
     }
     public Integer getStudentId(){
         return studentId;
@@ -67,7 +67,7 @@ public class Student extends Model {
     public List<Course> getCourseList(){
         return courseList;
     }
-    public List<Solution> getSolutionList(){
+    public List<Answer> getSolutionList(){
         return solutionList;
     }
 

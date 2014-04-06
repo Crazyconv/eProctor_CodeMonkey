@@ -3,7 +3,7 @@ package controllers;
 
 import cw_models.Student;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import models.Exam;
+import models.ExamRecord;
 import models.Invigilator;
 import play.data.DynamicForm;
 import play.data.Form;
@@ -60,14 +60,14 @@ public class Application extends Controller {
                     throw new CMException("Student does not exist.");
                 }
 
-                List<Exam> examList = student.getExamList();
+                List<ExamRecord> examRecordList = student.getExamRecordList();
                 //the examMap is used in the html to get the exam time for a course.
-                Map<Integer,Exam> examMap = new HashMap<Integer, Exam>();
-                for(Exam exam: examList){
-                    Integer courseId = exam.getCourse().getCourseId();
-                    examMap.put(courseId,exam);
+                Map<Integer, ExamRecord> examRecordMap = new HashMap<Integer, ExamRecord>();
+                for(ExamRecord examRecord : examRecordList){
+                    Integer courseId = examRecord.getCourse().getCourseId();
+                    examRecordMap.put(courseId, examRecord);
                 }
-                return ok(studentView.render(student, examMap));
+                return ok(studentView.render(student, examRecordMap));
             }
             if(domain==1){
                 Invigilator invigilator = Invigilator.byId(CMUser);
