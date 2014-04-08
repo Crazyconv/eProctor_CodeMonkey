@@ -8,6 +8,7 @@ import javax.persistence.*;
 //for example, when should a student/invigilator sign in
 @Entity
 public class Setting extends Model {
+
     @Id
     @Column(name = "s_id")
     private Integer settingId;

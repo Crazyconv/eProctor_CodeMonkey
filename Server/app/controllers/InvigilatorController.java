@@ -17,7 +17,9 @@ import views.html.invigilator.invigilateExam;
 
 import java.util.*;
 
-
+/**
+ * This class contains a set of static methods that will handle all kinds of operations perfermed by an invigilator in an on-going exam.
+ */
 public class InvigilatorController extends Controller {
     /**
      * Signs in the current invigilator for exams specified in the form received and bring him to a new page.
