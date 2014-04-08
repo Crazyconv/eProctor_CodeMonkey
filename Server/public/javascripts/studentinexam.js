@@ -114,7 +114,7 @@ $(document).ready(function(){
     }
 
     //sign in
-    $(document).on('click','input[name="signin"]',function(){
+    $(document).on('click','button[name="signin"]',function(){
         var $form = $(this).parent('form');
         var examRecordId = $form.get(0).examRecordId.value;
         var options={
