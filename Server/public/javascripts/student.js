@@ -36,7 +36,7 @@ $(document).ready(function(){
         return fmt;
     }
 
-    $('input[type=button][name="edit"]').click(function(){
+    $('button[name="edit"]').click(function(){
         var $form = $(this).parent('form');
         var courseId = $form.get(0).courseId.value;
         var options={
@@ -104,7 +104,7 @@ $(document).ready(function(){
         return false;                       // somehow can avoid some problems
     });
 
-    $(document).on('click','input[name="cancel"]',function(){
+    $(document).on('click','button[name="cancel"]',function(){
         var courseId = this.form.courseId.value;
         //ar courseId = $(this).parent('form').get(0).courseId.value;
         //hide the exam slot selection form and display the exam time
@@ -112,7 +112,7 @@ $(document).ready(function(){
         $('#slot'+courseId).show();
     });
 
-    $(document).on('click','input[name="remove"]',function(){
+    $(document).on('click','button[name="remove"]',function(){
         var $form = $(this).parent('form');
         var courseId = $form.get(0).courseId.value;
         var options={

@@ -1,13 +1,13 @@
 @(courseId: Integer, examSessionMap: Map[ExamSession,Integer], slot: TimeSlot)
-<form id="slotForm@courseId">
+<form class="form-inline" id="slotForm@courseId">
     <input type="hidden" name="courseId" value="@courseId"/>
-    <select name="examSessionId">
+    <select class="form-control" name="examSessionId">
         @examSessionMap.map{ map=>
         <option @if(slot!=null && map._1.getTimeSlot.getTimeSlotId==slot.getTimeSlotId){selected="selected"}
                 value="@map._1.getExamSessionId">@map._1.getTimeSlot.getStartTime.format("dd/MM/yyyy") @map._1.getTimeSlot.getStartTime.format("kk:mm")-@map._1.getTimeSlot.getEndTime.format("kk:mm")
                 (@map._2/@map._1.getCapacity)</option>
         }
     </select>
-    <input type="submit" value="Save"/>
-    <input type="button" name="cancel"  value="Cancel"/>
+    <button class="btn btn-default btn-xs" type="submit">Save</button>
+    <button class="btn btn-default btn-xs" type="button" name="cancel">Cancel</button>
 </form>

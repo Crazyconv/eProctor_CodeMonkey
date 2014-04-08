@@ -1,8 +1,7 @@
 $(document).ready(function(){
 
-    $('#loginForm').submit(
-    function()
-    {
+    $('#loginForm').submit(function(){
+        $button = $(this).find('[type="submit"]');
         // communicate with controller for /enter at route table
         var options = {
             url:"/enter",
@@ -21,20 +20,23 @@ $(document).ready(function(){
                     form.password.focus();
                     return false;
                 }
+                $button.button('loading');
                 return true;
             },
             success: function(json){
 
                 // if authentication failed, display error msg 
                 if(json.error != 0){
+                    $button.button('reset');
                     $("#loginerror").text(json.error).slideDown();
                 }else{
-                    $("#loginerror").hide();
+                    $("#loginerror").html('<br/>');
                     //if authentication succeed,redirect to the /index page
                     window.location.href="/index";
                 }
             },
             error: function(xhr,status){
+                $button.button('reset');
                 $("#loginerror").text("Sorry... the form submission failed.").slideDown();
             }
         };
@@ -43,4 +45,9 @@ $(document).ready(function(){
         $(this).ajaxSubmit(options);
         return false;
     });
+
+    $('#exit').click(function(){
+        exit.exitApp();
+    });
+
 });
