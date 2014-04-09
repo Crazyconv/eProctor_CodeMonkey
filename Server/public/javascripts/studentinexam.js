@@ -135,10 +135,10 @@ $(document).ready(function(){
     });
 
     //save answer
-    $(document).on('click','input[name="saveanswer"]',function(){
+    $(document).on('click','button[name="saveanswer"]',function(){
         var $button = $(this);
         var $form = $button.parent('form');
-        var $div = $form.parent('div');
+        var $div = $form.parent('a');
 
         var options={
             url:"/saveanswer",
@@ -147,23 +147,23 @@ $(document).ready(function(){
             beforeSubmit: function(formData, jqForm, option){
                 var form = jqForm[0];
                 if(form.answer.value==""){
-                    $div.find('span[name="answererror"]').text("The answer field is empty.").slideDown();
+                    $form.find('span[name="answererror"]').text("The answer field is empty.").slideDown();
                     return false;
                 }
                 return true;
             },
             success: function(json){
                 if(json.error!=0){
-                    $div.find('span[name="answererror"]').text(json.error).show();
+                    $form.find('span[name="answererror"]').text(json.error).show();
                 }else{
-                    $div.find('span[name="answererror"]').hide();
+                    $form.find('span[name="answererror"]').hide();
                     $button.attr("disabled","disabled");
-                    $div.find('span[name="answersuccess"]').text("Saved!").slideDown();
-                    setTimeout(function(){$div.find('span[name="answersuccess"]').hide();},2000);
+                    $form.find('span[name="answersuccess"]').text("Saved!").slideDown();
+                    setTimeout(function(){$form.find('span[name="answersuccess"]').hide();},2000);
                 }
             },
             error: function(xhr,status){
-                $div.find('span[name="answererror"]').text("Internal server error").show();
+                $form.find('span[name="answererror"]').text("Internal server error").show();
             }
         };
         $form.ajaxSubmit(options);

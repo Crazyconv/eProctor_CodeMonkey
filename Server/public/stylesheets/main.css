@@ -1,0 +1,37 @@
+.head{
+    width: 100%;
+    height: 50px;
+    background-color: #666666;
+    background-image: url(../images/logo.png);
+    background-repeat: no-repeat;
+    box-shadow: 2px 2px 3px #aaaaaa;
+    text-align: right;
+    padding: 0 40px 0 0;
+}
+
+.account{
+    position: relative;
+    top: 15px;
+}
+
+.account span{
+    font-size: 20px;
+}
+
+.account p{
+    display: inline;
+    font-style: italic;
+    color: #CCCCCC;
+    font-size: 14px;
+}
+
+.account a{
+    color: #CCCCCC;
+    text-decoration:none;
+}
+
+.account a:hover{
+    color: #ffffff;
+    text-decoration:underline;
+    cursor: pointer;
+}

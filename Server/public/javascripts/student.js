@@ -22,6 +22,15 @@ $(document).ready(function(){
     //sort the table by exam time
     $("table").tablesorter( {sortList: [[1,0]]} );
 
+    //for css
+    $('tr').mouseenter(function(){
+        $(this).addClass("info");
+    });
+    $('tr').mouseleave(function(){
+        $(this).removeClass("info");
+    });
+    $('#chatting').pin({containerSelector: '#interact'});
+
     //date format for display
     Date.prototype.Format = function (fmt) {
         var o = {
@@ -77,7 +86,7 @@ $(document).ready(function(){
                     $("#selecterror").text(json.error).show();
                 }else{
                     //hide the previous error message and the exam slot selection form
-                    $("#selecterror").hide();
+                    $("#selecterror").html('<br/>');
                     $('#select'+courseId).hide();
                     //update the exam time in html
                     var date = new Date(json.start).Format("dd/MM/yyyy");
@@ -124,7 +133,7 @@ $(document).ready(function(){
                     $("#selecterror").text(json.error).show();
                 }else{
                     //hide the previous error message
-                    $("#selecterror").hide();
+                    $("#selecterror").html('<br/>');
                     //clear the original exam time
                     $('#slot'+courseId).text("");
                     $('#hidden'+courseId).text("");
