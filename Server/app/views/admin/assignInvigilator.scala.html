@@ -1,52 +1,29 @@
-@()
+@(list:List[String])
 
 @main("Assign Invigilator"){
 
-<link href="@routes.Assets.at("stylesheets/query-ui-1.9.2.custom.min.css")" rel="stylesheet" type="text/css" />
+<h2>Assign Invigilator</h2>
 
-<script src="@routes.Assets.at("javascript/jquery-1.8.3.js")" type="text/javascript"></script>
+    <form action="assignInvigilator" method="post">
 
-<script src="@routes.Assets.at("javascript/jquery-ui-1.9.2.custom.min.js")" type="text/javascript"></script>
+        @if(list.size>0){
+        <p>Invigilator Email:<input type="text" name="invigilator email"></p>
+        <p>Number of Student You want to assign to this Invigilator:<input type="text" name="numStudent"></p>
+        <p>Invigilator Email:<input type="text" name="invigilator email"></p>
+        <select name="selection">
 
-<script>
 
-$(function(){
+            @for(i <- 0 to list.size-1){
+            <option value ="@i">@list.get(i)</option>
+            @i++;
+            }
 
-  $.datepicker.setDefaults(
+        </select>
+        <p><input type="submit" value="Assign"/></p>
+        }else{
+        <h3 style="color:red">No allocation is currently available to be assigned</p>
+            }
 
-    $.extend($.datepicker.regional[''])
-
-  );
-
-  $('#datepicker').datepicker();
-
-});
-
-</script>
-
-<body>
-
-<br/>
-<h3>Assign Invigilator</h3>
-<br/>
- <p>Invigilator:
- 	
-<form action="">
-<select name="Invigilators">
-<option value="Mike">Volvo</option>
-<option value="Sam">Saab</option>
-<option value="Dean">Fiat</option>
-<option value="Brew">Audi</option>
-</select>
-<br/>
-<br/>
-<p>Date: <input type="text" id="datepicker" name="date" style="float: center"></p>
-<input type="button" value="Assign" style="float: right">
-</form>
-
-</p>
-
- 
- 
-</body>
-}
+    </form>
+    <a href='login'><input value="Back" type=button></a>
+    }
