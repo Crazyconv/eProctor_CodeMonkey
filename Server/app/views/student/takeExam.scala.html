@@ -1,88 +1,52 @@
 @(examRecord: ExamRecord, questionList: List[Question])
-<style>
-    #question{
-        float:left;
-        width:800px;
-        border:1px solid #ccc;
-    }
-    #interact{
-        margin-left:810px;
-        width:300px;
-        border:1px solid #ccc;
-    }
-    textarea{
-        width:750px;
-        height:100px;
-    }
-    #video{
-        width:200px;
-        height:150px;
-        margin-left: 30px;
-        border:1px solid #ccc;
-    }
-    #video img{
-        max-width:100%;
-        max-height:100%;
-    }
-    #ready{
-        font-weight: bold;
-    }
-    #interact textarea{
-        width:270px;
-    }
-    #history{
-        height:300px;
-        overflow-y:auto;
-        border:1px solid #ccc;
-    }
-    .invigilator{
-        text-align:left;
-        color:blue;
-        margin-left: 10px;
-    }
-    .student{
-        text-align:right;
-        color:green;
-        margin-right: 10px;
-    }
-</style>
-<div id="question">
-    <div>
-        @examRecord.getCourse.getInstruction
+<div class="panel panel-default" id="question">
+    <div class="panel-heading">
+        <h4>Instruction</h4>
+        <p>@examRecord.getCourse.getInstruction</p>
     </div>
-    @questionList.map{ question =>
-        <div>
-            <div>
-                @question.getContent
-            </div>
-            <form>
-                <input type="hidden" name="questionId" value="@question.getQuestionId"/>
-                <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId"/>
-                <textarea name="answer"></textarea><br/>
-                <input type="button" name="saveanswer" value="save"/>
-                <span name="answererror" style="color:red;display:none;"></span>
-                <span name="answersuccess" style="display:none;"></span>
-            </form>
+    <div class="panel-body">
+        <div class="list-group">
+        @questionList.map{ question =>
+            <a class="list-group-item">
+                <div>
+                    @question.getContent
+                </div>
+                <form class="form-default">
+                    <input type="hidden" name="questionId" value="@question.getQuestionId"/>
+                    <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId"/>
+                    <textarea class="form-control" rows="5" name="answer"></textarea>
+                    <button class="btn btn-primary btn-sm line" type="button" name="saveanswer">Save</button>
+                    <span name="answererror" class="text-danger"></span>
+                    <span name="answersuccess" class="text-success hidden"></span>
+                </form>
+            </a>
+        }
         </div>
-    }
+    </div>
 </div>
 <div id="interact">
-    <div id="notice">
-        <span id="ready"></span>
-        <span id="wait">Please wait for the camera to get ready. This will take a few seconds...</span>
-    </div>
-    <div id="video">
+    <div class="panel panel-default" id="notice">
+        <div class="panel-heading">Notice</div>
+        <div class="panel-body">
+            <span id="ready"></span>
+            <span id="wait">Please wait for the camera to get ready. This will take a few seconds...</span><br/>
+            <div id="video">
 
-    </div>
-    <div id="chatting">
-        <div id="history">
-
+            </div>
         </div>
-        <form>
-            <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId" />
-            <textarea name="message"></textarea>
-            <input type="button" name="sendmessage" value="send" />
-            <span name="messageerror" style="color:red"></span>
-        </form>
+    </div>
+    <div class="panel panel-default" id="chatting">
+        <div class="panel-heading">Message</div>
+        <div class="panel-body">
+            <div class="well" id="history">
+
+            </div>
+            <form>
+                <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId" />
+                <textarea rows="4" class="form-control" name="message"></textarea>
+                <input class="btn btn-primary btn-sm" type="button" name="sendmessage" value="send" /><br/>
+                <span name="messageerror" class="text-danger" ><br/></span>
+            </form>
+        </div>
     </div>
 </div>

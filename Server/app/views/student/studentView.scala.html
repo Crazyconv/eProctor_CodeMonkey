@@ -1,57 +1,81 @@
 @(student: cw_models.Student, examRecordMap: Map[Integer,ExamRecord])
 @main("Student"){
+    <div class="head">
+        <div class="account">
+            <span class="glyphicon glyphicon-user"></span>&nbsp;<p>@student.getMatricNo</p>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <p><a href="/logout">Logout</a></p>
+        </div>
+    </div>
     <div id="beforeexam">
-        <h1>Welcome! @student.getMatricNo</h1>
-        <span id="selecterror" style="display:none;color:red;"></span><br/>
-        <table class="table table-striped">
-            <thead><tr><th>Course</th><th>Timestamp</th><th>ExamId</th><th style="min-width:350px;">Time</th><th>Action</th><th>Status</th></tr></thead>
-            <tbody>
-            @student.getCourseList.map{ course =>
-                @defining(examRecordMap.get(course.getCourseId)){ examRecord=>
-                    <tr>
-                        <td>@course.getCourseCode: @course.getTitle</td>
-                        <td id="hidden@course.getCourseId" name="hidden">@if(examRecord != null){@examRecord.getTimeSlot.getStartTime.getTime}</td>
-                        <td id="examRecord@course.getCourseId">@if(examRecord != null){@examRecord.getExamRecordId}</td>
-                        <td>
-                            <span id="slot@course.getCourseId">@if(examRecord != null){@examRecord.getTimeSlot.getStartTime.format("dd/MM/yyyy") @examRecord.getTimeSlot.getStartTime.format("kk:mm")-@examRecord.getTimeSlot.getEndTime.format("kk:mm")}</span>
-                            <span id="select@course.getCourseId" style="display:none;"></span>
-                        </td>
-                        <td><form>
-                            <input type="hidden" name="courseId" value="@course.getCourseId"/>
-                            <button class="btn btn-info btn-xs" type="button" name="edit">Edit</button>
-                            <button class="btn btn-info btn-xs" type="button" name="remove" id="remove@course.getCourseId" @if(examRecord == null){disabled="disabled"} >Remove</button>
-                        </form></td>
-                        <!--<td id="status@course.getCourseId">-->
-                            <!--@if(examRecord != null){-->
-                                <!--@if(examRecord.getTimeSlot.getStartTime.before(new Date())){-->
-                                    <!--finish-->
-                                <!--} else {-->
-                                    <!--@if(examRecord.getTimeSlot.getStartTime.after(new Date((new Date()).getTime + 15*60*1000))){-->
-                                        <!--@((examRecord.getTimeSlot.getStartTime.getTime - (new Date()).getTime)/(24*60*60*1000)) days-->
-                                    <!--} else {-->
-                                        <!--<form>-->
-                                            <!--<input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId"/>-->
-                                            <!--<button class="btn btn-info btn-xs" type="button" name= "signin">Sign in</button>-->
-                                        <!--</form>-->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-th-list"></span>&nbsp;&nbsp;
+                <h4>Manage/Take exams</h4>
+            </div>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <thead><tr><th>Course</th><th>Timestamp</th><th>ExamId</th><th style="min-width:350px;">Time</th><th>Action</th><th>Status</th></tr></thead>
+                    <tbody>
+                    @student.getCourseList.map{ course =>
+                        @defining(examRecordMap.get(course.getCourseId)){ examRecord=>
+                            <tr>
+                                <td>@course.getCourseCode: @course.getTitle</td>
+                                <td id="hidden@course.getCourseId" name="hidden">@if(examRecord != null){@examRecord.getTimeSlot.getStartTime.getTime}</td>
+                                <td id="examRecord@course.getCourseId">@if(examRecord != null){@examRecord.getExamRecordId}</td>
+                                <td>
+                                    <span id="slot@course.getCourseId">@if(examRecord != null){@examRecord.getTimeSlot.getStartTime.format("dd/MM/yyyy") @examRecord.getTimeSlot.getStartTime.format("kk:mm")-@examRecord.getTimeSlot.getEndTime.format("kk:mm")}</span>
+                                    <span id="select@course.getCourseId" style="display:none;"></span>
+                                </td>
+                                <td><form>
+                                    <input type="hidden" name="courseId" value="@course.getCourseId"/>
+                                    <button class="btn btn-info btn-xs" type="button" name="edit">Edit</button>
+                                    <button class="btn btn-info btn-xs" type="button" name="remove" id="remove@course.getCourseId" @if(examRecord == null){disabled="disabled"} >Remove</button>
+                                </form></td>
+                                <!--<td id="status@course.getCourseId">-->
+                                    <!--@if(examRecord != null){-->
+                                        <!--@if(examRecord.getTimeSlot.getStartTime.before(new Date())){-->
+                                            <!--finish-->
+                                        <!--} else {-->
+                                            <!--@if(examRecord.getTimeSlot.getStartTime.after(new Date((new Date()).getTime + 15*60*1000))){-->
+                                                <!--@((examRecord.getTimeSlot.getStartTime.getTime - (new Date()).getTime)/(24*60*60*1000)) days-->
+                                            <!--} else {-->
+                                                <!--<form>-->
+                                                    <!--<input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId"/>-->
+                                                    <!--<button class="btn btn-info btn-xs" type="button" name= "signin">Sign in</button>-->
+                                                <!--</form>-->
+                                            <!--}-->
+                                        <!--}-->
                                     <!--}-->
-                                <!--}-->
-                            <!--}-->
-                        <!--</td>-->
-                        <td id="status@course.getCourseId">
-                            @if(examRecord != null){
-                                <form>
-                                    <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId"/>
-                                    <button class="btn btn-info btn-xs" type="button" name= "signin">Sign in</button>
-                                </form>
-                            }
-                        </td>
-                    </tr>
-                }
-            }
-            </tbody>
-        </table>
+                                <!--</td>-->
+                                <td id="status@course.getCourseId">
+                                    @if(examRecord != null){
+                                        <form>
+                                            <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId"/>
+                                            <button class="btn btn-info btn-xs" type="button" name= "signin">Sign in</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    </tbody>
+                </table>
+                <p id="selecterror" class="text-danger" ><br/></p>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-comment"></span>&nbsp;&nbsp;
+                <h4>Instruction</h4>
+            </div>
+            <div class="panel-body">
+                Please follow the instructions below.
+            </div>
+        </div>
     </div>
     <div id="inexam">
+
     </div>
 
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/student.css")">
