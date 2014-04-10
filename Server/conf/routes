@@ -23,6 +23,7 @@ POST    /pollmessage                     controllers.ExamController.pollMessage(
 POST    /sendmessage                     controllers.ExamController.sendMessage()
 GET     /getphoto/:studentid             controllers.ExamController.getPhoto(studentid: Integer)
 GET     /getimage/:imageid               controllers.ExamController.getImage(imageid: Integer)
+POST    /finishexam                      controllers.ExamController.finishExam()
 
 
 # Invigilator page

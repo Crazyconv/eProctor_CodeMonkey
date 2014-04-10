@@ -5,7 +5,7 @@
         <p>@examRecord.getCourse.getInstruction</p>
     </div>
     <div class="panel-body">
-        <div class="list-group">
+        <div class="list-group hidden" id="hiddenquestion">
         @questionList.map{ question =>
             <a class="list-group-item">
                 <div>
@@ -15,38 +15,80 @@
                     <input type="hidden" name="questionId" value="@question.getQuestionId"/>
                     <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId"/>
                     <textarea class="form-control" rows="5" name="answer"></textarea>
-                    <button class="btn btn-primary btn-sm line" type="button" name="saveanswer">Save</button>
+                    <button class="btn btn-info btn-sm line" type="button" name="saveanswer">Save</button>
                     <span name="answererror" class="text-danger"></span>
-                    <span name="answersuccess" class="text-success hidden"></span>
+                    <span name="answersuccess" class="text-success"></span>
                 </form>
             </a>
         }
         </div>
+        <button class="btn btn-primary" data-toggle="popover" data-placement="right" type="button" name="finish">Finish exam</button>
+        <span id="finisherror" class="text-danger" ><br/></span>
     </div>
 </div>
 <div id="interact">
     <div class="panel panel-default" id="notice">
-        <div class="panel-heading">Notice</div>
+        <div class="panel-heading">
+            <span class="glyphicon glyphicon-bell"></span>&nbsp;&nbsp;
+            Notice
+        </div>
         <div class="panel-body">
-            <span id="ready"></span>
-            <span id="wait">Please wait for the camera to get ready. This will take a few seconds...</span><br/>
+            <span class="text-primary" id="ready"></span>
+            <span class="text-muted" id="wait">Please wait for the camera to get ready. This will take a few seconds...</span><br/>
             <div id="video">
 
             </div>
         </div>
     </div>
     <div class="panel panel-default" id="chatting">
-        <div class="panel-heading">Message</div>
+        <div class="panel-heading">
+            <span class="glyphicon glyphicon-comment"></span>&nbsp;&nbsp;
+            Message
+        </div>
         <div class="panel-body">
-            <div class="well" id="history">
+            <div class="well well-sm" id="history">
 
             </div>
             <form>
                 <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId" />
                 <textarea rows="4" class="form-control" name="message"></textarea>
-                <input class="btn btn-primary btn-sm" type="button" name="sendmessage" value="send" /><br/>
+                <input class="btn btn-info btn-sm" type="button" name="sendmessage" value="send" /><br/>
                 <span name="messageerror" class="text-danger" ><br/></span>
             </form>
         </div>
     </div>
 </div>
+
+<!--for pop up confirmation window-->
+<div id="confirmation" class="hidden">
+    <div>
+        <p>Please make sure you have saved all your answers!</p>
+        <p>Confirm to finish exam?</p>
+        <div>
+            <form>
+                <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId"/>
+                <button class="btn btn-primary btn-sm" type="button" name="confirmfinish">Confirm</button>
+                <button class="btn btn-primary btn-sm" type="button" name="back">Cancel</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="hidden" id="period">
+    @(examRecord.getTimeSlot.getEndTime.getTime - examRecord.getTimeSlot.getStartTime.getTime)
+</div>
+<script src="@routes.Assets.at("javascripts/stickUp.min.js")" type="text/javascript"></script>
+<script type="text/javascript">
+        jQuery(function($) {
+            $(document).ready( function() {
+                $('#chatting').stickUp();
+
+                $('button[name="finish"]').popover({
+                    html:true,
+                    content: function(){
+                        return $('#confirmation').html();
+                    }
+                });
+            });
+        });
+</script>

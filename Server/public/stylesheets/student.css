@@ -67,3 +67,12 @@ textarea{
 .line{
     display:inline;
 }
+
+#chatting{
+    position: relative;
+    z-index: 15;
+}
+
+#confirmation button{
+    display: inline;
+}
