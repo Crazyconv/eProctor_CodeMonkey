@@ -1,10 +1,7 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import models.Chat;
-import models.ExamRecord;
-import models.Image;
-import models.Report;
+import models.*;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.libs.Json;
@@ -14,6 +11,7 @@ import utils.Authentication;
 import utils.CMException;
 import utils.Global;
 import views.html.invigilator.invigilateExam;
+import views.html.invigilator.schedule;
 
 import java.util.*;
 
@@ -21,6 +19,30 @@ import java.util.*;
  * This class contains a set of static methods that will handle all kinds of operations perfermed by an invigilator in an on-going exam.
  */
 public class InvigilatorController extends Controller {
+
+    public static Result displaySchedule(){
+        DynamicForm scheduleForm = Form.form().bindFromRequest();
+
+        try{
+            if(scheduleForm.hasErrors()){
+                throw new CMException("Form submit error.");
+            }
+            Integer invigilatorId = Authentication.authorize(Global.INVIGILATOR);
+            Invigilator invigilator = Invigilator.byId(invigilatorId);
+            if(invigilator == null){
+                throw new CMException("Access denied. Please login.");
+            }
+
+            Date date = new Date(Long.parseLong(scheduleForm.get("date")));
+            List<ExamRecord> examRecordList = invigilator.getExamRecordListByDay(date);
+            return ok(schedule.render(date, examRecordList));
+        }catch(CMException e){
+            return ok(e.getMessage());
+        }catch(NumberFormatException e){
+            return ok("Invalid request");
+        }
+    }
+
     /**
      * Signs in the current invigilator for exams specified in the form received and bring him to a new page.
      *

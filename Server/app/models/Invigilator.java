@@ -4,7 +4,9 @@ import play.db.ebean.Model;
 import utils.CMException;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -91,6 +93,20 @@ public class Invigilator extends Model{
      */
     public List<ExamRecord> getExamRecordList(){
         return examRecordList;
+    }
+
+    public List<ExamRecord> getExamRecordListByDay(Date day){
+        List<ExamRecord> listByDay = new ArrayList<ExamRecord>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        System.out.println(dateFormat.format(day));
+        for(ExamRecord examRecord : examRecordList){
+            System.out.println(dateFormat.format(examRecord.getTimeSlot().getStartTime()));
+            if((dateFormat.format(examRecord.getTimeSlot().getStartTime())).equals
+                    (dateFormat.format(day))){
+                listByDay.add(examRecord);
+            }
+        }
+        return listByDay;
     }
 
     /**

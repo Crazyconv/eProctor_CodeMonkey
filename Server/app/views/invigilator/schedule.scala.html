@@ -1,0 +1,22 @@
+@(date: Date, examRecordList: List[ExamRecord])
+<div>
+    <table class="table table-striped">
+        <tr><th colspan="2">@date.format("dd/MM/yyyy")</th></tr>
+        @examRecordList.groupBy(_.getTimeSlot.getStartTime).toSeq.sortBy(_._1).map{ examRecordGroup =>
+            <tr>
+                <td>
+                    @examRecordGroup._2.get(0).getTimeSlot.getStartTime.format("kk:mm:ss") - @examRecordGroup._2.get(0).getTimeSlot.getEndTime.format("kk:mm:ss")
+                </td>
+                <td>
+                    <form method="post" action="/signin">
+                        @examRecordGroup._2.map{ examRecord =>
+                            <input type="checkbox" name="examRecordIds" value="@examRecord.getExamRecordId" style="display:none;" checked = "checked"/>
+                        }
+                        <button type="button" class="btn btn-primary btn-xs" name="signin">Sign in</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </table>
+    <p id="signinerror" class="text-danger" ><br/></p>
+</div>
