@@ -23,7 +23,6 @@ dist
 ehthumbs.db
 Thumbs.db
 
-/public/uploads/*
 /public/videos/*
 /Todo.txt
 /conf/evolutions/*
