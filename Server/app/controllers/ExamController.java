@@ -395,4 +395,39 @@ public class ExamController extends Controller{
             return ok("Error: photo not found");
         }
     }
+
+    public static Result finishExam(){
+        DynamicForm finishForm = Form.form().bindFromRequest();
+        ObjectNode result = Json.newObject();
+        try{
+            Integer studentId = Authentication.authorize(Global.STUDENT);
+
+            if(finishForm.hasErrors()){
+                throw new CMException("Form submit error.");
+            }
+
+            // extract examId from form received and locate the Report it concerns
+            Integer examRecordId = Integer.parseInt(finishForm.get("examRecordId"));
+            ExamRecord examRecord = ExamRecord.byId(examRecordId);
+            if(examRecord ==null){
+                throw new CMException("ExamRecord does not exist");
+            }
+            Report report = examRecord.getReport();
+            if(report==null){
+                throw new CMException("Exam error");
+            }
+            if(report.getExamStatus()!=Global.VERIFIED){
+                throw new CMException("Your identity has not been verified.");
+            }
+            report.setExamStatus(Global.FINISHED);
+            report.save();
+
+            result.put("error",0);
+        }catch(CMException e){
+            result.put("error",e.getMessage());
+        }catch(NumberFormatException e){
+            result.put("error","Invalid request");
+        }
+        return ok(result);
+    }
 }

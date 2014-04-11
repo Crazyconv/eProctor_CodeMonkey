@@ -47,6 +47,7 @@ public class Course extends Model{
     @ManyToMany(mappedBy = "courseList")
     private List<Student> studentList = new ArrayList<Student>();
     
+    
     /**
      * the question pool from where the questions for a particular exam session are selected.
      */

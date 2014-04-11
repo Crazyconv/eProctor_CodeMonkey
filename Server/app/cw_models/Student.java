@@ -229,6 +229,7 @@ public class Student extends Model {
      * @param  matricNo matricNo of the student to be verified
      * @param  password password of te student to be verified
      * @return return true if the passed in matricNo-password pair is a valid one; otherwise return false.
+     * 
      */
     public static boolean login(String matricNo, String password){
         if(Student.find.where().eq("matricNo",matricNo.toUpperCase()).eq("password",password).findRowCount()==0){

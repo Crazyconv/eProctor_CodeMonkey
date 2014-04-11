@@ -20,6 +20,7 @@ $(document).ready(function(){
     //             in the current HTML(embed in an element)
     // ----------------------------------------------------------------------
     //sort the table by exam time
+
     $("table").tablesorter( {sortList: [[1,0]]} );
 
     //for css
@@ -29,7 +30,6 @@ $(document).ready(function(){
     $('tr').mouseleave(function(){
         $(this).removeClass("info");
     });
-    $('#chatting').pin({containerSelector: '#interact'});
 
     //date format for display
     Date.prototype.Format = function (fmt) {
@@ -99,8 +99,11 @@ $(document).ready(function(){
                     //enable the remove button and sort the table again
                     $('#remove'+courseId).attr("disabled",false);
                     $("table").tablesorter( {sortList: [[1,0]]} );
-                    //add the status info
-                    $('#status'+courseId).html(remain + " days");
+                    //The page is supposed to show the number of remaining days
+                    ////add the status info
+                    //$('#status'+courseId).html(remain + " days");
+                    //However, for demostration purpose, we will just display the sign in button
+                    setTimeout(toStart(courseId, json.examId),0);
                 }
             },
             // similar to success clause
@@ -136,6 +139,7 @@ $(document).ready(function(){
                     $("#selecterror").html('<br/>');
                     //clear the original exam time
                     $('#slot'+courseId).text("");
+                    $('#select'+courseId).text("");
                     $('#hidden'+courseId).text("");
                     $('#exam'+courseId).text("");
                     //remove the status info
@@ -157,8 +161,8 @@ $(document).ready(function(){
     function toStart(courseId,examId){
         return function(){
             $form = ('<form>' +
-                '<input type="hidden" name="examId" value="'+ examId +'"/>' +
-                '<input type="button" value="Sign in" name="signin"/>' +
+                '<input type="hidden" name="examRecordId" value="'+ examId +'"/>' +
+                '<button class="btn btn-info btn-xs" type="button" name="signin">Sign in</button>' +
                 '</form>');
             $('#status'+courseId).html($form);
         }

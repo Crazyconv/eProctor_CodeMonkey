@@ -95,6 +95,10 @@ public class ExamSession extends Model{
         return course;
     }
 
+    public List<ExamRecord> getExamRecordList(){
+        return ExamRecord.find.where().eq("examSessionId",examSessionId).findList();
+    }
+
     /**
      * setter for capacity.
      * @param capacity capacity

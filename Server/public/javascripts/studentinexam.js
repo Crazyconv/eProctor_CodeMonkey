@@ -15,6 +15,11 @@ $(document).ready(function(){
                         if(json.examStatus == 2){
                             $('<p>You identity has been verified.</p>').appendTo($('#ready'));
                             $('#wait').text("");
+                            $('#hiddenquestion').removeClass('hidden');
+                            var period = $('#period').html();
+                            if(period>0 && period<2*24*60*60*1000){
+                                setTimeout(finishExam,period);
+                            }
                         }else if(json.examStatus == 3){
                             stopTimer(examRecordId);
                             $('<p>Identity verification failed, please appeal to your school.</p>').appendTo($('#ready'));
@@ -32,34 +37,46 @@ $(document).ready(function(){
     }
 
     //poll message
+    var toPoll = false;
+    var pollEvent;
     function pollMessage(examRecordId,lastChatId){
         return function(){
-            $.ajax({
-                url:"/pollmessage",
-                type:"POST",
-                data:{examRecordId: examRecordId, lastChatId: lastChatId},
-                dataType:"json",
-                success:function(json){
-                    if(json.error!=0){
-                        $('#wait').text(json.error);
-                    }else{
-                        lastChatId = json.lastChatId;
-                        $.each(json.chatList, function( i, chat ){
-                            if(chat.fromStudent){
-                                $('<p class="student">' + chat.message + '</p>').appendTo($('#history'));
-                            }else{
-                                $('<p class="invigilator">' + chat.message + '</p>').appendTo($('#history'));
-                            }
-                            $('#history').get(0).scrollTop = $('#history').get(0).scrollHeight;
-                        });
-                        setTimeout(pollMessage(examRecordId,lastChatId),1000);
+            if(toPoll){
+                $.ajax({
+                    url:"/pollmessage",
+                    type:"POST",
+                    data:{examRecordId: examRecordId, lastChatId: lastChatId},
+                    dataType:"json",
+                    success:function(json){
+                        if(json.error!=0){
+                            $('#wait').text(json.error);
+                        }else{
+                            lastChatId = json.lastChatId;
+                            $.each(json.chatList, function( i, chat ){
+                                if(chat.fromStudent){
+                                    $('<p class="student">' + chat.message + '</p>').appendTo($('#history'));
+                                }else{
+                                    $('<p class="invigilator">' + chat.message + '</p>').appendTo($('#history'));
+                                }
+                                $('#history').get(0).scrollTop = $('#history').get(0).scrollHeight;
+                            });
+                            pollEvent = setTimeout(pollMessage(examRecordId,lastChatId),1000);
+                        }
+                    },
+                    error:function(xhr,status){
+                        $('#wait').text("Internal server error");
                     }
-                },
-                error:function(xhr,status){
-                    $('#wait').text("Internal server error");
-                }
-            });
+                });
+            }
         }
+    }
+    function startPoll(examRecordId,lastChatId){
+        toPoll = true;
+        pollEvent = setTimeout(pollMessage(examRecordId,lastChatId),1000);
+    }
+    function stopPoll(){
+        toPoll = false;
+        clearTimeout(pollEvent);
     }
 
     //sign in -> start grabbing image
@@ -74,7 +91,6 @@ $(document).ready(function(){
                         startCamera = true;
                         $('<p>Camera is ready!</p>').appendTo($('#ready'));
                         $('#wait').text("Please wait for the invigilator to verify your identity");
-                        setTimeout(checkVerification(examRecordId),5000);
                     }
                 }else{
                     var imageString = grab.grab();
@@ -104,7 +120,7 @@ $(document).ready(function(){
         toSent = true;
         timerEvent = setTimeout(timerTask(examRecordId),500);
     }
-    function stopTimer(examRecordId){
+    function stopTimer(){
         if(startCamera==true){
             toSent = false;
             clearTimeout(timerEvent);
@@ -124,8 +140,9 @@ $(document).ready(function(){
             success: function(html){
                 $('#beforeexam').toggle();
                 $('#inexam').html(html);
+                setTimeout(checkVerification(examRecordId),5000);
                 startTimer(examRecordId);
-                setTimeout(pollMessage(examRecordId,0),1000);
+                startPoll(examRecordId,0);
             },
             error: function(xhr,status){
                 $("#selecterror").text("Internal server error").show();
@@ -204,4 +221,40 @@ $(document).ready(function(){
         };
         $form.ajaxSubmit(options);
     });
+
+    //click "finish exam" to finish exam in advance
+    //action for "finish" button is written in html
+    //a. click "confirm"
+    $(document).on('click','button[name="confirmfinish"]',function(){
+        var $form = $(this).parent('form');
+        var examRecordId = $form.get(0).examRecordId.value;
+        var options={
+            url:"/finishexam",
+            type:"POST",
+            dataType:"json",
+            success: function(json){
+                if(json.error!=0){
+                    $('#finisherror').text(json.error).show();
+                    $('button[name="finish"]').popover('hide');
+                }else{
+                    stopTimer();
+                    stopPoll();
+                    $('#inexam').text("");
+                    $('#beforeexam').show();
+                }
+            },
+            error: function(xhr,status){
+                $('#finisherror').text('Internal server error').show();
+            }
+        };
+        $form.ajaxSubmit(options);
+    });
+    //b. click "cancel"
+    $(document).on('click','button[name="back"]',function(){
+        $('button[name="finish"]').popover('hide');
+    });
+
+    function finishExam(){
+        $('button[name="confirmfinish"]').trigger('click');
+    }
 });

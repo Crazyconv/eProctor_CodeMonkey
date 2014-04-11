@@ -37,7 +37,8 @@ public class Report extends Model{
      * <p> 0:student not signed in<br/>
      *     1:student signed in<br/>
      *     2:student verified<br/>
-     *     3:student expelled</p>
+     *     3:student expelled<br/>
+     *     4:student finishes exam</p>
      */
     private Integer examStatus = Global.NOTSIGNEDIN;
     @OneToMany(mappedBy = "report")
