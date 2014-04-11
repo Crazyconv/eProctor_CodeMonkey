@@ -7,15 +7,9 @@
     display: inline;
 }
 
-#another{
-    font-style: italic;
-    margin-left: 10px;
-}
-
-#another a:hover{
-    cursor: pointer;
-    text-decoration: none;
-}
+/*#date{*/
+    /*margin-left: 20px;*/
+/*}*/
 
 #invigilate{
     margin: 20px auto;

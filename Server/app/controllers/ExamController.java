@@ -100,7 +100,6 @@ public class ExamController extends Controller{
         ObjectNode result = Json.newObject();
         try{
             Integer studentId = Authentication.authorize(Global.STUDENT);
-            System.out.println("======"+studentId+"=======");
             if(questionForm.hasErrors()){
                 throw new CMException("Form submit error.");
             }
@@ -108,9 +107,7 @@ public class ExamController extends Controller{
             // retrive info from form received
             String answer = questionForm.get("answer");
             Integer questionId = Integer.parseInt(questionForm.get("questionId"));
-            System.out.println("======"+questionId+"=======");
             Integer examRecordId = Integer.parseInt(questionForm.get("examRecordId"));
-            System.out.println("======"+examRecordId+"=======");
 
             // use info retrieved to access models
             ExamRecord examRecord = ExamRecord.byId(examRecordId);

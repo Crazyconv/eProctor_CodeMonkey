@@ -40,11 +40,29 @@
                                 <textarea class="form-control" rows="5" name="remark"></textarea>
                                 <input type="button" name="submitremark" value="Submit" class="btn btn-primary btn-xs" />
                                 <span name="remarkerror" class="text-danger"></span>
+                                <span name="remarksuccess" class="text-success"></span>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
         }
+
+        <div style="clear:both;">
+        </div>
+        <button class="btn btn-primary btn-sm"  data-toggle="popover" data-placement="right" name="finish">Finish invigilation</button>
+
+        <div id="confirmation" class="hidden">
+            <div>
+                <p>Please make sure you have saved all your remarks!</p>
+                <p>Confirm to finish invigilation?</p>
+                <div>
+                    <form>
+                        <button class="btn btn-primary btn-sm" type="button" name="confirmfinish">Confirm</button>
+                        <button class="btn btn-primary btn-sm" type="button" name="back">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
         <script src="@routes.Assets.at("javascripts/invigilatorinexam.js")" type="text/javascript"></script>
 }

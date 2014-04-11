@@ -146,8 +146,9 @@ $(document).ready(function(){
                 if(json.error!=0){
                     $form.find('span[name="remarkerror"]').text(json.error).show();
                 }else{
-                    $('#schedule').show();
-                    $('#invigilate').text("");
+                    $form.find('span[name="remarkerror"]').text("");
+                    $form.find('span[name="remarksuccess"]').text("Remark sent!").show();
+                    $form.find('input[name="submitremark"]').attr("disabled","disabled");
                 }
             },
             error: function(xhr,status){
@@ -157,5 +158,20 @@ $(document).ready(function(){
         $form.ajaxSubmit(options);
     });
 
+    //finish invigilation
+    $('button[name="finish"]').popover({
+        html:true,
+        content: function(){
+            return $('#confirmation').html();
+        }
+    });
 
+    $(document).on('click','button[name="confirmfinish"]',function(){
+        $('#invigilate').text("");
+        $('#schedule').show();
+    });
+    //b. click "cancel"
+    $(document).on('click','button[name="back"]',function(){
+        $('button[name="finish"]').popover('hide');
+    });
 });

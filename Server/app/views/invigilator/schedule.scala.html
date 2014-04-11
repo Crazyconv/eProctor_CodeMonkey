@@ -1,7 +1,7 @@
 @(date: Date, examRecordList: List[ExamRecord])
 <div>
     <table class="table table-striped">
-        <tr><th colspan="2">@date.format("dd/MM/yyyy")</th></tr>
+        <tr><th colspan="2">@date.format("dd-MM-yyyy")</th></tr>
         @examRecordList.groupBy(_.getTimeSlot.getStartTime).toSeq.sortBy(_._1).map{ examRecordGroup =>
             <tr>
                 <td>

@@ -136,7 +136,6 @@ public class InvigilatorController extends Controller {
             List<Integer> examRecordIds = new ArrayList<Integer>();
             for(String ei : examRecordIdArray){
                 examRecordIds.add(Integer.parseInt(ei));
-                System.out.println("========="+ei+"========");
             }
 
             Integer newChatId = lastChatId;
