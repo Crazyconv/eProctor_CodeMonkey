@@ -1,107 +1,50 @@
 @(examRecordList: List[ExamRecord])
 @main("Invigilator"){
-        <style>
-            div{
-                border:1px solid #ccc;
-            }
-            .out{
-                width:640px;
-                display:inline-block;
-                vertical-align: top;
-            }
-            .video{
-                height:480px;
-            }
-            .video img{
-                max-width: 100%;
-                max-height: 100%;
-            }
-            .info{
-                width:150px;
-                height:300px;
-                display:inline-block;
-                text-align: center;
-            }
-            .info img{
-                width:100px;
-                height:100px;
-            }
-            .message{
-                width:470px;
-                height:300px;
-                display:inline-block;
-                vertical-align: top;
-            }
-            .remark form{
-                height:180px;
-            }
-            form{
-                text-align:left;
-            }
-            .message input[type="text"]{
-                width:400px;
-            }
-            .history{
-                height:270px;
-                overflow-y:auto;
-            }
-            .remark textarea{
-                height:110px;
-                width:620px;
-            }
-            .student{
-                text-align:left;
-                color:blue;
-                margin-left: 10px;
-            }
-            .invigilator{
-                text-align:right;
-                color:green;
-                margin-right: 10px;
-            }
-        </style>
         @examRecordList.map{ examRecord=>
             <div class="out" name="forjs" id="@examRecord.getExamRecordId">
                 <div class="video">
                     <img/>
                 </div>
-                <span name="pollerror" style="color:red"></span>
+                <span name="pollerror" class="text-danger"></span>
                 <div class="action">
-                    <p name="comm_header">Communication</p>
-                    <div class="interact">
-                        <div class="info">
-                            <p>@examRecord.getStudent.getMatricNo</p>
-                            <img src="/getphoto/@examRecord.getStudent.getStudentId" /><br/>
-                            <form>
-                                <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId" />
-                                <input type="radio" name="status" value="1" checked="checked"/> Authenticate <br/>
-                                <input type="radio" name="status" value="0"/> Expel <br/>
-                                <input type="button" name="verify" value="Submit"/>
-                            </form>
-                        </div>
-                        <div class="message">
-                            <form>
-                                <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId" />
-                                <input type="text" name="message"/>
-                                <input type="button" name="sendmessage" value="Send" />
-                                <span name="messageerror" style="color:red"></span>
-                            </form>
-                            <div class="history">
-
+                    <div class="panel panel-default interact">
+                        <div class="panel-heading" name="comm_header"><span class="glyphicon glyphicon-comment"></span>&nbsp;&nbsp;Communication</div>
+                        <div class="panel-body">
+                            <div class="info">
+                                <p>@examRecord.getStudent.getMatricNo</p>
+                                <img src="/getphoto/@examRecord.getStudent.getStudentId" /><br/>
+                                <form>
+                                    <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId" />
+                                    <input type="radio" name="status" value="1" checked="checked"/> Authenticate <br/>
+                                    <input type="radio" name="status" value="0"/> Expel <br/>
+                                    <input type="button" name="verify" value="Submit" class="btn btn-primary btn-xs" />
+                                </form>
+                            </div>
+                            <div class="message">
+                                <form class="form-inline">
+                                    <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId" />
+                                    <input type="text" name="message" class="form-control input-sm"/>
+                                    <input type="button" name="sendmessage" value="Send" class="btn btn-primary btn-xs" />
+                                </form>
+                                <div class="well history">
+                                    <span name="messageerror" class="text-danger"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="remark">
-                        <p name="remarkheader">Remark</p>
-                        <form>
-                            <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId" />
-                            <textarea name="remark"></textarea><br/>
-                            <input type="button" name="submitremark" value="Submit" />
-                            <span name="remarkerror" style="color:red"></span>
-                        </form>
+                    <div class="panel panel-default remark">
+                        <div class="panel-heading" name="remarkheader"><span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Remark</div>
+                        <div class="panel-body">
+                            <form>
+                                <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId" />
+                                <textarea class="form-control" rows="5" name="remark"></textarea>
+                                <input type="button" name="submitremark" value="Submit" class="btn btn-primary btn-xs" />
+                                <span name="remarkerror" class="text-danger"></span>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         }
-        <script src="@routes.Assets.at("javascripts/invigilator.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/invigilatorinexam.js")" type="text/javascript"></script>
 }

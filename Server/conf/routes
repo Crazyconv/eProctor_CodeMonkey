@@ -27,6 +27,7 @@ POST    /finishexam                      controllers.ExamController.finishExam()
 
 
 # Invigilator page
+POST    /displayschedule                 controllers.InvigilatorController.displaySchedule()
 POST    /signin                          controllers.InvigilatorController.signIn()
 POST    /verifystudent                   controllers.InvigilatorController.verifyStudent()
 POST    /invigilatormessage              controllers.InvigilatorController.sendMessage()

@@ -1,0 +1,80 @@
+#schedule{
+    width: 80%;
+    margin: 20px auto;
+}
+
+#schedule h4{
+    display: inline;
+}
+
+#another{
+    font-style: italic;
+    margin-left: 10px;
+}
+
+#another a:hover{
+    cursor: pointer;
+    text-decoration: none;
+}
+
+#invigilate{
+    margin: 20px auto;
+    width: 100%;
+}
+
+.out{
+    width:440px;
+    display:inline-block;
+    vertical-align: top;
+}
+
+.video{
+    height:330px;
+}
+
+.video img{
+    width: 100%;
+    height: 100%;
+}
+
+.info{
+    width:150px;
+    height:250px;
+    display:inline-block;
+    text-align: center;
+}
+
+.info img{
+    width:100px;
+    height:100px;
+}
+
+.message{
+    width:240px;
+    height:250px;
+    display:inline-block;
+    vertical-align: top;
+}
+
+.message input[name="message"]{
+    width:180px;
+}
+
+form{
+    text-align:left;
+}
+
+.history{
+    height:220px;
+    overflow-y:auto;
+    margin: 5px 0;
+}
+
+.student{
+    text-align:left;
+    color:blue;
+}
+.invigilator{
+    text-align:right;
+    color:green;
+}
