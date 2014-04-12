@@ -137,7 +137,7 @@ public class Invigilator extends Model{
      */
     public void setPassword(String password) throws CMException{
         if(password.length()<5 || password.length()>16){
-            throw new CMException("Password should contain 6-15 characters.");
+            throw new CMException("Password should contain 5-16 characters.");
         }
         this.password = password;
     }
