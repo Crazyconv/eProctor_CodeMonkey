@@ -1,0 +1,6 @@
+@(invigilatorList: List[Invigilator])
+<table id="table" class="table table-striped table-condensed">
+    @invigilatorList.map{ invigilator =>
+        <tr><td>@invigilator.getAccount</td><td>@invigilator.getName</td></tr>
+    }
+</table>

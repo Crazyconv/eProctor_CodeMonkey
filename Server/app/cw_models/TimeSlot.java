@@ -1,12 +1,12 @@
 package cw_models;
 
+import models.ExamRecord;
+import models.Invigilator;
 import play.db.ebean.Model;
 import utils.CMException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * A period of time during which an exam session can take place.
@@ -73,6 +73,24 @@ public class TimeSlot extends Model{
         return endTime;
     }
 
+    public List<ExamRecord> getExamRecordList(){
+        List<ExamRecord> examRecordList = new ArrayList<ExamRecord>();
+        for(ExamSession examSession: examSessionList){
+            examRecordList.addAll(examSession.getExamRecordList());
+        }
+        return examRecordList;
+    }
+
+    public Set<Invigilator> getInvigilatorSet(){
+        Set<Invigilator> invigilatorSet = new HashSet<Invigilator>();
+        for(ExamRecord examRecord: getExamRecordList()){
+            if(examRecord.getInvigilator()!=null){
+                invigilatorSet.add(examRecord.getInvigilator());
+            }
+        }
+        return invigilatorSet;
+    }
+
     /**
      * setter for startTime and EndTime.
      *
@@ -103,6 +121,10 @@ public class TimeSlot extends Model{
      */
     public static TimeSlot byId(Integer timeSlotId){
         return TimeSlot.find.byId(timeSlotId);
+    }
+
+    public static List<TimeSlot> getAll(){
+        return TimeSlot.find.all();
     }
 
 }

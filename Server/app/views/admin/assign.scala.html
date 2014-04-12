@@ -1,0 +1,56 @@
+@(timeSlot: TimeSlot, invigilatorList: List[Invigilator])
+@main("Assign invigilator"){
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">@timeSlot.getStartTime.format("dd-MM-yyyy") @timeSlot.getStartTime.format("kk:mm:ss")-@timeSlot.getEndTime.format("kk:mm:ss")</h4>
+    </div>
+    <div id="body" class="modal-body">
+        <form id="assignform">
+            <input type="hidden" value="@timeSlot.getTimeSlotId" name="timeSlotId" />
+            @invigilatorList.map{ invigilator =>
+                <input class="checkvalue" type="checkbox" name="invigilatorIds" value="@invigilator.getInvigilatorId"/> @invigilator.getName<br/>
+            }
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button id="assignbutton" type="button" class="btn btn-primary btn-sm" name="assigninvigilator">Assign</button>
+        <button type ="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+    </div>
+
+    <script type="text/javascript">
+        $('#assignbutton').click(function(){
+            $form = $('#assignform');
+            var options={
+                url:"/performassign",
+                type:"POST",
+                dataType:"json",
+                beforeSubmit: function(formData, jqForm, option){
+                    if(typeof $('.checkvalue:checked').val() ==="undefined"){
+                        $('#body').append('<span class="text-danger">No invigilators are selected.</span>.');
+                        return false;
+                    }
+                    return true;
+                },
+                success: function(json){
+                    if(json.error!=0){
+                        $('#body').html(json.error);
+                        $('#assignbutton').attr("disabled","disabled");
+                    }else{
+                        var timeSlotId = $form.get(0).timeSlotId.value;
+                        $('#list'+timeSlotId).text("");
+                        $('#body').html("Assign successfully!");
+                        $('#assignbutton').attr("disabled","disabled");
+                        $.each(json.names, function(index,name){
+                            $('#list'+timeSlotId).append(name);
+                        });
+                    }
+                },
+                error: function(xhr,status){
+                    $('#body').html("Internal server error.");
+                    $('#assignbutton').attr("disabled","disabled");
+                }
+            };
+            $form.ajaxSubmit(options);
+        });
+    </script>
+}

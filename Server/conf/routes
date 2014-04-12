@@ -36,12 +36,12 @@ POST    /pollmessageimage                controllers.InvigilatorController.pollM
 
 
 # Admin page
-POST	/createInvigilator				 controllers.AdminController.createInvigilator()
+POST	/createinvigilator				 controllers.AdminController.createInvigilator()
 POST	/resetpassword				     controllers.AdminController.resetPassword()
-GET     /createInvigilator				 controllers.AdminController.renderCreateInvigilator()
-GET 	/editInvigilator				 controllers.AdminController.renderEditInvigilator()
-GET     /assignInvigilator				 controllers.AdminController.renderAssignInvigilator()
-POST    /assignInvigilator               controllers.AdminController.assignInvigilator()
+GET     /assignInvigilator               controllers.AdminController.assignInvigilator()
+POST    /toggleassign                    controllers.AdminController.toggleAssign()
+POST    /performassign                   controllers.AdminController.performAssign()
+GET     /listinvigilators                controllers.AdminController.listInvigilators()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                    controllers.Assets.at(path="/public", file)

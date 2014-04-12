@@ -194,4 +194,8 @@ public class Invigilator extends Model{
         return Invigilator.find.where().eq("account",account).findUnique();
     }
 
+    public static List<Invigilator> getAll(){
+        return Invigilator.find.all();
+    }
+
 }

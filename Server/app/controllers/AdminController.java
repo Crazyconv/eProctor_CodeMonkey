@@ -1,20 +1,22 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import cw_models.ExamSession;
+import cw_models.TimeSlot;
 import models.*;
 import play.data.DynamicForm;
 import play.data.Form;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import utils.Authentication;
 import utils.CMException;
 import utils.Global;
 import views.html.admin.*;
+import views.html.invigilator.invigilateExam;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class AdminController extends Controller {
 
@@ -28,6 +30,7 @@ public class AdminController extends Controller {
      * </ul>
      */
     public static Result createInvigilator() {
+        ObjectNode result = Json.newObject();
         DynamicForm invigilatorForm = Form.form().bindFromRequest();
         try {
             Authentication.authorize(Global.ADMIN);
@@ -36,7 +39,7 @@ public class AdminController extends Controller {
                 throw new CMException("Form submit error.");
             }
 
-            String email = invigilatorForm.get("email");
+            String email = invigilatorForm.get("account");
             String name = invigilatorForm.get("name");
             String password = invigilatorForm.get("password");
 
@@ -46,54 +49,18 @@ public class AdminController extends Controller {
             invigilator.setPassword(password);
             invigilator.save();
 
+            result.put("name",name);
+            result.put("email",email);
+            result.put("error",0);
         } catch (CMException e) {
-            return ok(adminErrorView.render(e.getMessage()));
+            result.put("error",e.getMessage());
         } catch (NumberFormatException e) {
-            return ok(adminErrorView.render("Invalid request!"));
+            result.put("error","Invalid request.");
         }
 
-        return ok(adminSuccessPage.render());
+        return ok(result);
     }
 
-    /**
-     * Simply returns a HTTP element on which one can create new invigilator account.
-     * 
-     * @return one of the 2:
-     * <ul>
-     *     <li>an ok HTTP response wrapping an HTTP element rendered with error message.</li>
-     *     <li>an ok HTTP response wrapping an HTTP element where creation of new invigilator account can be performed.</li>
-     * </ul>
-     */
-    public static Result renderCreateInvigilator() {
-        try{
-            Authentication.authorize(Global.ADMIN);
-        }catch(CMException e){
-            return ok(adminErrorView.render(e.getMessage()));
-        }
-
-        return ok(createInvigilator.render());
-    }
-
-    /**
-     * Simply returns an HTTP element on which the invigilator's information can be edited.
-     * 
-     * @return one of the 2:
-     * <ul>
-     *     <li>an ok HTTP response wrapping an HTTP element rendered with error message.</li>
-     *     <li>an ok HTTP response wrapping an HTTP element where an invigilator can be edited</li>
-     * </ul>
-     * 
-     */
-    public static Result renderEditInvigilator() {
-
-        try{
-            Authentication.authorize(Global.ADMIN);
-        }catch(CMException e){
-            return ok(adminErrorView.render(e.getMessage()));
-        }
-
-        return ok(editInvigilator.render());
-    }
 
     /**
      * Sets the password of an invigilator account.
@@ -111,6 +78,7 @@ public class AdminController extends Controller {
      * </ul>
      */
     public static Result resetPassword() {
+        ObjectNode result = Json.newObject();
         DynamicForm passwordForm = Form.form().bindFromRequest();
 
         try{
@@ -129,104 +97,145 @@ public class AdminController extends Controller {
             invigilator.setPassword(password);
             invigilator.save();
 
+            result.put("error",0);
         } catch (CMException e){
-            return ok(adminErrorView.render(e.getMessage()));
+            result.put("error",e.getMessage());
+        } catch (NumberFormatException e){
+            result.put("error","Invalid request.");
         }
 
-        return ok(adminSuccessPage.render());
+        return ok(result);
     }
 
-    static List<ExamSession> alList; // pending what?
 
     /**
      * 
      * @return [description]
      */
-    public static Result renderAssignInvigilator(){
+    public static Result assignInvigilator(){
         try{
             Authentication.authorize(Global.ADMIN);
 
-            alList = ExamSession.find.all();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            List<String> stringList = new ArrayList<String>();
-
-
-            for(ExamSession examSession : alList){
-                Date startTime = examSession.getTimeSlot().getStartTime();
-                String startTimeStr = sdf.format(startTime);
-
-                Date endTime = examSession.getTimeSlot().getEndTime();
-                String endTimeStr = sdf.format(endTime);
-
-                //generate the Time String, such as 2010-09-24 18:30---2010-09-24 21:30
-                stringList.add(startTimeStr+"---"+endTimeStr);
-
-            }
-            return ok(assignInvigilator.render(stringList));
+            return ok(assignInvigilator.render(TimeSlot.getAll()));
         } catch (CMException e){
-            return ok(adminErrorView.render(e.getMessage()));
+            return ok(e.getMessage());
         } catch(NumberFormatException e){
-            return ok(adminErrorView.render(e.getMessage()));
+            return ok("Invalid request.");
         }
     }
 
-    public static Result assignInvigilator(){
 
-        DynamicForm form = Form.form().bindFromRequest();
+    public static Result listInvigilators(){
         try{
             Authentication.authorize(Global.ADMIN);
 
-            if(form.hasErrors()){
-                throw new CMException("Form submission error.");
+            List<Invigilator> invigilatorList = Invigilator.getAll();
+
+            return ok(listInvigilators.render(invigilatorList));
+        } catch (CMException e){
+            return ok(e.getMessage());
+        } catch(NumberFormatException e){
+            return ok("Invalid request.");
+        }
+    }
+
+    public static Result toggleAssign(){
+        DynamicForm assignForm = Form.form().bindFromRequest();
+
+        try{
+            Authentication.authorize(Global.ADMIN);
+            if(assignForm.hasErrors()){
+                throw new CMException("Form submit error.");
             }
 
-            String invigilatorStr = form.get("invigilator email");
-            String numStudentStr = form.get("numStudent");//get the number of exam the invigilator wants to invigilate
-            String selectionStr = form.get("selection");// choose the index of the slot
-
-
-            int selectionIndex = Integer.parseInt(selectionStr);
-
-            int numStudent = Integer.parseInt(numStudentStr);
-
-            ExamSession examSession = alList.get(selectionIndex);
-            System.out.println(examSession.getExamSessionId());
-            List<ExamRecord> examRecordList = examSession.getExamRecordList();
-            Invigilator invigilator = Invigilator.byAccount(invigilatorStr);
-
-            if(examRecordList.size()==0){
-                throw new CMException("No exam records for this slot.");
+            Integer timeSlotId = Integer.parseInt(assignForm.get("timeSlotId"));
+            TimeSlot timeSlot = TimeSlot.byId(timeSlotId);
+            if(timeSlot == null){
+                throw new CMException("This timeSlot does not exist.");
             }
-            int count = 0;
-            ExamRecord examRecord = examRecordList.remove(0);
-            while(count<numStudent && examRecord!=null){
-                //assign the exam in this slot, until the count is satified the invigilators' Number Of Students
-                //Or until the slot of students in this list are assigned up.
-                if(examRecord.getInvigilator()==null){
+
+            //get the invigilator list who is free in this time slot
+            Date startTime = timeSlot.getStartTime();
+            Date endTime = timeSlot.getEndTime();
+            List<Invigilator> allInvigilator = Invigilator.getAll();
+            List<Invigilator> invigilatorList = new ArrayList<Invigilator>();
+            List<ExamRecord> examRecordList;
+            boolean free;
+            for(Invigilator invigilator: allInvigilator){
+                free = true;
+                examRecordList = invigilator.getExamRecordList();
+                //check whether any examRecord overlap withthe timeslot
+                for(ExamRecord examRecord: examRecordList){
+                    if((examRecord.getTimeSlot().getStartTime().after(startTime) &&
+                        examRecord.getTimeSlot().getStartTime().before(endTime)) ||
+                       (examRecord.getTimeSlot().getEndTime().after(startTime) &&
+                        examRecord.getTimeSlot().getEndTime().before(endTime))){
+                        free = false;
+                        break;
+                    }
+                }
+                if(free){
+                    invigilatorList.add(invigilator);
+                }
+            }
+            return ok(assign.render(timeSlot,invigilatorList));
+        }catch(CMException e){
+            return ok(e.getMessage());
+        }catch(NumberFormatException e){
+            return ok("Invalid request");
+        }
+    }
+
+    public static Result performAssign(){
+        ObjectNode result = Json.newObject();
+        Map<String, String[]> assignMap = request().body().asFormUrlEncoded();
+        try{
+            Authentication.authorize(Global.ADMIN);
+
+            //get invigilator list and exam record list
+            String timeSlotId = assignMap.get("timeSlotId")[0];
+            String[] invigilatorIds = assignMap.get("invigilatorIds");
+
+            TimeSlot timeSlot = TimeSlot.byId(Integer.parseInt(timeSlotId));
+            if(timeSlot == null){
+                throw new CMException("Time slot does not exist");
+            }
+            List<ExamRecord> examRecordList = timeSlot.getExamRecordList();
+            List<Invigilator> invigilatorList = new ArrayList<Invigilator>();
+            Invigilator invigilator;
+            for(String invigilatorId: invigilatorIds){
+                invigilator = Invigilator.byId(Integer.parseInt(invigilatorId));
+                if(invigilator == null){
+                    throw new CMException("Invigilator does not exist.");
+                }
+                invigilatorList.add(invigilator);
+            }
+
+            //assign the exam records in this time slot to the invigilators
+            //compute the number of exam records assigned to one invigilator
+            int invigilatorsNum = invigilatorList.size();
+            int examRecordsNum = examRecordList.size();
+            int number = (int) Math.ceil((double)examRecordsNum/(double)invigilatorsNum);
+            ExamRecord examRecord;
+            Set<String> nameSet = new HashSet<String>();
+            for(int i=0; i<invigilatorsNum; i++){
+                for(int j=i*number; (j<(i+1)*number)&&(j<examRecordsNum); j++){
+                    examRecord = examRecordList.get(j);
+                    invigilator = invigilatorList.get(i);
                     examRecord.setInvigilator(invigilator);
                     examRecord.save();
-                    count++;
-                }
-                if(examRecordList.size()>0){
-                    examRecord = examRecordList.remove(0);
-                }else{
-                    examRecord = null;
+                    nameSet.add(invigilator.getName());
+                    System.out.println("====" + examRecord.getExamRecordId() + ":" + invigilator.getInvigilatorId() + "====" );
                 }
             }
 
-            String outputStr;
-            if(count==numStudent){
-                outputStr = "This invigilator has been assigned with "+count+" students.";
-            }else{
-                //if the count is lower than Number of Students of Invigilator. It will happen when the list of exams in this slot is lower than Number of Invigilator.
-                outputStr = "This invigilator has been assigned with "+count+" students. It is lower than your expect because this is all students available in this time slots.";
-            }
-
-            return ok(adminErrorView.render(outputStr));
-        } catch(CMException e) {
-            return ok(adminErrorView.render(e.getMessage()));
-        } catch(NumberFormatException e){
-            return ok(adminErrorView.render(e.getMessage()));
+            result.put("error",0);
+            result.put("names",Json.toJson(nameSet));
+        }catch(CMException e){
+            result.put("error",e.getMessage());
+        }catch(NumberFormatException e){
+            result.put("error","Invalid request.");
         }
+        return ok(result);
     }
 }
