@@ -245,26 +245,24 @@ public class DataController extends Controller {
     }
 
     public static Result testClient(){
-        return ok(Setting.get("student_domain"));
-
-        /*
         List<Integer> list = new ArrayList<Integer>();
-        list.add(Integer.parseInt(Setting.get("student_domain")));
-        list.add(Integer.parseInt(Setting.get("invigilator_domain")));
-        list.add(Integer.parseInt(Setting.get("admin_domain")));
-
-        list.add(Integer.parseInt(Setting.get("not_signed_in")));
-        list.add(Integer.parseInt(Setting.get("signed_in")));
-        list.add(Integer.parseInt(Setting.get("verified")));
-        list.add(Integer.parseInt(Setting.get("expelled")));
-        list.add(Integer.parseInt(Setting.get("finished")));
-
-        list.add(Integer.parseInt(Setting.get("time_advanced")));
+//        list.add(Integer.parseInt(Setting.get("student_domain")));
+//        list.add(Integer.parseInt(Setting.get("invigilator_domain")));
+//        list.add(Integer.parseInt(Setting.get("admin_domain")));
+//
+//        list.add(Integer.parseInt(Setting.get("not_signed_in")));
+//        list.add(Integer.parseInt(Setting.get("signed_in")));
+//        list.add(Integer.parseInt(Setting.get("verified")));
+//        list.add(Integer.parseInt(Setting.get("expelled")));
+//        list.add(Integer.parseInt(Setting.get("finished")));
+//
+//        list.add(Integer.parseInt(Setting.get("time_advanced")));
+        list.add(Global.SIGNEDIN);
+        list.add(Global.INVIGILATOR);
 
         for(Integer num: list){
             System.out.println("=====" + num + "======");
         }
         return ok(testclient.render());
-        */
     }
 }

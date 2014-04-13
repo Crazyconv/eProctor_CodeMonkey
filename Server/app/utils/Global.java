@@ -1,17 +1,16 @@
 package utils;
 
 public class Global {
-    public static final Integer STUDENT = 0;
-    public static final Integer INVIGILATOR = 1;
-    public static final Integer ADMIN = 2;
-    public static final String ADMIN_ACCOUNT = "admin";
-    public static final String ADMIN_PASSWORD = "admin";
+    public static Integer STUDENT;
+    public static Integer INVIGILATOR;
+    public static Integer ADMIN;
+    public static String ADMIN_ACCOUNT;
+    public static String ADMIN_PASSWORD;
 
-    public static final Integer NOTSIGNEDIN = 0;
-    public static final Integer SIGNEDIN = 1;
-    public static final Integer VERIFIED = 2;
-    public static final Integer EXPELLED = 3;
-    public static final Integer FINISHED = 4;
-
-    public static Integer TEST;
+    public static Integer NOTSIGNEDIN;
+    public static Integer SIGNEDIN;
+    public static Integer VERIFIED;
+    public static Integer EXPELLED;
+    public static Integer FINISHED;
+    public static Integer TIME_ADVANCED;
 }
