@@ -2,6 +2,7 @@ package controllers.data;
 
 import cw_models.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import models.Setting;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.libs.Json;
@@ -9,11 +10,13 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import utils.CMException;
+import utils.Global;
 import utils.StringGenerator;
 import views.html.data.*;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -242,6 +245,26 @@ public class DataController extends Controller {
     }
 
     public static Result testClient(){
+        return ok(Setting.get("student_domain"));
+
+        /*
+        List<Integer> list = new ArrayList<Integer>();
+        list.add(Integer.parseInt(Setting.get("student_domain")));
+        list.add(Integer.parseInt(Setting.get("invigilator_domain")));
+        list.add(Integer.parseInt(Setting.get("admin_domain")));
+
+        list.add(Integer.parseInt(Setting.get("not_signed_in")));
+        list.add(Integer.parseInt(Setting.get("signed_in")));
+        list.add(Integer.parseInt(Setting.get("verified")));
+        list.add(Integer.parseInt(Setting.get("expelled")));
+        list.add(Integer.parseInt(Setting.get("finished")));
+
+        list.add(Integer.parseInt(Setting.get("time_advanced")));
+
+        for(Integer num: list){
+            System.out.println("=====" + num + "======");
+        }
         return ok(testclient.render());
+        */
     }
 }

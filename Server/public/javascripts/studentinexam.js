@@ -138,12 +138,12 @@ $(document).ready(function(){
             type:"POST",
             dataType:"html",
             success: function(html){
-                app.lockApp();
                 $('#beforeexam').toggle();
                 $('#inexam').html(html);
                 setTimeout(checkVerification(examRecordId),5000);
                 startTimer(examRecordId);
                 startPoll(examRecordId,0);
+                app.lockApp();
             },
             error: function(xhr,status){
                 $("#selecterror").text("Internal server error").show();

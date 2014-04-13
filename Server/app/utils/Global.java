@@ -12,4 +12,6 @@ public class Global {
     public static final Integer VERIFIED = 2;
     public static final Integer EXPELLED = 3;
     public static final Integer FINISHED = 4;
+
+    public static Integer TEST;
 }

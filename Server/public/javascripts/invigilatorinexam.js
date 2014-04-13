@@ -66,6 +66,7 @@ $(document).ready(function(){
     var examRecordIdsArray = new Array(examRecordIdsInfo.length);
     for(var i=0;i<examRecordIdsInfo.length;i++){
         examRecordIdsArray[i] = examRecordIdsInfo[i].id;
+        setTimeout(checkExamStatus(examRecordIdsArray[i]),5000);
     }
     var examRecordIds = examRecordIdsArray.join(",");
     console.log(examRecordIds);
@@ -174,4 +175,30 @@ $(document).ready(function(){
     $(document).on('click','button[name="back"]',function(){
         $('button[name="finish"]').popover('hide');
     });
+
+    //check whether student has finished exam
+    function checkExamStatus(examRecordId){
+        return function(){
+            $.ajax({
+                url:"/checkexamstatus",
+                type:"POST",
+                data:{examRecordId: examRecordId},
+                dataType:"json",
+                success:function(json){
+                    if(json.error!=0){
+                        $('<p class="text-danger">' + json.error + '</p>').appendTo($('#info'+examRecordId));
+                    }else{
+                        if(json.examStatus == 4){
+                            $('<p class="text-danger">Student has left exam</p>').appendTo($('#info'+examRecordId));
+                        }else{
+                            setTimeout(checkExamStatus(examRecordId),1000);
+                        }
+                    }
+                },
+                error:function(xhr,status){
+                    $('<p class="text-danger">Internal server error.</p>').appendTo($('#info'+examRecordId));
+                }
+            });
+        }
+    }
 });

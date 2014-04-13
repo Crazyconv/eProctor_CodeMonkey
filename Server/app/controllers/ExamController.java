@@ -52,8 +52,6 @@ public class ExamController extends Controller{
         DynamicForm statusForm = Form.form().bindFromRequest();
         ObjectNode result = Json.newObject();
         try{
-            Integer studentId = Authentication.authorize(Global.STUDENT);
-
             if(statusForm.hasErrors()){
                 throw new CMException("Form submit error.");
             }
@@ -63,11 +61,12 @@ public class ExamController extends Controller{
                 throw new CMException("ExamRecord does not exist");
             }
             Report report = examRecord.getReport();
+            Integer examStatus;
             if(report==null){
-                throw new CMException("Status error");
+                examStatus = Global.NOTSIGNEDIN;
+            }else{
+                examStatus = report.getExamStatus();
             }
-
-            Integer examStatus = report.getExamStatus();
             result.put("examStatus",examStatus);
 
             result.put("error",0);

@@ -11,7 +11,7 @@
   </resources>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="CodeMonkey.jar" size="31108" download="eager" />
+    <jar href="CodeMonkey.jar" size="30681" download="eager" />
     <jar href="lib/commons-codec-1.9.jar" size="263965" download="eager" />
     <jar href="lib/javacpp.jar" size="160677" download="eager" />
     <jar href="lib/javacv-windows-x86.jar" size="1352112" download="eager" />

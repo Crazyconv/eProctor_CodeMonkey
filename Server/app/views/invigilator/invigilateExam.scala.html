@@ -10,8 +10,9 @@
                     <div class="panel panel-default interact">
                         <div class="panel-heading" name="comm_header"><span class="glyphicon glyphicon-comment"></span>&nbsp;&nbsp;Communication</div>
                         <div class="panel-body">
-                            <div class="info">
-                                <p>@examRecord.getStudent.getMatricNo</p>
+                            <div class="info" id="info@examRecord.getExamRecordId">
+                                <p>@examRecord.getStudent.getMatricNo<br/>
+                                @examRecord.getCourse.getCourseCode</p>
                                 <img src="/getphoto/@examRecord.getStudent.getStudentId" /><br/>
                                 <form>
                                     <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId" />
