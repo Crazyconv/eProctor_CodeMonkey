@@ -238,11 +238,11 @@ $(document).ready(function(){
                     $('#finisherror').text(json.error).show();
                     $('button[name="finish"]').popover('hide');
                 }else{
+                    $('#inexam').text("");
+                    $('#beforeexam').show();
                     app.unlockApp();
                     stopTimer();
                     stopPoll();
-                    $('#inexam').text("");
-                    $('#beforeexam').show();
                 }
             },
             error: function(xhr,status){
