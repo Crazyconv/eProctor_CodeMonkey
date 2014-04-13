@@ -11,12 +11,18 @@ import javax.swing.JFrame;
  *
  * @author Administrator
  */
-public class ExitApp {
+public class App {
     JFrame jFrame;
-    public ExitApp(JFrame jFrame){
+    public App(JFrame jFrame){
         this.jFrame = jFrame;
     }
     public void exitApp(){
         jFrame.dispose();
+    }
+    public void lockApp(){
+        jFrame.setAlwaysOnTop(true);
+    }
+    public void unlockApp(){
+        jFrame.setAlwaysOnTop(false);
     }
 }

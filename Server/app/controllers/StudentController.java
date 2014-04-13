@@ -264,11 +264,11 @@ public class StudentController extends Controller {
                 throw new CMException("ExamRecord does not exist.");
             }
 
-//            Date now = new Date();
-//            Date startTime = examRecord.getTimeSlot().getStartTime();
-//            if(startTime.before(now)){
-//                throw new CMException("Sorry,the examRecord has already started");
-//            }
+            Date now = new Date();
+            Date startTime = examRecord.getTimeSlot().getStartTime();
+            if(startTime.before(now)){
+                throw new CMException("Sorry,the examRecord has already started");
+            }
 
             // create an examRecord report for the current student if haven't done so
             // sign in the current student for an examRecord record (by setting the flag in the associated examRecord report)

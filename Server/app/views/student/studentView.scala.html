@@ -32,30 +32,30 @@
                                     <button class="btn btn-info btn-xs" type="button" name="edit">Edit</button>
                                     <button class="btn btn-info btn-xs" type="button" name="remove" id="remove@course.getCourseId" @if(examRecord == null){disabled="disabled"} >Remove</button>
                                 </form></td>
-                                <!--<td id="status@course.getCourseId">-->
-                                    <!--@if(examRecord != null){-->
-                                        <!--@if(examRecord.getTimeSlot.getStartTime.before(new Date())){-->
-                                            <!--finish-->
-                                        <!--} else {-->
-                                            <!--@if(examRecord.getTimeSlot.getStartTime.after(new Date((new Date()).getTime + 15*60*1000))){-->
-                                                <!--@((examRecord.getTimeSlot.getStartTime.getTime - (new Date()).getTime)/(24*60*60*1000)) days-->
-                                            <!--} else {-->
-                                                <!--<form>-->
-                                                    <!--<input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId"/>-->
-                                                    <!--<button class="btn btn-info btn-xs" type="button" name= "signin">Sign in</button>-->
-                                                <!--</form>-->
-                                            <!--}-->
-                                        <!--}-->
-                                    <!--}-->
-                                <!--</td>-->
                                 <td id="status@course.getCourseId">
                                     @if(examRecord != null){
-                                        <form>
-                                            <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId"/>
-                                            <button class="btn btn-info btn-xs" type="button" name= "signin">Sign in</button>
-                                        </form>
+                                        @if(examRecord.getTimeSlot.getStartTime.before(new Date())){
+                                            finish
+                                        } else {
+                                            @if(examRecord.getTimeSlot.getStartTime.after(new Date((new Date()).getTime + 15*60*1000))){
+                                                @((examRecord.getTimeSlot.getStartTime.getTime - (new Date()).getTime)/(24*60*60*1000)) days
+                                            } else {
+                                                <form>
+                                                    <input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId"/>
+                                                    <button class="btn btn-info btn-xs" type="button" name= "signin">Sign in</button>
+                                                </form>
+                                            }
+                                        }
                                     }
                                 </td>
+                                <!--<td id="status@course.getCourseId">-->
+                                    <!--@if(examRecord != null){-->
+                                        <!--<form>-->
+                                            <!--<input type="hidden" name="examRecordId" value="@examRecord.getExamRecordId"/>-->
+                                            <!--<button class="btn btn-info btn-xs" type="button" name= "signin">Sign in</button>-->
+                                        <!--</form>-->
+                                    <!--}-->
+                                <!--</td>-->
                             </tr>
                         }
                     }

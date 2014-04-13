@@ -156,7 +156,7 @@ public class Invigilator extends Model{
      */
     public void setName(String name) throws CMException{
         if(!name.matches("^[\\w\\s]{4,20}$")){  //
-            throw new CMException(name);
+            throw new CMException("Name should contain 4-20 characters.");
         }
         this.name = name.toLowerCase();
     }

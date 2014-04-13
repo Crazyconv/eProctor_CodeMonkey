@@ -47,7 +47,7 @@ $(document).ready(function(){
     });
 
     $('#exit').click(function(){
-        exit.exitApp();
+        app.exitApp();
     });
 
 });

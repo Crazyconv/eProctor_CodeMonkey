@@ -138,6 +138,7 @@ $(document).ready(function(){
             type:"POST",
             dataType:"html",
             success: function(html){
+                app.lockApp();
                 $('#beforeexam').toggle();
                 $('#inexam').html(html);
                 setTimeout(checkVerification(examRecordId),5000);
@@ -237,6 +238,7 @@ $(document).ready(function(){
                     $('#finisherror').text(json.error).show();
                     $('button[name="finish"]').popover('hide');
                 }else{
+                    app.unlockApp();
                     stopTimer();
                     stopPoll();
                     $('#inexam').text("");

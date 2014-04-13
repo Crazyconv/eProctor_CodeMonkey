@@ -1,6 +1,5 @@
 import java.awt.Frame;
 import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -13,7 +12,6 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Region;
-import javafx.scene.text.Font;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -32,15 +30,15 @@ public class CodeMonkey extends javafx.application.Application {
     @Override
     public void start( final Stage stage ) throws Exception {
         final Scene scene = new Scene(new Browser());
-//        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-//            @Override
-//            public void handle(KeyEvent t) {
-//                KeyCode key = t.getCode();
-//                if (key == KeyCode.WINDOWS){
-//                    jFrame.dispose();
-//                }
-//            }
-//        });
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                KeyCode key = t.getCode();
+                if (key == KeyCode.WINDOWS){
+                    jFrame.dispose();
+                }
+            }
+        });
         
         final JFXPanel fxPanel = new JFXPanel();
         Platform.runLater(new Runnable() {
@@ -53,7 +51,6 @@ public class CodeMonkey extends javafx.application.Application {
         jFrame.add(fxPanel);
         jFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
         jFrame.setUndecorated(true);
-        jFrame.setAlwaysOnTop(true);
         jFrame.setVisible(true);
         jFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
@@ -72,12 +69,12 @@ public class CodeMonkey extends javafx.application.Application {
                                 win1.setMember("grab", new Grabber());
                                 JSObject win2 = 
                                     (JSObject) webEngine.executeScript("window");
-                                win2.setMember("exit", new ExitApp(jFrame));
+                                win2.setMember("app", new App(jFrame));
                         }
                     }
                 }
             );
-            webEngine.load("http://172.22.96.65:9000/");
+            webEngine.load("http://172.22.96.30:9000/");
             getChildren().add(browser);
         }
         @Override 

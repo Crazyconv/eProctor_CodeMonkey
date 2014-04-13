@@ -1,4 +1,12 @@
 $(document).ready(function(){
+    //for css
+//    $('tr').mouseenter(function(){
+//        $(this).addClass("info");
+//    });
+//    $('tr').mouseleave(function(){
+//        $(this).removeClass("info");
+//    });
+
     //load the schedule for the current date
     //for demo purpose, the date is set to be 2014/5/1
     //var nowDate = new Date();

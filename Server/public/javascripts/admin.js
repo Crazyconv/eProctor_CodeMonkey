@@ -2,6 +2,14 @@ $('document').ready(function(){
     $('#invigilators').load("/listinvigilators");
     $('#inv').load("/assignInvigilator");
 
+    //for css
+    $('tr').mouseenter(function(){
+        $(this).addClass("info");
+    });
+    $('tr').mouseleave(function(){
+        $(this).removeClass("info");
+    });
+
     $('#createbutton').click(function(){
         $form = $('#createForm');
         var options = {

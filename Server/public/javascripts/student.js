@@ -100,10 +100,10 @@ $(document).ready(function(){
                     $('#remove'+courseId).attr("disabled",false);
                     $("table").tablesorter( {sortList: [[1,0]]} );
                     //The page is supposed to show the number of remaining days
-                    ////add the status info
-                    //$('#status'+courseId).html(remain + " days");
+                    //add the status info
+                    $('#status'+courseId).html(remain + " days");
                     //However, for demostration purpose, we will just display the sign in button
-                    setTimeout(toStart(courseId, json.examId),0);
+                    //setTimeout(toStart(courseId, json.examId),0);
                 }
             },
             // similar to success clause
