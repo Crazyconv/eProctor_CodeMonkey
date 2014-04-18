@@ -1,0 +1,44 @@
+  - !!models.Setting
+    sKey:       student_domain
+    sValue:    0
+
+  - !!models.Setting
+    sKey:       invigilator_domain
+    sValue:    1
+
+  - !!models.Setting
+    sKey:       admin_domain
+    sValue:    2
+
+  - !!models.Setting
+    sKey:       admin_account
+    sValue:    admin
+
+  - !!models.Setting
+    sKey:       admin_password
+    sValue:    admin
+
+  - !!models.Setting
+    sKey:       not_signed_in
+    sValue:    0
+
+  - !!models.Setting
+    sKey:       signed_in
+    sValue:    1
+
+  - !!models.Setting
+    sKey:       verified
+    sValue:    2
+
+  - !!models.Setting
+    sKey:       expelled
+    sValue:    3
+
+  - !!models.Setting
+    sKey:       finished
+    sValue:    4
+
+  - !!models.Setting
+    sKey:       time_advanced
+    sValue:    15
+

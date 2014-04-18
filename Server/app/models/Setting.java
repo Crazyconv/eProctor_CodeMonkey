@@ -16,6 +16,7 @@ public class Setting extends Model {
     private String sValue;
 
     public Setting(){ }
+
     public static Finder<Integer,Setting> find = new Finder<Integer,Setting>(
             Integer.class,Setting.class
     );
@@ -26,6 +27,14 @@ public class Setting extends Model {
 
     public static String get(String sKey){
         return Setting.find.where().eq("sKey",sKey).findUnique().getValue();
+    }
+
+    public void setsKey(String sKey){
+        this.sKey = sKey;
+    }
+
+    public void setsValue(String sValue){
+        this.sValue = sValue;
     }
 
 }
