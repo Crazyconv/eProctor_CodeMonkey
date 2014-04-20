@@ -1,3 +1,4 @@
+app/Configuration.java
 app/controllers/AdminController.java
 app/controllers/Application.java
 app/controllers/data/DataController.java

@@ -1,5 +1,11 @@
 package utils;
 
+import models.Setting;
+/**
+ * Global constants and Global settings.
+ *
+ * Settings will be loaded at runtime from {@link Setting}.
+ */
 public class Global {
     public static Integer STUDENT;
     public static Integer INVIGILATOR;

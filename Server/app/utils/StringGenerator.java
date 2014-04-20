@@ -2,6 +2,9 @@ package utils;
 
 import java.util.Random;
 
+/**
+ * A generator for a string of specified length.
+ */
 public class StringGenerator {
     private static final String pattern = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final Random random = new Random();

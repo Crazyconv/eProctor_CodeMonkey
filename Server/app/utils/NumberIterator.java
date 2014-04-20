@@ -5,6 +5,9 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
+/**
+ * A customisable Iterator.
+ */
 public class NumberIterator {
     private static final Random random = new Random();
     public static Iterator<Integer> generate(Integer result,Integer range){

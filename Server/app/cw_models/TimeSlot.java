@@ -123,6 +123,11 @@ public class TimeSlot extends Model{
         return TimeSlot.find.byId(timeSlotId);
     }
 
+    /**
+     * gets all objects of this model.
+     * 
+     * @return A list of all objects of class TimeSlot.
+     */
     public static List<TimeSlot> getAll(){
         return TimeSlot.find.all();
     }

@@ -108,9 +108,16 @@ public class AdminController extends Controller {
     }
 
 
-    /**
+    /** 
+     * Provides a full listing of all {@link TimeSlot} to be assigned to invigilators.
      * 
-     * @return [description]
+     * @return an ok HTTP response that could contain any of the 3
+     * <ul>
+     *     <li>an HTML section that provides a full listing of all TimeSlots to be
+     *     assigned to invigilators.</li>
+     *     <li>a message string of errors thrown from methods invoked</li>
+     *     <li>a message string in the current controller</li>
+     * </ul>
      */
     public static Result assignInvigilator(){
         try{
@@ -124,7 +131,17 @@ public class AdminController extends Controller {
         }
     }
 
-
+    /**
+     * Provides a full listing of all {@link Invigilator} that are available for invigilation.
+     * 
+     * @return an ok HTTP response that could contain any of the 3
+     * <ul>
+     *     <li>an HTML section that provides a full listing of all Invigilator that are
+     *     available for invigilation.</li>
+     *     <li>a message string of errors thrown from methods invoked</li>
+     *     <li>a message string in the current controller</li>
+     * </ul>
+     */
     public static Result listInvigilators(){
         try{
             Authentication.authorize(Global.ADMIN);
@@ -139,6 +156,14 @@ public class AdminController extends Controller {
         }
     }
 
+    /**
+     * Gets all the free invigilators for a TimeSlot.
+     *
+     * @return an selection page with available invigilators wrapped in an ok HTTP response.
+     *
+     * @see Invigilator
+     * @see TimeSlot
+     */
     public static Result toggleAssign(){
         DynamicForm assignForm = Form.form().bindFromRequest();
 
@@ -186,6 +211,15 @@ public class AdminController extends Controller {
         }
     }
 
+    /**
+     * Assign a list of {@link Invigilators} to a list of {@link examRecord}. 
+     *
+     * This assignment takes in a list of {@link Invigilator invigilators} and
+     * a list of {@link ExamRecord ExamRecords} and do the assignment randomly.
+     * 
+     * @return an JSonNode wrapped in an ok HTTP response, indicating whether 
+     * the assignment is successful.
+     */
     public static Result performAssign(){
         ObjectNode result = Json.newObject();
         Map<String, String[]> assignMap = request().body().asFormUrlEncoded();

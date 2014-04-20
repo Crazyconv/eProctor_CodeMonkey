@@ -6,6 +6,9 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+/**
+ * Transform imageString into BufferedImage.
+ */
 public class ImageDecoder {
     public static BufferedImage decodeToImage(String imageString) throws IOException{
         BufferedImage image = null;

@@ -372,8 +372,12 @@ public class ExamController extends Controller{
         return ok(result);
     }
 
-
-    
+    /**
+     * Gets from database the ID photo of a student.
+     * 
+     * @param  studentId ID of the student whose ID photo is being requested.
+     * @return an HTTP ok response containing the byte representation of the student's ID photo 
+     */
     public static Result getPhoto(Integer studentId){
         Student student = Student.byId(studentId);
         try{
@@ -383,6 +387,12 @@ public class ExamController extends Controller{
         }
     }
 
+    /**
+     * Gets from database one of the frames making up the video stream of a student.
+     * 
+     * @param  imageId the id of the wanted frame.
+     * @return an HTTP ok response containing the byte representation of the requested frame.
+     */
     public static Result getImage(Integer imageId){
         Image image = Image.byId(imageId);
         try{
@@ -392,6 +402,19 @@ public class ExamController extends Controller{
         }
     }
 
+    /**
+     * Finishes an exam for a student.
+     *
+     * <p>It is done by locking up the relevant {@link ExamRecord} and {@link Report}
+     * so no further changes could be made to theses 2 models as well as the 
+     * {@link Chat} and {@link Image} models, both of which are considered to be
+     * pertaining 1 report(composition relationship).</p>
+     * 
+     * @return A JsonNode wrapped in an ok HTTP response carring an error field to
+     * indicate whether the status of an exam is successfully modified, whose semantic
+     * is similar to that of enter() in Application.
+     * @see  Application#enter()
+     */
     public static Result finishExam(){
         DynamicForm finishForm = Form.form().bindFromRequest();
         ObjectNode result = Json.newObject();
